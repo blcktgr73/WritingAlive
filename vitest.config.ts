@@ -5,6 +5,7 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: 'node',
+		include: ['tests/**/*.test.ts'],
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html'],
@@ -20,6 +21,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src'),
+			// Mock Obsidian module for tests
+			'obsidian': path.resolve(__dirname, './tests/mocks/obsidian.ts'),
 		},
 	},
 });

@@ -77,15 +77,24 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
   - 31 transformation tasks (8-9 week roadmap)
   - Testing and deployment strategy
 
+- **[TRANSFORMATIONS.md](docs/TRANSFORMATIONS.md)** - Transformation Log
+  - All completed transformations
+  - Implementation details and rationale
+  - Design decisions and trade-offs
+
 - **[CLAUDE.md](CLAUDE.md)** - Development Philosophy
   - Transformation-Centered AI Pair Programming principles
   - Generative Sequence-based development loop
   - Coding standards and deliverable structure
 
 ### Reference Materials
-- **[WriteAlive 개요](docs/WriteAlive-살리고 글쓰기 도우미.md)** - Original concept document (Korean)
-- **[Bill Evans - Creative Process](docs/20251101%20Universal%20Mind%20of%20Bill%20Evans%20-%20Creative%20Process%20and%20Self-Teaching.md)** - Practice philosophy inspiration
-- **[Bill Evans - 연습 방법](docs/20251101%20성공의%20단계에%20이르는%20빌%20에반스의%20연습%20방법.md)** - Korean summary
+- **[WriteAlive 개요](docs/reference/WriteAlive-살리고%20글쓰기%20도우미.md)** - Original concept document (Korean)
+- **[Bill Evans - Creative Process](docs/reference/20251101%20Universal%20Mind%20of%20Bill%20Evans%20-%20Creative%20Process%20and%20Self-Teaching.md)** - Practice philosophy inspiration
+- **[Bill Evans - 연습 방법](docs/reference/20251101%20성공의%20단계에%20이르는%20빌%20에반스의%20연습%20방법.md)** - Korean summary
+
+### Implementation Details
+- **[docs/implementation/](docs/implementation/)** - Phase implementation summaries and verification checklists
+- **[docs/transformations/](docs/transformations/)** - Individual transformation records (T-YYYYMMDD-###)
 
 ## 🛠️ Technology Stack
 

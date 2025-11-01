@@ -1,23 +1,47 @@
 import type { App } from 'obsidian';
-import { PluginSettingTab, Setting } from 'obsidian';
+import { PluginSettingTab, Setting, Notice } from 'obsidian';
 import type WriteAlivePlugin from '../main';
+import { encryptionService } from '../services/encryption';
+import type { AIProvider } from './settings';
 
 /**
  * WriteAlive Settings Tab
  *
- * Provides user interface for plugin configuration.
+ * Provides user interface for plugin configuration with secure
+ * API key handling.
+ *
+ * Security Features:
+ * - Encrypts API keys before saving
+ * - Masks displayed keys (shows "••••••••")
+ * - Never logs plaintext keys
+ * - Provides show/hide toggle for verification
+ *
  * Follows Open/Closed Principle: Easy to extend with new settings
  * without modifying existing code structure.
  */
 export class WriteAliveSettingTab extends PluginSettingTab {
 	plugin: WriteAlivePlugin;
 
+	// Track API key visibility state per provider
+	private apiKeyVisible: Record<AIProvider, boolean> = {
+		claude: false,
+		gpt: false,
+		gemini: false,
+	};
+
+	// Cache decrypted API keys temporarily for display
+	private decryptedKeys: Record<AIProvider, string> = {
+		claude: '',
+		gpt: '',
+		gemini: '',
+	};
+
 	constructor(app: App, plugin: WriteAlivePlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
 
-	display(): void {
+	async display(): Promise<void> {
 		const { containerEl } = this;
 
 		containerEl.empty();
@@ -29,6 +53,9 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 			cls: 'setting-item-description',
 		});
 
+		// Decrypt API keys for current provider (for display only)
+		await this.loadDecryptedKeys();
+
 		// AI Provider Section
 		this.addAIProviderSettings(containerEl);
 
@@ -37,6 +64,50 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 
 		// General Settings Section
 		this.addGeneralSettings(containerEl);
+	}
+
+	/**
+	 * Load decrypted API keys for display
+	 *
+	 * Only decrypts the current provider's key to minimize exposure.
+	 * Keys are kept in memory only for the duration of settings display.
+	 */
+	private async loadDecryptedKeys(): Promise<void> {
+		const provider = this.plugin.settings.aiProvider;
+		const encryptedKey = this.plugin.settings.encryptedApiKeys[provider];
+
+		if (encryptedKey) {
+			try {
+				this.decryptedKeys[provider] = await encryptionService.decryptApiKey(
+					encryptedKey,
+					provider
+				);
+			} catch (error) {
+				console.error('Failed to decrypt API key for display:', error);
+				this.decryptedKeys[provider] = '';
+			}
+		}
+	}
+
+	/**
+	 * Clear decrypted keys from memory
+	 *
+	 * Called when settings tab is closed to minimize security exposure.
+	 */
+	hide(): void {
+		// Clear all decrypted keys from memory
+		this.decryptedKeys = {
+			claude: '',
+			gpt: '',
+			gemini: '',
+		};
+
+		// Reset visibility state
+		this.apiKeyVisible = {
+			claude: false,
+			gpt: false,
+			gemini: false,
+		};
 	}
 
 	/**
@@ -58,24 +129,20 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 					.addOption('gemini', 'Gemini Pro (Coming Soon)')
 					.setValue(this.plugin.settings.aiProvider)
 					.onChange(async (value) => {
-						this.plugin.settings.aiProvider = value as 'claude' | 'gpt' | 'gemini';
+						const newProvider = value as AIProvider;
+						this.plugin.settings.aiProvider = newProvider;
 						await this.plugin.saveSettings();
+
+						// Reload decrypted key for new provider
+						await this.loadDecryptedKeys();
+
+						// Refresh display
+						this.display();
 					})
 			);
 
-		// API Key
-		new Setting(containerEl)
-			.setName('API Key')
-			.setDesc('Your AI provider API key (stored encrypted)')
-			.addText((text) =>
-				text
-					.setPlaceholder('Enter your API key')
-					.setValue(this.plugin.settings.apiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value;
-						await this.plugin.saveSettings();
-					})
-			);
+		// API Key with encryption
+		this.addApiKeyInput(containerEl);
 
 		// Cost Warnings
 		new Setting(containerEl)
@@ -89,6 +156,140 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+	}
+
+	/**
+	 * Add secure API key input with show/hide toggle
+	 *
+	 * Security Features:
+	 * - Encrypts before saving
+	 * - Masks by default (shows "••••••••")
+	 * - Show/Hide button for verification
+	 * - Never logs plaintext
+	 */
+	private addApiKeyInput(containerEl: HTMLElement): void {
+		const provider = this.plugin.settings.aiProvider;
+		const hasKey = this.plugin.settings.encryptedApiKeys[provider] !== null;
+
+		const setting = new Setting(containerEl)
+			.setName('API Key')
+			.setDesc(
+				'Your AI provider API key (stored encrypted with AES-256). Never shared or logged.'
+			);
+
+		let textComponent: any = null;
+
+		// Add text input
+		setting.addText((text) => {
+			textComponent = text;
+
+			// Show masked value by default
+			const displayValue = hasKey
+				? this.apiKeyVisible[provider]
+					? this.decryptedKeys[provider]
+					: '••••••••••••••••'
+				: '';
+
+			text.setPlaceholder('Enter your API key (e.g., sk-ant-...)')
+				.setValue(displayValue)
+				.onChange(async (value) => {
+					// Only process if not showing masked placeholder
+					if (value && value !== '••••••••••••••••') {
+						await this.saveApiKey(provider, value);
+					}
+				});
+
+			// Input type for security
+			text.inputEl.type = this.apiKeyVisible[provider] ? 'text' : 'password';
+		});
+
+		// Add Show/Hide button
+		if (hasKey) {
+			setting.addButton((button) => {
+				button
+					.setButtonText(this.apiKeyVisible[provider] ? 'Hide' : 'Show')
+					.onClick(async () => {
+						this.apiKeyVisible[provider] = !this.apiKeyVisible[provider];
+
+						// Update input value and type
+						if (textComponent) {
+							const displayValue = this.apiKeyVisible[provider]
+								? this.decryptedKeys[provider]
+								: '••••••••••••••••';
+
+							textComponent.setValue(displayValue);
+							textComponent.inputEl.type = this.apiKeyVisible[provider]
+								? 'text'
+								: 'password';
+						}
+
+						// Refresh display
+						this.display();
+					});
+			});
+		}
+
+		// Add Clear button if key exists
+		if (hasKey) {
+			setting.addButton((button) => {
+				button
+					.setButtonText('Clear')
+					.setWarning()
+					.onClick(async () => {
+						// Clear the encrypted key
+						this.plugin.settings.encryptedApiKeys[provider] = null;
+						this.decryptedKeys[provider] = '';
+						await this.plugin.saveSettings();
+
+						new Notice(`${provider} API key cleared`);
+
+						// Refresh display
+						this.display();
+					});
+			});
+		}
+	}
+
+	/**
+	 * Save API key with encryption
+	 *
+	 * @param provider - AI provider
+	 * @param plaintext - Plaintext API key
+	 */
+	private async saveApiKey(provider: AIProvider, plaintext: string): Promise<void> {
+		try {
+			// Validate key format (basic check)
+			if (!plaintext || plaintext.trim().length < 10) {
+				new Notice('API key seems too short. Please check and try again.');
+				return;
+			}
+
+			// Generate salt if this is the first key
+			if (!this.plugin.settings.encryptionSalt) {
+				this.plugin.settings.encryptionSalt = encryptionService.generateSalt();
+			}
+
+			// Encrypt the API key
+			const encrypted = await encryptionService.encryptApiKey(
+				plaintext.trim(),
+				provider,
+				this.plugin.settings.encryptionSalt
+			);
+
+			// Store encrypted key
+			this.plugin.settings.encryptedApiKeys[provider] = encrypted;
+
+			// Update decrypted cache for display
+			this.decryptedKeys[provider] = plaintext.trim();
+
+			// Save settings
+			await this.plugin.saveSettings();
+
+			new Notice(`${provider} API key saved securely`);
+		} catch (error) {
+			console.error('Failed to save API key:', error);
+			new Notice('Failed to save API key. Please try again.');
+		}
 	}
 
 	/**

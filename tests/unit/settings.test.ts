@@ -13,8 +13,14 @@ describe('Settings', () => {
 			expect(DEFAULT_SETTINGS.aiProvider).toBe('claude');
 		});
 
-		it('should have empty API key by default', () => {
-			expect(DEFAULT_SETTINGS.apiKey).toBe('');
+		it('should have null encrypted API keys by default', () => {
+			expect(DEFAULT_SETTINGS.encryptedApiKeys.claude).toBeNull();
+			expect(DEFAULT_SETTINGS.encryptedApiKeys.gpt).toBeNull();
+			expect(DEFAULT_SETTINGS.encryptedApiKeys.gemini).toBeNull();
+		});
+
+		it('should have empty encryption salt by default', () => {
+			expect(DEFAULT_SETTINGS.encryptionSalt).toBe('');
 		});
 
 		it('should have seed tags configured', () => {
