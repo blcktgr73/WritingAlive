@@ -1,0 +1,10 @@
+{
+	"id": "writealive",
+	"name": "WriteAlive",
+	"version": "0.1.0",
+	"minAppVersion": "1.4.0",
+	"description": "AI-assisted writing tool based on Saligo Writing methodology - helping writers start small and grow naturally through center-based development",
+	"author": "blcktgr73",
+	"authorUrl": "https://github.com/blcktgr73/writealive",
+	"isDesktopOnly": false
+}

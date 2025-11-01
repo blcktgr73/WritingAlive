@@ -11,16 +11,17 @@
 
 This technical design document provides a comprehensive blueprint for implementing WriteAlive, an AI-assisted writing tool based on the Saligo Writing (살리고 글쓰기) methodology developed by June Kim (김창준), inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' step-by-step learning philosophy.
 
-**MVP Scope**: Obsidian plugin with Claude API integration  
-**Timeline**: 8-9 weeks (30 transformations)  
+**MVP Scope**: Obsidian plugin with Claude API integration + Mobile support
+**Timeline**: 8-9 weeks (34 transformations)
 **Target**: Enable low-friction writing through seed-based creation, AI-assisted center discovery, wholeness analysis, and iterative refinement
 
 **Key Architectural Decisions**:
-- Platform: Obsidian Plugin → Web App (post-MVP)
+- Platform: Obsidian Plugin (Desktop + Mobile) → Web App (post-MVP)
 - AI Provider: Claude 3.5 Sonnet (primary)
 - Storage: YAML Frontmatter + Local File System
 - Architecture Pattern: Service-oriented with clean abstractions
 - Development Methodology: Transformation-Centered (per CLAUDE.md)
+- **Mobile-First**: Core features (seed capture, MOC viewing) optimized for mobile from day 1
 
 ---
 
@@ -201,9 +202,79 @@ YAML frontmatter updated → Centers highlighted in editor
 
 ### 5.2 Performance Optimizations
 - Lazy loading React components
-- Debounced auto-save (30s)
+- Debounced auto-save (30s desktop, 2s mobile)
 - Incremental wholeness analysis (reanalyze only changed paragraphs)
 - AI response caching (24h TTL)
+- **Mobile-specific**:
+  - Image compression before upload (max 1MB)
+  - Aggressive request batching
+  - Reduced animation/transitions
+  - Local-first architecture (offline queue)
+
+### 5.3 Mobile-Specific Considerations
+
+#### Platform Support
+- **Android**: Obsidian Mobile 1.4.0+ (API Level 24+, Android 7.0+)
+- **iOS**: Obsidian Mobile 1.4.0+ (iOS 14.0+)
+- **Touch Optimization**: Min tap target 44x44px (Apple HIG, Material Design)
+- **Screen Sizes**:
+  - Mobile: 360x640 (small) to 414x896 (large)
+  - Tablet: 768x1024 to 1024x1366
+
+#### Mobile UI Constraints
+**What Works Well on Mobile** (MVP):
+- ✅ Quick seed capture (voice + text + photo)
+- ✅ Browsing MOCs (read-only)
+- ✅ Reviewing gathered seeds
+- ✅ Tagging and organizing
+- ✅ Sync status visibility
+
+**What Doesn't Work on Mobile** (Desktop Only):
+- ❌ AI center discovery (requires extended focus + screen space)
+- ❌ Document editing with AI suggestions (complex UI)
+- ✅ Wholeness analysis visualization (too complex)
+- ❌ Multi-column layouts
+- ❌ Drag-and-drop reordering
+
+#### Mobile-Specific Tech Stack
+- **No React on Mobile UI**: Use native Obsidian Mobile components (lighter)
+- **Voice Input**: Platform-native Speech Recognition API
+  - Android: `SpeechRecognizer`
+  - iOS: `SFSpeechRecognizer`
+- **Photo Capture**: Obsidian's file attachment API
+- **Offline Storage**: IndexedDB + LocalForage (cross-platform)
+- **Touch Gestures**: Hammer.js or native touch events
+
+#### Offline-First Architecture
+```typescript
+interface OfflineQueue {
+  queueSeed(seed: Seed): void;
+  syncWhenOnline(): Promise<void>;
+  getQueueStatus(): { pending: number, synced: number };
+}
+```
+
+**Sync Strategy**:
+1. User captures seed on mobile → Saved to local IndexedDB immediately
+2. Background sync attempts every 30s (if online)
+3. On app resume: force sync attempt
+4. Show clear indicators: "3 seeds pending sync"
+
+#### Performance Targets (Mobile)
+- **Cold Start**: < 2s to app ready
+- **Seed Capture**: < 5s from tap to saved
+- **Voice Input**: < 500ms to start recording
+- **Photo Attach**: < 3s to compress + attach
+- **Sync**: < 5 min for 95% of seeds
+- **Battery**: < 2% drain per hour of idle sync
+
+#### Testing Strategy (Mobile)
+- **Real Device Testing**:
+  - Android: Samsung Galaxy S21 (mid-range)
+  - iOS: iPhone 12 (mid-range)
+- **Emulator Testing**: Android Studio + Xcode Simulator
+- **Network Conditions**: Test on 3G, 4G, WiFi, Offline
+- **Battery Testing**: Monitor battery drain during sync
 
 ---
 

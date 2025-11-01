@@ -89,13 +89,16 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 
 ## 🛠️ Technology Stack
 
-- **Platform**: Obsidian Plugin
+- **Platform**: Obsidian Plugin (Desktop + Mobile)
+  - Desktop: Windows, macOS, Linux
+  - Mobile: Android 7.0+, iOS 14.0+
 - **Language**: TypeScript
-- **UI Framework**: React
+- **UI Framework**: React (Desktop), Native Obsidian Components (Mobile)
 - **AI Integration**: Claude 3.5 Sonnet (primary), extensible to GPT/Gemini
 - **Build Tool**: esbuild
 - **Testing**: Vitest
 - **i18n**: Korean + English
+- **Mobile-Specific**: Voice input, offline queue, photo capture
 
 ## 🚀 Getting Started (For Developers)
 
@@ -128,24 +131,31 @@ npm run dev
 
 ### Method 1: Seed Gathering (Spontaneous Ideas)
 
-**Weekend**: Reading, watching videos, observing nature
-```markdown
-<!-- In daily/2025-11-01.md -->
-"Alexander: strong centers make weak centers stronger" #seed #creativity
+**Weekend - Mobile + Desktop Workflow**:
 
-<!-- In daily/2025-11-02.md -->
-"Evans: start small but truthful, not vague approximation" #idea #practice
+📱 **Saturday Morning** (Subway, reading on phone):
+- See inspiring quote in book
+- Open Obsidian Mobile → Tap "Quick Seed"
+- Snap photo of page + speak: "Alexander centers concept"
+- Auto-tagged: `#seed #reading` → Saved in 5 seconds
 
-<!-- Korean note -->
-"나무는 줄기에서 바깥으로 자란다" #씨앗 #자연관찰
-```
+📱 **Saturday Afternoon** (Coffee shop, watching video):
+- Hear Bill Evans quote
+- Quick note: "Truth over approximation" `#idea #practice`
+- Offline mode → Queued for sync
 
-**Sunday Evening**: Ready to write
-1. Command: `WriteAlive: Gather Seeds`
-2. Finds all 3 seeds (even Korean `#씨앗` tag!)
-3. Select seeds → AI suggests centers → 30 min → 600-word draft
+📱 **Sunday Morning** (Walk in park):
+- Observe trees growing → Voice memo
+- "나무는 줄기에서 바깥으로 자란다" `#씨앗 #자연관찰`
+
+💻 **Sunday Evening** (Desktop, ready to write):
+1. All 3 mobile seeds synced automatically
+2. Command: `WriteAlive: Gather Seeds`
+3. Finds all seeds (even Korean `#씨앗` + photos!)
+4. Select seeds → AI suggests centers → 30 min → 600-word draft
 
 **Settings**: Configured tags: `seed, idea, 씨앗, 💡`
+**Cross-Device**: Seeds captured on mobile available instantly on desktop
 
 ### Method 2: MOC Integration (Structured Knowledge)
 
@@ -194,10 +204,12 @@ writealive:
 
 ### Phase 1: AI Infrastructure (Week 2-3)
 - [ ] Seed gathering with custom/multiple tag support
+- [ ] **Mobile quick capture UI** (voice + photo + text)
 - [ ] MOC detection and parsing
 - [ ] Living MOC auto-update system
-- [ ] Center finding logic
-- [ ] Wholeness analysis
+- [ ] **Offline queue and sync**
+- [ ] Center finding logic (desktop only)
+- [ ] Wholeness analysis (desktop only)
 
 ### Phase 2: User Interface (Week 4-5)
 - [ ] Command palette integration

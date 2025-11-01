@@ -54,8 +54,9 @@ WriteAlive is an AI-assisted writing tool that enables writers to practice "Sali
   - High context-switching cost between tasks makes writing sessions rare
   - Corporate writing feels stale and formulaic
   - Lack time for traditional multi-draft processes
-- **Goals**: Write clear, persuasive documents efficiently in scattered time blocks
-- **Success Scenario**: Draft comprehensive product spec during commute and coffee breaks
+  - **Mobile pain**: Ideas strike during commute but hard to capture in full context
+- **Goals**: Write clear, persuasive documents efficiently in scattered time blocks across devices
+- **Success Scenario**: Capture seeds on mobile during commute → Develop into full spec on desktop
 
 ### 3. The Reflective Learner (Secondary)
 - **Profile**: Knowledge workers, lifelong learners maintaining personal knowledge bases (Obsidian, Notion users)
@@ -63,8 +64,9 @@ WriteAlive is an AI-assisted writing tool that enables writers to practice "Sali
   - Notes remain fragmented - never evolve into coherent understanding
   - Fear of "not knowing enough yet" prevents writing
   - Lack structure for developing thoughts progressively
-- **Goals**: Transform scattered thoughts into developed insights through low-friction writing
-- **Success Scenario**: Convert week's worth of reading notes into coherent essay through incremental refinement
+  - **Mobile pain**: Read articles on phone, but notes stay disconnected from writing workflow
+- **Goals**: Transform scattered thoughts into developed insights through low-friction writing across devices
+- **Success Scenario**: Capture book highlights on phone → Tag as seeds → Write essay on desktop over weekend
 
 ---
 
@@ -604,6 +606,121 @@ Sunday: "Start from MOC"
 - Sidebar panel shows: current centers, wholeness score, version snapshots
 - Works with existing markdown files (non-destructive annotations)
 - Sync settings across devices via Obsidian Sync
+
+---
+
+### Epic 6.5: Mobile-First Features (MVP - High Priority)
+**Priority**: P0 (Must Have for Mobile Users)
+**Effort**: Medium (5-8 story points)
+**Rationale**: Seeds are often captured on mobile during commutes, walks, and daily activities. Mobile support is critical for the "low energy barrier" promise.
+
+#### US-6.5.1: Mobile-Optimized Seed Capture
+**As a** mobile user walking/commuting
+**I want** to quickly capture seed ideas with minimal friction
+**So that** I don't lose fleeting thoughts
+
+**Acceptance Criteria**:
+- **Quick Capture UI**: Large tap targets (min 44x44px), thumb-friendly layout
+- **Voice Input**: Native speech-to-text integration
+  - Tap microphone icon → speak → auto-tagged with `#seed`
+  - Works offline (device STT)
+- **Minimal Keyboard**: Auto-suggest tags based on recent usage
+- **Auto-save**: Saves every 2 seconds (mobile network unreliable)
+- **Offline Mode**: Queue seeds locally, sync when online
+- **Photo Seeds**: Capture photo + quick note → tagged as seed
+  - Example: Photo of book page + "Alexander's centers concept" #seed #reading
+
+**Mobile-Specific Constraints**:
+- Works on Android (Obsidian Mobile 1.4.0+)
+- Works on iOS (Obsidian Mobile 1.4.0+)
+- No complex UI (limited screen real estate)
+- Touch-optimized (no hover states)
+- Performance: <100ms UI response on mid-range devices
+
+**Real-World Scenario**:
+```
+7:30 AM - On subway
+User sees inspiring quote in book
+→ Opens Obsidian Mobile
+→ Taps "Quick Seed" button
+→ Takes photo of page
+→ Speaks: "Alexander says strong centers make weak ones stronger"
+→ Auto-tags: #seed #reading #christopher-alexander
+→ Saved in < 5 seconds
+→ Back to reading
+
+Evening - At desk
+→ Opens "Gather Seeds" on desktop
+→ Finds morning's subway seed with photo
+→ Starts writing essay
+```
+
+**Structural Quality Metric**: 70% of seeds captured on mobile are used in desktop writing within 7 days
+
+---
+
+#### US-6.5.2: Mobile-Friendly MOC Viewing
+**As a** mobile user reviewing knowledge
+**I want** to browse my MOCs and their auto-gathered seeds
+**So that** I can see my knowledge structure while on-the-go
+
+**Acceptance Criteria**:
+- **Read-Only MOC View**: Display MOC structure clearly on small screen
+- **Collapsible Sections**: Tap to expand/collapse manual vs auto-sections
+- **Seed Preview**: Tap seed → show full note in modal
+- **Filter by Tag**: Quick filter to see only specific themes
+- **Swipe Navigation**: Swipe between MOCs
+- **Bookmark MOCs**: Pin frequently accessed MOCs to top
+
+**Mobile Constraints**:
+- Vertical scroll only (natural mobile pattern)
+- No horizontal scrolling
+- Load performance: < 2s for MOC with 50+ links
+
+**NOT Supported on Mobile (Desktop Only)**:
+- Starting new documents from MOC (complex UI)
+- AI center discovery (requires extended focus)
+- Wholeness analysis (visual complexity)
+- Full document editing (use desktop)
+
+**Use Case**:
+```
+Lunch break - On phone
+→ Opens MOC "Creativity and Practice"
+→ Sees 5 new auto-gathered seeds this week
+→ Taps seed: "Evans: truth over approximation"
+→ Reads full note
+→ Mental note: "This connects to Alexander!"
+→ Evening at desk: writes about connection
+```
+
+**Structural Quality Metric**: 50% of mobile users browse MOCs weekly; 30% review seeds on mobile before desktop writing sessions
+
+---
+
+#### US-6.5.3: Cross-Device Sync Status
+**As a** user working across devices
+**I want** to see sync status clearly
+**So that** I know my mobile captures are available on desktop
+
+**Acceptance Criteria**:
+- **Sync Indicator**: Shows "Synced" / "Syncing..." / "Offline" with timestamp
+- **Conflict Resolution UI**: If mobile+desktop edited same note
+  - Show both versions side-by-side (mobile: top, desktop: bottom)
+  - User picks which to keep or merge manually
+- **Sync Settings**: Choose sync method
+  - Obsidian Sync (paid)
+  - iCloud / Google Drive (free)
+  - Git (advanced users)
+- **Background Sync**: Auto-sync when app comes to foreground
+- **Low Battery Mode**: Reduce sync frequency to save battery
+
+**Edge Cases**:
+- Large attachments (photos): Compress before upload
+- Slow network: Show progress bar for large syncs
+- No network: Clear "Offline" indicator, queue changes
+
+**Structural Quality Metric**: < 5% of users report sync conflicts; 95% of seeds synced within 5 minutes
 
 ---
 

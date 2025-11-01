@@ -39,3 +39,8 @@ coverage/
 
 # Claude
 .claude/
+
+# Plugin build artifacts
+main.js
+*.js.map
+styles.css
