@@ -64,6 +64,17 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 
 ## 📚 Documentation
 
+### Getting Started
+- **[TUTORIAL (English)](docs/TUTORIAL-EN.md)** - Hands-on tutorial with concrete examples
+  - Experience Saligo Writing step-by-step
+  - Learn through realistic scenarios
+  - Practice with Bill Evans' philosophy
+
+- **[튜토리얼 (한국어)](docs/TUTORIAL-KO.md)** - 구체적 사례로 배우는 실습 가이드
+  - 살리고 글쓰기를 단계별로 체험
+  - 실제 시나리오로 학습
+  - 빌 에반스 철학 적용 연습
+
 ### Essential Reading
 - **[PRD.md](docs/PRD.md)** - Product Requirements Document
   - Product vision and goals
