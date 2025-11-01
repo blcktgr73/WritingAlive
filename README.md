@@ -55,9 +55,28 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 
 ## 📚 Documentation
 
-- **[PRD.md](docs/PRD.md)** - Complete product requirements and user stories
-- **[PLAN.md](PLAN.md)** - Technical architecture and implementation roadmap
-- **[CLAUDE.md](CLAUDE.md)** - Development philosophy and transformation principles
+### Essential Reading
+- **[PRD.md](docs/PRD.md)** - Product Requirements Document
+  - Product vision and goals
+  - User personas and journeys
+  - Core user stories (Epic 0-7)
+  - Success metrics and acceptance criteria
+
+- **[PLAN.md](docs/PLAN.md)** - Technical Design & Implementation Plan
+  - System architecture and data models
+  - Technology stack decisions
+  - 31 transformation tasks (8-9 week roadmap)
+  - Testing and deployment strategy
+
+- **[CLAUDE.md](CLAUDE.md)** - Development Philosophy
+  - Transformation-Centered AI Pair Programming principles
+  - Generative Sequence-based development loop
+  - Coding standards and deliverable structure
+
+### Reference Materials
+- **[WriteAlive 개요](docs/WriteAlive-살리고 글쓰기 도우미.md)** - Original concept document (Korean)
+- **[Bill Evans - Creative Process](docs/20251101%20Universal%20Mind%20of%20Bill%20Evans%20-%20Creative%20Process%20and%20Self-Teaching.md)** - Practice philosophy inspiration
+- **[Bill Evans - 연습 방법](docs/20251101%20성공의%20단계에%20이르는%20빌%20에반스의%20연습%20방법.md)** - Korean summary
 
 ## 🛠️ Technology Stack
 
