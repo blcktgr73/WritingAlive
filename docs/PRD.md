@@ -132,7 +132,11 @@ WriteAlive is designed to support how ideas actually emerge in daily life, not j
 
 **Acceptance Criteria**:
 - User invokes command: "Gather my seeds" (Ctrl+P → WriteAlive: Gather Seeds)
-- System searches vault for tags: `#seed`, `#writealive-seed`, or custom user-defined tags
+- System searches vault for configurable seed tags (Settings):
+  - Default: `#seed`, `#writealive-seed`
+  - User can add custom tags: `#idea`, `#thought`, `#fleeting`, `#💡`, etc.
+  - Support for multiple tags (OR logic): matches any of the configured tags
+  - Tag aliases: `#씨앗` (Korean) = `#seed`
 - Returns results with metadata:
   - Original note title and path
   - Seed text (paragraph containing tag)
@@ -143,10 +147,25 @@ WriteAlive is designed to support how ideas actually emerge in daily life, not j
 
 **Real-World Scenario**:
 ```
+User's custom seed tag configuration:
+- #seed (default)
+- #idea (for quick captures)
+- #💡 (emoji tag for inspiration moments)
+- #씨앗 (Korean preference)
+
 User has 200+ daily notes from past 6 months
-Contains 15 tagged seeds about "creativity" theme
+Contains 15 notes with any of these tags about "creativity" theme
 Command finds all 15 in < 2 seconds
-Presents organized list with context
+Presents organized list with context, showing which tag matched
+```
+
+**Settings UI Example**:
+```
+Seed Tags (comma-separated)
+[seed, idea, 💡, 씨앗, fleeting, thought]
+
+☑ Include default tags (#seed, #writealive-seed)
+☐ Case-sensitive matching
 ```
 
 **Structural Quality Metric**: 80% of users successfully gather seeds on first attempt; avg 5-10 seeds per gathering session
@@ -284,6 +303,94 @@ WriteAlive command: "Start from MOC"
 - One-click "Create MOC + Start Writing" generates both MOC note and writing document
 
 **Structural Quality Metric**: 40% of suggested MOCs are accepted and used for writing within 1 week
+
+---
+
+#### US-0.6: Living MOC Auto-Update
+**As a** knowledge worker who captures seeds daily
+**I want** my MOCs to automatically reflect new seeds with relevant tags
+**So that** my knowledge maps stay current without manual maintenance
+
+**Acceptance Criteria**:
+- User enables "Living MOC" mode in MOC frontmatter:
+  ```yaml
+  ---
+  writealive:
+    auto_gather_seeds: true
+    seed_tags: [creativity, practice, writing, 창의성]  # Multiple tags supported
+    seed_tag_mode: any  # 'any' (OR) or 'all' (AND)
+    update_frequency: daily  # or: realtime, manual
+    include_global_seed_tags: true  # Also use tags from global settings
+  ---
+  ```
+- MOC contains auto-update section markers:
+  ```markdown
+  ## Recent Seeds (Auto-updated)
+  <!-- BEGIN WRITEALIVE-AUTO -->
+  <!-- END WRITEALIVE-AUTO -->
+  ```
+- WriteAlive monitors vault for new notes matching MOC's `seed_tags`
+- When new matching seed found:
+  - **Realtime mode**: Immediately add to AUTO section
+  - **Daily mode**: Show notification: "3 new seeds for 'Creativity' MOC" [Update Now] [Review]
+  - **Manual mode**: Suggest during "Start from MOC" command
+- Auto-section sorts by: recency (default), relevance, or custom
+- User can move items from AUTO to manual sections (becomes permanent)
+- Respects user edits: never overwrites manual content
+
+**Real-World Scenario**:
+```markdown
+User's MOC: "Creativity and Practice.md"
+---
+writealive:
+  auto_gather_seeds: true
+  seed_tags: [creativity, practice, 창의성, 연습]  # Multilingual!
+  seed_tag_mode: any
+  update_frequency: daily
+---
+
+Monday: Reading book → "Alexander: centers" #creativity #씨앗
+→ Matches MOC's "creativity" tag
+→ [Notification] "1 new seed for 'Creativity and Practice' MOC"
+
+Tuesday: Watching video → "Evans: truth" #practice #idea
+→ Matches MOC's "practice" tag + global "#idea" tag
+→ Auto-section now has 2 seeds
+
+Wednesday: Korean note → "자연스러운 성장" #창의성 #씨앗
+→ Matches MOC's "창의성" tag (Korean)
+→ Auto-section now has 3 seeds
+
+Sunday: "Start from MOC"
+→ All 3 auto-gathered seeds + manual links as context
+→ AI: "Your MOC has grown this week. I notice bilingual themes..."
+```
+
+**Three Implementation Approaches** (Choose 1 for MVP):
+
+1. **Smart Markers** (Recommended for MVP)
+   - Pros: Works with pure markdown, user control, clear boundaries
+   - Cons: Requires marker discipline
+
+2. **Dataview Integration** (If Dataview plugin available)
+   - Pros: Real-time, no manual updates needed
+   - Cons: Requires Dataview plugin, less portable
+
+3. **Hybrid Notification** (Safest)
+   - Pros: User always in control, no accidental overwrites
+   - Cons: Requires user action, not truly "auto"
+
+**Structural Quality Metric**:
+- 50% of MOC users enable auto-update
+- Auto-updated MOCs receive 2-3x more seeds than manual MOCs
+- 70% of auto-gathered seeds are kept (not removed as irrelevant)
+- Time saved: 5-10 min/week of manual MOC maintenance
+
+**Edge Cases & Safety**:
+- Never modify content outside AUTO markers
+- If markers missing, suggest adding them (don't auto-inject)
+- If multiple MOCs match same seed tags, ask user which to update
+- Undo support: "Revert last auto-update"
 
 ---
 

@@ -209,32 +209,32 @@ YAML frontmatter updated → Centers highlighted in editor
 
 ## 6. Transformation-Based Task Breakdown
 
-**Total**: 33 transformations over 8-9 weeks
+**Total**: 34 transformations over 8-9 weeks
 
 ### Summary of Phases
 
 **Phase 0: Foundation** (Week 1) - T-001 to T-003
 - Project scaffold, settings UI, encryption
 
-**Phase 1: AI Infrastructure** (Week 2-3) - T-004 to T-010
-- AI service layer, Claude provider, prompts, **seed gathering**, **MOC detection**, center finding, wholeness analysis
+**Phase 1: AI Infrastructure** (Week 2-3) - T-004 to T-011
+- AI service layer, Claude provider, prompts, **seed gathering**, **MOC detection**, **Living MOC auto-update**, center finding, wholeness analysis
 
-**Phase 2: Storage** (Week 3-4) - T-011 to T-014
+**Phase 2: Storage** (Week 3-4) - T-012 to T-015
 - YAML frontmatter manager, snapshots, diffs, rate limiting
 
-**Phase 3: User Interface** (Week 4-5) - T-015 to T-021
+**Phase 3: User Interface** (Week 4-5) - T-016 to T-022
 - Commands, seed modal, **MOC modal**, center modal, panels, highlighting, cost warnings
 
-**Phase 4: Refinement Features** (Week 6) - T-022 to T-025
+**Phase 4: Refinement Features** (Week 6) - T-023 to T-026
 - Expansion prompts, read-aloud, labeling, unity checker
 
-**Phase 5: Polish** (Week 7) - T-026 to T-028
+**Phase 5: Polish** (Week 7) - T-027 to T-029
 - i18n, error handling, documentation
 
-**Phase 6: Testing** (Week 8) - T-029 to T-031
+**Phase 6: Testing** (Week 8) - T-030 to T-032
 - Unit tests, integration tests, QA checklist
 
-**Phase 7: Release** (Week 8-9) - T-032 to T-033
+**Phase 7: Release** (Week 8-9) - T-033 to T-034
 - Plugin submission, living docs
 
 ### Key Transformations Detail
@@ -264,7 +264,21 @@ YAML frontmatter updated → Centers highlighted in editor
 - Dependencies: T-004 (Vault access)
 - Time: 2 hours
 
-**T-20251101-009: Implement Center Finding Logic**
+**T-20251101-009: Implement Living MOC Auto-Update System**
+- Intent: Make MOCs living documents that evolve with daily note-taking
+- Acceptance:
+  - Vault file watcher monitors new/modified notes with `#seed` tags
+  - Detects MOCs with `writealive.auto_gather_seeds: true` in frontmatter
+  - Matches seed tags against MOC's `seed_tags` list
+  - Parses MOC to find `<!-- BEGIN WRITEALIVE-AUTO -->` markers
+  - Inserts new seed links in auto-section (sorted by recency)
+  - Three update modes: realtime, daily notification, manual suggestion
+  - Never modifies content outside markers
+  - Undo/revert support for last auto-update
+- Dependencies: T-008 (MOC Detection)
+- Time: 2-3 hours
+
+**T-20251101-010: Implement Center Finding Logic**
 - Intent: Enable AI-assisted center discovery (core capability)
 - Acceptance: Extracts context, calls AI, parses centers with positions
 - Time: 2 hours

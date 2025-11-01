@@ -24,9 +24,16 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 ## ✨ Key Features (MVP)
 
 ### 🌱 Seed Gathering & MOC Integration
-- **Seed Gathering**: Automatically collect tagged ideas (`#seed`) from your entire vault
+- **Seed Gathering**: Automatically collect tagged ideas from your entire vault
+  - Configurable seed tags: `#seed`, `#idea`, `#💡`, `#씨앗`, or your custom tags
+  - Support for multiple tags (finds notes matching any configured tag)
+  - Bilingual support: Korean and English tags work seamlessly
 - **MOC Integration**: Start writing from your Map of Contents notes
-- Transform scattered daily observations OR structured knowledge maps into writing
+  - Works with `#moc` tag, folder patterns, or YAML frontmatter
+- **Living MOCs**: Auto-update your MOCs with new seeds matching specific themes
+  - Set tags per MOC: e.g., `seed_tags: [creativity, practice, 창의성]`
+  - Three modes: realtime, daily notifications, or manual
+  - Never overwrites your manual content
 - Zero-friction path: "note while reading" → "coherent essay"
 - Works with existing Zettelkasten, PARA, and other PKM workflows
 
@@ -124,41 +131,59 @@ npm run dev
 **Weekend**: Reading, watching videos, observing nature
 ```markdown
 <!-- In daily/2025-11-01.md -->
-"Alexander: strong centers make weak centers stronger" #seed
+"Alexander: strong centers make weak centers stronger" #seed #creativity
 
 <!-- In daily/2025-11-02.md -->
-"Evans: start small but truthful, not vague approximation" #seed
+"Evans: start small but truthful, not vague approximation" #idea #practice
 
-"Trees grow from trunk outward, not all at once" #seed
+<!-- Korean note -->
+"나무는 줄기에서 바깥으로 자란다" #씨앗 #자연관찰
 ```
 
 **Sunday Evening**: Ready to write
 1. Command: `WriteAlive: Gather Seeds`
-2. Select 3 seeds from this weekend
-3. AI suggests centers → 30 min → 600-word draft
+2. Finds all 3 seeds (even Korean `#씨앗` tag!)
+3. Select seeds → AI suggests centers → 30 min → 600-word draft
+
+**Settings**: Configured tags: `seed, idea, 씨앗, 💡`
 
 ### Method 2: MOC Integration (Structured Knowledge)
 
 **Existing MOC**: "Creativity and Practice.md"
 ```markdown
+---
+writealive:
+  auto_gather_seeds: true
+  seed_tags: [creativity, practice, 창의성]
+  update_frequency: daily
+---
+
 # Creativity and Practice
 
-## Foundational Concepts
+## Foundational Concepts (Manual)
 - [[Christopher Alexander - Centers]]
 - [[Bill Evans - Truth over Approximation]]
 
-## Personal Observations
-- [[2025-10-28 - Reading Nature of Order]]
-- [[2025-10-29 - Walk observations]]
+## Recent Seeds (Auto-updated)
+<!-- BEGIN WRITEALIVE-AUTO -->
+- [[2025-11-01]] - "Alexander: centers" #creativity #seed
+- [[2025-11-02]] - "Evans: truth" #practice #idea
+- [[2025-11-03]] - "자연스러운 성장" #창의성 #씨앗
+<!-- END WRITEALIVE-AUTO -->
 ```
+
+**What happened automatically**:
+- Monday-Wednesday: User creates 3 notes with relevant tags
+- WriteAlive detects matches and updates AUTO section
+- Thursday notification: "3 new seeds for 'Creativity' MOC"
 
 **Ready to write**:
 1. Command: `WriteAlive: Start from MOC`
 2. Select "Creativity and Practice"
-3. All 7 linked notes pulled in as context
-4. AI: "Your MOC has 3 themes. Which to explore first?"
+3. All manual links + auto-gathered seeds pulled in
+4. AI: "Your MOC has grown this week. I notice bilingual themes..."
 
-**Key Benefit**: Works with your existing workflow. No reorganization needed.
+**Key Benefit**: MOC stays current automatically. Zero manual organization.
 
 ## 🗺️ Roadmap
 
@@ -168,8 +193,9 @@ npm run dev
 - [ ] Settings UI with API key encryption
 
 ### Phase 1: AI Infrastructure (Week 2-3)
-- [ ] Seed gathering from vault
+- [ ] Seed gathering with custom/multiple tag support
 - [ ] MOC detection and parsing
+- [ ] Living MOC auto-update system
 - [ ] Center finding logic
 - [ ] Wholeness analysis
 
