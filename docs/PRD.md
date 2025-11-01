@@ -215,6 +215,78 @@ What center do you see across these ideas?
 
 ---
 
+#### US-0.4: MOC (Map of Contents) Integration
+**As a** knowledge worker using MOC structure to organize notes
+**I want** WriteAlive to recognize my MOCs and use them as writing starting points
+**So that** I can leverage my existing knowledge organization for writing
+
+**Acceptance Criteria**:
+- User can designate notes as MOCs in plugin settings (via folder path, tag `#moc`, or YAML `type: moc`)
+- "Start from MOC" command shows list of available MOCs
+- MOC preview displays:
+  - Title and structure
+  - Linked notes count
+  - Last modified date
+  - Quick preview of links
+- Selecting a MOC creates new document with:
+  - All linked notes pulled in as context
+  - Hierarchical structure preserved (H2/H3 sections → document sections)
+  - Option to include full note content or just excerpts
+- Auto-sync: When MOC is updated, WriteAlive suggests refreshing the writing document
+
+**Real-World Scenario**:
+```markdown
+<!-- User's MOC: "Creativity and Practice.md" -->
+# Creativity and Practice
+
+## Foundational Concepts
+- [[Christopher Alexander - Centers]]
+- [[Bill Evans - Truth over Approximation]]
+- [[Natural Growth Patterns]]
+
+## Personal Observations
+- [[2025-10-28 - Reading Nature of Order]]
+- [[2025-10-29 - Walk observations]]
+
+## Applications
+- [[Saligo Writing Method]]
+- [[Deliberate Practice in Writing]]
+
+---
+WriteAlive command: "Start from MOC"
+→ Selects "Creativity and Practice"
+→ New document created with all 7 linked notes as initial context
+→ AI suggests: "Your MOC has 3 themes. Which would you like to explore first?"
+```
+
+**Structural Quality Metric**:
+- MOC-initiated documents have 50% higher completion rate than seed-initiated (85% vs 70%)
+- Average 10-15 linked notes per MOC
+- 60% of users with MOC workflow adopt this feature
+
+---
+
+#### US-0.5: Auto-MOC Generation (Optional, Post-MVP)
+**As a** writer who accumulates related notes but doesn't manually create MOCs
+**I want** WriteAlive to suggest MOC candidates based on my note relationships
+**So that** I can discover emergent knowledge structures
+
+**Acceptance Criteria**:
+- "Suggest MOCs" command analyzes vault for:
+  - Notes with 5+ outbound links
+  - Clusters of notes with mutual backlinks
+  - Notes sharing common tags/folders
+- Presents MOC candidates with:
+  - Suggested title based on content
+  - Proposed structure (hierarchical grouping)
+  - Strength score (how cohesive the cluster is)
+- User can accept, edit, or dismiss
+- One-click "Create MOC + Start Writing" generates both MOC note and writing document
+
+**Structural Quality Metric**: 40% of suggested MOCs are accepted and used for writing within 1 week
+
+---
+
 ### Epic 1: Low-Energy Writing Initiation (MVP)
 **Priority**: P0 (Must Have)
 **Effort**: Large (8-13 story points)

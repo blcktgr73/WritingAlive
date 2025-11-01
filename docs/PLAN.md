@@ -209,32 +209,32 @@ YAML frontmatter updated → Centers highlighted in editor
 
 ## 6. Transformation-Based Task Breakdown
 
-**Total**: 30 transformations over 8-9 weeks
+**Total**: 33 transformations over 8-9 weeks
 
 ### Summary of Phases
 
 **Phase 0: Foundation** (Week 1) - T-001 to T-003
 - Project scaffold, settings UI, encryption
 
-**Phase 1: AI Infrastructure** (Week 2-3) - T-004 to T-009
-- AI service layer, Claude provider, prompts, **seed gathering**, center finding, wholeness analysis
+**Phase 1: AI Infrastructure** (Week 2-3) - T-004 to T-010
+- AI service layer, Claude provider, prompts, **seed gathering**, **MOC detection**, center finding, wholeness analysis
 
-**Phase 2: Storage** (Week 3-4) - T-010 to T-013
+**Phase 2: Storage** (Week 3-4) - T-011 to T-014
 - YAML frontmatter manager, snapshots, diffs, rate limiting
 
-**Phase 3: User Interface** (Week 4-5) - T-014 to T-019
-- Commands, modals, panels, highlighting, cost warnings
+**Phase 3: User Interface** (Week 4-5) - T-015 to T-021
+- Commands, seed modal, **MOC modal**, center modal, panels, highlighting, cost warnings
 
-**Phase 4: Refinement Features** (Week 6) - T-020 to T-023
+**Phase 4: Refinement Features** (Week 6) - T-022 to T-025
 - Expansion prompts, read-aloud, labeling, unity checker
 
-**Phase 5: Polish** (Week 7) - T-024 to T-026
+**Phase 5: Polish** (Week 7) - T-026 to T-028
 - i18n, error handling, documentation
 
-**Phase 6: Testing** (Week 8) - T-027 to T-029
+**Phase 6: Testing** (Week 8) - T-029 to T-031
 - Unit tests, integration tests, QA checklist
 
-**Phase 7: Release** (Week 8-9) - T-030 to T-031
+**Phase 7: Release** (Week 8-9) - T-032 to T-033
 - Plugin submission, living docs
 
 ### Key Transformations Detail
@@ -254,7 +254,17 @@ YAML frontmatter updated → Centers highlighted in editor
 - Dependencies: T-004 (AI Service), T-005 (Claude Provider)
 - Time: 2 hours
 
-**T-20251101-008: Implement Center Finding Logic**
+**T-20251101-008: Implement MOC Detection and Parsing**
+- Intent: Support existing knowledge organization workflows (Zettelkasten, PARA, etc.)
+- Acceptance:
+  - Detects MOCs via: folder path pattern, `#moc` tag, or YAML `type: moc`
+  - Parses MOC structure (headings, links, hierarchy)
+  - Extracts all linked notes with metadata
+  - Caches MOC index for performance
+- Dependencies: T-004 (Vault access)
+- Time: 2 hours
+
+**T-20251101-009: Implement Center Finding Logic**
 - Intent: Enable AI-assisted center discovery (core capability)
 - Acceptance: Extracts context, calls AI, parses centers with positions
 - Time: 2 hours
@@ -268,12 +278,22 @@ YAML frontmatter updated → Centers highlighted in editor
   - "Start writing with selected seeds" action
 - Time: 2 hours
 
-**T-20251101-016: Create Center Selection Modal**
+**T-20251101-016: Create MOC Selection Modal**
+- Intent: User-friendly interface for starting writing from MOC
+- Acceptance:
+  - Modal displays available MOCs with metadata (title, link count, last modified)
+  - Preview pane shows MOC structure and linked notes
+  - "Start Writing" creates document with MOC context
+  - Option to expand full note content or use excerpts
+  - Settings to configure MOC detection patterns
+- Time: 2 hours
+
+**T-20251101-017: Create Center Selection Modal**
 - Intent: User-friendly center review interface
 - Acceptance: Modal shows suggestions, accept/dismiss, keyboard nav
 - Time: 2 hours
 
-**T-20251101-025: Implement i18n**
+**T-20251101-026: Implement i18n**
 - Intent: Bilingual accessibility (Korean/English)
 - Acceptance: i18next setup, translations complete, auto-detection
 - Time: 2 hours

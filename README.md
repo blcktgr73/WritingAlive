@@ -23,10 +23,12 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 
 ## ✨ Key Features (MVP)
 
-### 🌱 Seed Gathering
-- Automatically collect tagged ideas (`#seed`) from your entire vault
-- Transform scattered daily observations into writing foundations
-- Zero-friction path from "note while reading" to "coherent essay"
+### 🌱 Seed Gathering & MOC Integration
+- **Seed Gathering**: Automatically collect tagged ideas (`#seed`) from your entire vault
+- **MOC Integration**: Start writing from your Map of Contents notes
+- Transform scattered daily observations OR structured knowledge maps into writing
+- Zero-friction path: "note while reading" → "coherent essay"
+- Works with existing Zettelkasten, PARA, and other PKM workflows
 
 ### 🎯 AI-Assisted Center Discovery
 - Identify the strongest "centers" in your writing
@@ -117,9 +119,9 @@ npm run dev
 
 ## 📖 Usage Example
 
-### Weekend Observations → Coherent Essay
+### Method 1: Seed Gathering (Spontaneous Ideas)
 
-**Saturday**: Reading, watching videos, observing nature
+**Weekend**: Reading, watching videos, observing nature
 ```markdown
 <!-- In daily/2025-11-01.md -->
 "Alexander: strong centers make weak centers stronger" #seed
@@ -127,18 +129,36 @@ npm run dev
 <!-- In daily/2025-11-02.md -->
 "Evans: start small but truthful, not vague approximation" #seed
 
-<!-- In daily/2025-11-02.md -->
 "Trees grow from trunk outward, not all at once" #seed
 ```
 
 **Sunday Evening**: Ready to write
-1. Create new note: "On Creative Practice.md"
-2. Command: `WriteAlive: Gather Seeds`
-3. Select 3 seeds from this weekend
-4. AI suggests centers: *"Connection between natural growth and practice?"*
-5. 30 minutes → Coherent 600-word draft
+1. Command: `WriteAlive: Gather Seeds`
+2. Select 3 seeds from this weekend
+3. AI suggests centers → 30 min → 600-word draft
 
-**Key Benefit**: Zero manual organization. Ideas → Writing with minimal friction.
+### Method 2: MOC Integration (Structured Knowledge)
+
+**Existing MOC**: "Creativity and Practice.md"
+```markdown
+# Creativity and Practice
+
+## Foundational Concepts
+- [[Christopher Alexander - Centers]]
+- [[Bill Evans - Truth over Approximation]]
+
+## Personal Observations
+- [[2025-10-28 - Reading Nature of Order]]
+- [[2025-10-29 - Walk observations]]
+```
+
+**Ready to write**:
+1. Command: `WriteAlive: Start from MOC`
+2. Select "Creativity and Practice"
+3. All 7 linked notes pulled in as context
+4. AI: "Your MOC has 3 themes. Which to explore first?"
+
+**Key Benefit**: Works with your existing workflow. No reorganization needed.
 
 ## 🗺️ Roadmap
 
@@ -149,12 +169,14 @@ npm run dev
 
 ### Phase 1: AI Infrastructure (Week 2-3)
 - [ ] Seed gathering from vault
+- [ ] MOC detection and parsing
 - [ ] Center finding logic
 - [ ] Wholeness analysis
 
 ### Phase 2: User Interface (Week 4-5)
 - [ ] Command palette integration
 - [ ] Seed selection modal
+- [ ] MOC selection modal
 - [ ] Center highlighting
 
 ### Phase 3: Refinement (Week 6-7)
