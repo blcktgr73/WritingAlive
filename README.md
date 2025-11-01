@@ -1,8 +1,8 @@
 # WriteAlive (살리고 글쓰기 도우미)
 
-> **AI-Assisted Writing Tool Based on Christopher Alexander's "Nature of Order"**
+> **AI-Assisted Writing Tool Based on Saligo Writing Methodology**
 
-WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살리고 글쓰기)** — a generative, iterative approach to writing inspired by Christopher Alexander's concepts of Wholeness, Centers, and Generative Sequence, combined with Bill Evans' philosophy of deliberate practice.
+WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살리고 글쓰기)** — a generative, iterative approach to writing developed by **June Kim (김창준)**, inspired by Christopher Alexander's concepts of Wholeness, Centers, and Generative Sequence from "The Nature of Order", combined with Bill Evans' philosophy of deliberate practice.
 
 ## 🌱 Core Philosophy
 
@@ -234,15 +234,15 @@ MIT License - See [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Kim Changjon (김창준)** - Creator of Saligo Writing methodology
-- **Christopher Alexander** - "The Nature of Order" concepts
-- **Bill Evans** - Practice philosophy and creative process insights
+- **June Kim (김창준)** - Creator of Saligo Writing (살리고 글쓰기) methodology
+- **Christopher Alexander** - "The Nature of Order" concepts: Wholeness, Centers, Generative Sequence
+- **Bill Evans** - Practice philosophy: truth over approximation, step-by-step mastery
 - **Obsidian Community** - Platform and plugin ecosystem
 
 ## 📬 Contact
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/WriteAlive/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/WriteAlive/discussions)
+- **Issues**: [GitHub Issues](https://github.com/blcktgr73/WritingAlive/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/blcktgr73/WritingAlive/discussions)
 
 ---
 

@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This technical design document provides a comprehensive blueprint for implementing WriteAlive, an AI-assisted writing tool based on the Saligo Writing methodology inspired by Christopher Alexander's "Nature of Order" and Bill Evans' step-by-step learning philosophy.
+This technical design document provides a comprehensive blueprint for implementing WriteAlive, an AI-assisted writing tool based on the Saligo Writing (살리고 글쓰기) methodology developed by June Kim (김창준), inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' step-by-step learning philosophy.
 
 **MVP Scope**: Obsidian plugin with Claude API integration  
 **Timeline**: 8-9 weeks (30 transformations)  

@@ -8,7 +8,7 @@
 
 ## Product Vision Summary
 
-WriteAlive is an AI-assisted writing tool that enables writers to practice "Saligo Writing" (Living-Centered Writing) - a methodology inspired by Christopher Alexander's Nature of Order and Bill Evans' step-by-step mastery philosophy. Rather than forcing writers into traditional outline-first approaches, WriteAlive supports an iterative, generative writing process where ideas grow organically from seed centers with low energy barriers to entry. The tool transforms writing from a high-friction, structure-heavy activity into a fluid, discovery-driven creative process.
+WriteAlive is an AI-assisted writing tool that enables writers to practice "Saligo Writing" (살리고 글쓰기, Living-Centered Writing) - a methodology developed by **June Kim (김창준)**, inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' step-by-step mastery philosophy. Rather than forcing writers into traditional outline-first approaches, WriteAlive supports an iterative, generative writing process where ideas grow organically from seed centers with low energy barriers to entry. The tool transforms writing from a high-friction, structure-heavy activity into a fluid, discovery-driven creative process.
 
 **Core Philosophy**: Writing as a living structure that evolves through generative sequences, not as a static artifact produced through rigid planning.
 
