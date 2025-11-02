@@ -17,7 +17,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SnapshotManager } from '../../src/services/storage/snapshot-manager';
 import { MetadataManager } from '../../src/services/storage/metadata-manager';
 import { StorageError } from '../../src/services/storage/types';
-import type { DocumentMetadata } from '../../src/services/storage/types';
 import type { TFile, Vault } from 'obsidian';
 
 // Mock Vault
@@ -180,11 +179,11 @@ describe('SnapshotManager', () => {
 		});
 
 		it('should preserve existing snapshots when creating new one', async () => {
-			const snapshot1 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Snapshot 1'
 			);
-			const snapshot2 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Snapshot 2'
 			);
@@ -272,19 +271,19 @@ describe('SnapshotManager', () => {
 
 		it('should return snapshots sorted by timestamp (newest first)', async () => {
 			// Create snapshots with small delays to ensure different timestamps
-			const snap1 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Oldest'
 			);
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			const snap2 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Middle'
 			);
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			const snap3 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Newest'
 			);
@@ -370,7 +369,7 @@ describe('SnapshotManager', () => {
 		});
 
 		it('should preserve other snapshots when deleting one', async () => {
-			const snap1 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Keep 1'
 			);
@@ -378,7 +377,7 @@ describe('SnapshotManager', () => {
 				testFile,
 				'Delete'
 			);
-			const snap3 = await snapshotManager.createSnapshot(
+			await snapshotManager.createSnapshot(
 				testFile,
 				'Keep 2'
 			);

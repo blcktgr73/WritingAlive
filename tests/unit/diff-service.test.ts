@@ -18,7 +18,7 @@ import { DiffService } from '../../src/services/storage/diff-service';
 import { SnapshotManager } from '../../src/services/storage/snapshot-manager';
 import { MetadataManager } from '../../src/services/storage/metadata-manager';
 import type { Snapshot, DocumentMetadata } from '../../src/services/storage/types';
-import type { TFile, Vault } from 'obsidian';
+import type { Vault } from 'obsidian';
 
 // Helper: Create mock snapshot
 const createMockSnapshot = (
@@ -68,12 +68,14 @@ const createMockVault = (): Vault => ({
 	} as any,
 } as any);
 
-// Mock TFile
+// Mock TFile - commented out as not currently used in tests
+/*
 const createMockFile = (path: string): TFile => ({
 	path,
 	basename: path.replace('.md', ''),
 	parent: null,
 } as TFile);
+*/
 
 describe('DiffService', () => {
 	let diffService: DiffService;

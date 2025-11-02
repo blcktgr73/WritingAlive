@@ -33,7 +33,7 @@ function createMockFile(path: string): TFile {
 /**
  * Mock Vault
  */
-function createMockVault(): Vault {
+function createMockVault() {
 	const storage = new Map<string, string>();
 
 	return {

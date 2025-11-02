@@ -19,7 +19,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
 	RateLimiter,
 	RateLimitError,
-	type RateLimitConfig,
 } from '../../src/services/storage/rate-limiter';
 
 // Helper: Wait for milliseconds
