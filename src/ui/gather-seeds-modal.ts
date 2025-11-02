@@ -27,6 +27,8 @@
 import { Modal, App, Notice, ButtonComponent, DropdownComponent, Setting } from 'obsidian';
 import type { SeedGatherer } from '../services/vault/seed-gatherer';
 import type { SeedNote, SeedGatherOptions } from '../services/vault/types';
+import type { AIService } from '../services/ai/ai-service';
+import { CenterDiscoveryModal } from './modals/center-discovery-modal';
 
 /**
  * Gather Seeds Modal
@@ -38,6 +40,11 @@ export class GatherSeedsModal extends Modal {
 	 * Seed gatherer service
 	 */
 	private readonly seedGatherer: SeedGatherer;
+
+	/**
+	 * AI service for center discovery
+	 */
+	private readonly aiService: AIService | null;
 
 	/**
 	 * Currently loaded seeds
@@ -63,10 +70,12 @@ export class GatherSeedsModal extends Modal {
 	 *
 	 * @param app - Obsidian app instance
 	 * @param seedGatherer - Seed gatherer service
+	 * @param aiService - AI service for center discovery (optional)
 	 */
-	constructor(app: App, seedGatherer: SeedGatherer) {
+	constructor(app: App, seedGatherer: SeedGatherer, aiService: AIService | null = null) {
 		super(app);
 		this.seedGatherer = seedGatherer;
+		this.aiService = aiService;
 	}
 
 	/**
@@ -346,6 +355,16 @@ export class GatherSeedsModal extends Modal {
 				this.close();
 			});
 
+		// Find Centers button (only shown if AI service is available)
+		if (this.aiService) {
+			this.findCentersButton = new ButtonComponent(actionsDiv)
+				.setButtonText('🎯 Find Centers')
+				.setDisabled(true)
+				.onClick(async () => {
+					await this.handleFindCenters();
+				});
+		}
+
 		// Start Writing button
 		this.startWritingButton = new ButtonComponent(actionsDiv)
 			.setButtonText(`Start Writing (0 seeds)`)
@@ -362,13 +381,27 @@ export class GatherSeedsModal extends Modal {
 	private startWritingButton: ButtonComponent | null = null;
 
 	/**
+	 * Find Centers button reference
+	 */
+	private findCentersButton: ButtonComponent | null = null;
+
+	/**
 	 * Update action buttons based on selection
 	 */
 	private updateActionButtons(): void {
 		const count = this.selectedSeeds.size;
+
+		// Update Start Writing button
 		if (this.startWritingButton) {
 			this.startWritingButton.setButtonText(`Start Writing (${count} seed${count !== 1 ? 's' : ''})`);
 			this.startWritingButton.setDisabled(count === 0);
+		}
+
+		// Update Find Centers button (requires 2+ seeds and AI service)
+		if (this.findCentersButton) {
+			const hasEnoughSeeds = count >= 2;
+			const hasAIService = this.aiService !== null;
+			this.findCentersButton.setDisabled(!hasEnoughSeeds || !hasAIService);
 		}
 	}
 
@@ -400,6 +433,90 @@ export class GatherSeedsModal extends Modal {
 			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 			new Notice(`Failed to create document: ${errorMessage}`);
 			console.error('[GatherSeedsModal] Failed to create document:', error);
+		}
+	}
+
+	/**
+	 * Handle Find Centers action
+	 *
+	 * Calls AI service to discover centers from selected seeds,
+	 * then opens CenterDiscoveryModal with results.
+	 */
+	private async handleFindCenters(): Promise<void> {
+		// Validate AI service is available
+		if (!this.aiService) {
+			new Notice('AI service not available. Please configure API key in settings.');
+			return;
+		}
+
+		// Validate seed selection
+		if (this.selectedSeeds.size < 2) {
+			new Notice('Please select at least 2 seeds to find centers');
+			return;
+		}
+
+		// Get selected seed notes
+		const selectedSeedNotes = this.seeds.filter(seed =>
+			this.selectedSeeds.has(seed.path)
+		);
+
+		// Show loading notice
+		const loadingNotice = new Notice('🎯 Discovering centers... (3-5 seconds)', 0);
+
+		// Disable buttons during processing
+		if (this.findCentersButton) {
+			this.findCentersButton.setDisabled(true);
+		}
+		if (this.startWritingButton) {
+			this.startWritingButton.setDisabled(true);
+		}
+
+		try {
+			// Call AI service to find centers
+			const result = await this.aiService.findCentersFromSeeds(
+				selectedSeedNotes,
+				this.app
+			);
+
+			// Hide loading notice
+			loadingNotice.hide();
+
+			// Group centers by strength for the modal
+			const centersByStrength = {
+				strong: result.centers.filter(c => c.strength === 'strong'),
+				medium: result.centers.filter(c => c.strength === 'medium'),
+				weak: result.centers.filter(c => c.strength === 'weak'),
+			};
+
+			// Create extended result for CenterDiscoveryModal
+			const extendedResult = {
+				...result,
+				centersByStrength,
+			};
+
+			// Open CenterDiscoveryModal with results
+			const modal = new CenterDiscoveryModal(
+				this.app,
+				extendedResult,
+				selectedSeedNotes
+			);
+			modal.open();
+
+			// Close this modal (gather seeds modal)
+			this.close();
+
+		} catch (error) {
+			// Hide loading notice
+			loadingNotice.hide();
+
+			// Re-enable buttons
+			this.updateActionButtons();
+
+			// Show error message
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			new Notice(`❌ Failed to find centers: ${errorMessage}`, 5000);
+
+			console.error('[GatherSeedsModal] Center discovery failed:', error);
 		}
 	}
 

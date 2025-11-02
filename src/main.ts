@@ -507,8 +507,8 @@ export default class WriteAlivePlugin extends Plugin {
 					return;
 				}
 
-				// Open gather seeds modal
-				new GatherSeedsModal(this.app, this.seedGatherer).open();
+				// Open gather seeds modal with AI service (if available)
+				new GatherSeedsModal(this.app, this.seedGatherer, this.aiService).open();
 			},
 		});
 
