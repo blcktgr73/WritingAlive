@@ -496,6 +496,213 @@ export interface RateLimitState {
 }
 
 /**
+ * T-010: Center Finding Context Types
+ *
+ * Context data structures for AI-assisted center discovery from seed notes.
+ * These types enable privacy-preserving context extraction and structured
+ * center analysis based on Saligo Writing methodology.
+ */
+
+/**
+ * Center Finding Context
+ *
+ * Complete context package sent to AI for center discovery.
+ * Privacy-aware: Only includes seed content and metadata, no file paths.
+ */
+export interface CenterFindingContext {
+	/**
+	 * Seed notes to analyze for centers
+	 */
+	seeds: SeedContext[];
+
+	/**
+	 * Writing methodology (always 'saligo-writing')
+	 */
+	methodology: 'saligo-writing';
+
+	/**
+	 * User's goal (always 'find-centers')
+	 */
+	userGoal: 'find-centers';
+
+	/**
+	 * Optional MOC context if seeds come from a MOC
+	 */
+	mocContext?: MOCContext;
+}
+
+/**
+ * Seed Context
+ *
+ * Privacy-aware seed note context for AI analysis.
+ * Excludes file paths and vault identifiers.
+ */
+export interface SeedContext {
+	/**
+	 * Anonymous seed ID (not file path)
+	 * Format: 'seed-{index}' or 'seed-{hash}'
+	 */
+	id: string;
+
+	/**
+	 * Note content (excluding frontmatter)
+	 */
+	content: string;
+
+	/**
+	 * All tags (inline and frontmatter)
+	 */
+	tags: string[];
+
+	/**
+	 * Note title (filename without extension)
+	 */
+	title: string;
+
+	/**
+	 * Creation timestamp
+	 */
+	createdAt: number;
+
+	/**
+	 * Number of backlinks (for popularity signal)
+	 */
+	backlinkCount: number;
+
+	/**
+	 * Whether seed has photo attachment
+	 */
+	hasPhoto: boolean;
+
+	/**
+	 * Photo caption/alt text (if available)
+	 */
+	photoCaption?: string;
+}
+
+/**
+ * MOC Context
+ *
+ * Context about the Map of Contents the seeds come from.
+ * Provides structural information for better center discovery.
+ */
+export interface MOCContext {
+	/**
+	 * MOC title
+	 */
+	title: string;
+
+	/**
+	 * Heading structure (list of heading texts)
+	 */
+	headings: string[];
+
+	/**
+	 * Map of seed ID → heading it appears under
+	 */
+	seedsFromHeading: Record<string, string>;
+}
+
+/**
+ * Discovered Center (from AI)
+ *
+ * Enhanced Center type for T-010 center discovery results.
+ * Extends base Center with discovery-specific metadata.
+ */
+export interface DiscoveredCenter {
+	/**
+	 * Center theme/name (short descriptive phrase)
+	 */
+	name: string;
+
+	/**
+	 * AI explanation of why this is a center (2-3 sentences)
+	 */
+	explanation: string;
+
+	/**
+	 * Strength rating
+	 */
+	strength: 'strong' | 'medium' | 'weak';
+
+	/**
+	 * Connected seed IDs (which seeds relate to this center)
+	 */
+	connectedSeeds: string[];
+
+	/**
+	 * Recommendation text (if this is the strongest center)
+	 */
+	recommendation?: string;
+
+	/**
+	 * Confidence score (0.0-1.0) - derived from strength
+	 */
+	confidence: number;
+
+	/**
+	 * Structural assessment criteria
+	 */
+	assessment: {
+		/**
+		 * Does center appear across multiple domains/contexts?
+		 */
+		crossDomain: boolean;
+
+		/**
+		 * Does user express emotional resonance?
+		 */
+		emotionalResonance: boolean;
+
+		/**
+		 * Does user have concrete lived experience?
+		 */
+		hasConcrete: boolean;
+
+		/**
+		 * Can center expand in multiple directions?
+		 */
+		structuralPivot: boolean;
+	};
+}
+
+/**
+ * Center Finding Result
+ *
+ * Complete result from AI center discovery operation.
+ */
+export interface CenterFindingResult {
+	/**
+	 * Discovered centers (2-4 centers typically)
+	 */
+	centers: DiscoveredCenter[];
+
+	/**
+	 * Token usage for this operation
+	 */
+	usage: {
+		promptTokens: number;
+		completionTokens: number;
+		totalTokens: number;
+	};
+
+	/**
+	 * Estimated cost in USD
+	 */
+	estimatedCost: number;
+
+	/**
+	 * Provider used
+	 */
+	provider: AIProviderType;
+
+	/**
+	 * Timestamp
+	 */
+	timestamp: string;
+}
+
+/**
  * AI Service Error Types
  */
 export class AIServiceError extends Error {
@@ -527,4 +734,5 @@ export type AIErrorCode =
 	| 'INVALID_RESPONSE'
 	| 'TIMEOUT'
 	| 'QUOTA_EXCEEDED'
-	| 'INVALID_REQUEST';
+	| 'INVALID_REQUEST'
+	| 'INSUFFICIENT_SEEDS'; // T-010: Not enough seeds for center finding

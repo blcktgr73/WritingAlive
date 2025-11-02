@@ -34,9 +34,16 @@ import type {
 	AIOperation,
 	CacheEntry,
 	RateLimitState,
+	CenterFindingContext,
+	SeedContext,
+	MOCContext,
+	CenterFindingResult,
+	DiscoveredCenter,
 } from './types';
 import { ClaudeProvider } from './providers/claude-provider';
 import type { AIProvider as AIProviderType } from '../../settings/settings';
+import type { SeedNote } from '../vault/types';
+import type { App } from 'obsidian';
 
 /**
  * AI Service
@@ -368,6 +375,297 @@ export class AIService {
 			size: this.cache.size,
 			entries: this.cache.size,
 		};
+	}
+
+	/**
+	 * T-010: Find centers from seed notes
+	 *
+	 * Analyzes multiple seed notes to identify structural centers (themes)
+	 * with potential for development into coherent writing.
+	 *
+	 * This method:
+	 * 1. Extracts privacy-safe context from seeds
+	 * 2. Calls AI provider with Saligo Writing prompts
+	 * 3. Parses and validates center suggestions
+	 * 4. Returns ranked centers with explanations
+	 *
+	 * Privacy: Only sends seed content and tags, no file paths or vault info.
+	 * Performance: <4s total latency (extract <50ms/seed, API <3s)
+	 *
+	 * @param seeds - Seed notes to analyze (2-10 seeds recommended)
+	 * @param app - Obsidian app instance for photo detection
+	 * @param mocContext - Optional MOC context if seeds from MOC
+	 * @returns Center finding results with usage stats
+	 * @throws {AIServiceError} If insufficient seeds or API error
+	 */
+	async findCentersFromSeeds(
+		seeds: SeedNote[],
+		app: App,
+		mocContext?: {
+			title: string;
+			headings: string[];
+			seedsByHeading: Map<string, string>;
+		}
+	): Promise<CenterFindingResult> {
+		// Validate input
+		if (!seeds || seeds.length < 2) {
+			throw this.createError(
+				'INVALID_REQUEST',
+				'Need at least 2 seeds to find centers. Consider gathering more seeds first.'
+			);
+		}
+
+		if (seeds.length > 10) {
+			console.warn(
+				'[AIService] More than 10 seeds may dilute analysis. Consider filtering to most relevant seeds.'
+			);
+		}
+
+		console.log('[AIService] Finding centers from seeds', {
+			seedCount: seeds.length,
+			hasMOCContext: !!mocContext,
+		});
+
+		// Extract context (privacy-preserving)
+		const context = await this.extractCenterFindingContext(
+			seeds,
+			app,
+			mocContext
+		);
+
+		// Check cache
+		const cacheKey = this.createCacheKey('find-centers-from-seeds', {
+			seedIds: context.seeds.map(s => s.id),
+			moc: mocContext?.title,
+		});
+		const cached = this.getFromCache<CenterFindingResult>(cacheKey);
+		if (cached) {
+			console.log('[AIService] Returning cached center finding results');
+			return cached;
+		}
+
+		// Check rate limit
+		await this.checkRateLimit();
+
+		// Call provider (T-010 specific method)
+		try {
+			const result = await (this.provider as any).findCentersFromSeeds(context);
+
+			// Cache result
+			this.saveToCache(cacheKey, result);
+
+			console.log('[AIService] Found centers from seeds', {
+				centerCount: result.centers.length,
+				strongCenters: result.centers.filter((c: DiscoveredCenter) => c.strength === 'strong').length,
+				estimatedCost: result.estimatedCost,
+				cached: false,
+			});
+
+			return result;
+		} catch (error) {
+			throw this.createError(
+				'PROVIDER_ERROR',
+				'Failed to find centers from seeds',
+				error
+			);
+		}
+	}
+
+	/**
+	 * T-010: Extract privacy-safe context from seed notes
+	 *
+	 * Converts SeedNote[] → CenterFindingContext for AI analysis.
+	 * Ensures no file paths, vault names, or identifying info sent to API.
+	 *
+	 * Context extraction:
+	 * - Content: Removes frontmatter, keeps body text
+	 * - Tags: All tags (normalized)
+	 * - Metadata: Title, creation date, backlink count
+	 * - Photos: Detects photo attachments, extracts captions
+	 *
+	 * Performance: <50ms per seed (target)
+	 *
+	 * @param seeds - Seed notes to extract context from
+	 * @param app - Obsidian app for photo detection
+	 * @param mocContext - Optional MOC context
+	 * @returns Privacy-safe context for AI
+	 */
+	private async extractCenterFindingContext(
+		seeds: SeedNote[],
+		app: App,
+		mocContext?: {
+			title: string;
+			headings: string[];
+			seedsByHeading: Map<string, string>;
+		}
+	): Promise<CenterFindingContext> {
+		const startTime = Date.now();
+
+		// Extract seed contexts
+		const seedContexts: SeedContext[] = await Promise.all(
+			seeds.map(async (seed, index) => {
+				// Remove frontmatter from content
+				const content = this.removeFrontmatter(seed.content);
+
+				// Detect photo attachments
+				const { hasPhoto, caption } = await this.detectPhotoInSeed(
+					seed,
+					app
+				);
+
+				return {
+					id: `seed-${index + 1}`, // Anonymous ID
+					content: content.trim(),
+					tags: seed.tags,
+					title: seed.title,
+					createdAt: seed.createdAt,
+					backlinkCount: seed.backlinks.length,
+					hasPhoto,
+					photoCaption: caption,
+				};
+			})
+		);
+
+		// Convert MOC context if provided
+		const mocCtx: MOCContext | undefined = mocContext
+			? {
+					title: mocContext.title,
+					headings: mocContext.headings,
+					seedsFromHeading: Object.fromEntries(
+						Array.from(mocContext.seedsByHeading.entries())
+					),
+			}
+			: undefined;
+
+		const extractionTime = Date.now() - startTime;
+		const avgTimePerSeed = extractionTime / seeds.length;
+
+		console.log('[AIService] Context extraction complete', {
+			seedCount: seeds.length,
+			totalTime: extractionTime,
+			avgPerSeed: Math.round(avgTimePerSeed),
+			targetPerSeed: 50,
+		});
+
+		if (avgTimePerSeed > 50) {
+			console.warn(
+				`[AIService] Context extraction slower than target: ${avgTimePerSeed}ms/seed > 50ms/seed`
+			);
+		}
+
+		return {
+			seeds: seedContexts,
+			methodology: 'saligo-writing',
+			userGoal: 'find-centers',
+			mocContext: mocCtx,
+		};
+	}
+
+	/**
+	 * Remove YAML frontmatter from note content
+	 *
+	 * Removes content between opening --- and closing --- markers.
+	 * Handles edge cases: missing closing marker, nested ---, etc.
+	 *
+	 * @param content - Raw note content
+	 * @returns Content without frontmatter
+	 */
+	private removeFrontmatter(content: string): string {
+		// Check if content starts with frontmatter delimiter
+		if (!content.trimStart().startsWith('---')) {
+			return content;
+		}
+
+		// Find closing delimiter
+		const lines = content.split('\n');
+		let frontmatterEnd = -1;
+
+		for (let i = 1; i < lines.length; i++) {
+			if (lines[i].trim() === '---') {
+				frontmatterEnd = i;
+				break;
+			}
+		}
+
+		// If no closing delimiter found, return content as-is
+		if (frontmatterEnd === -1) {
+			return content;
+		}
+
+		// Return content after frontmatter
+		return lines.slice(frontmatterEnd + 1).join('\n');
+	}
+
+	/**
+	 * Detect photo attachments in seed note
+	 *
+	 * Checks for:
+	 * - Embedded images: ![[image.png]]
+	 * - Markdown images: ![alt](image.png)
+	 *
+	 * Extracts caption from alt text or surrounding text.
+	 *
+	 * @param seed - Seed note to check
+	 * @param _app - Obsidian app for file resolution (reserved for future use)
+	 * @returns Photo detection result
+	 */
+	private async detectPhotoInSeed(
+		seed: SeedNote,
+		_app: App
+	): Promise<{ hasPhoto: boolean; caption?: string }> {
+		const content = seed.content;
+
+		// Check for embedded images: ![[image.png]]
+		const embedRegex = /!\[\[([^\]]+)\]\]/g;
+		const embedMatches = content.match(embedRegex);
+
+		if (embedMatches && embedMatches.length > 0) {
+			// Extract filename from first embed
+			const firstEmbed = embedMatches[0];
+			const filenameMatch = firstEmbed.match(/!\[\[([^\]]+)\]\]/);
+			const filename = filenameMatch ? filenameMatch[1] : '';
+
+			// Extract caption from surrounding context (next line or previous line)
+			const lines = content.split('\n');
+			let caption: string | undefined;
+
+			for (let i = 0; i < lines.length; i++) {
+				if (lines[i].includes(firstEmbed)) {
+					// Try next line
+					if (i + 1 < lines.length && lines[i + 1].trim()) {
+						caption = lines[i + 1].trim();
+					}
+					// Try previous line
+					else if (i > 0 && lines[i - 1].trim()) {
+						caption = lines[i - 1].trim();
+					}
+					break;
+				}
+			}
+
+			return {
+				hasPhoto: true,
+				caption: caption || filename,
+			};
+		}
+
+		// Check for markdown images: ![alt](image.png)
+		const markdownImageRegex = /!\[([^\]]*)\]\(([^\)]+)\)/g;
+		const markdownMatches = content.match(markdownImageRegex);
+
+		if (markdownMatches && markdownMatches.length > 0) {
+			// Extract alt text from first image
+			const firstImage = markdownMatches[0];
+			const altMatch = firstImage.match(/!\[([^\]]*)\]/);
+			const altText = altMatch ? altMatch[1] : '';
+
+			return {
+				hasPhoto: true,
+				caption: altText || 'No caption',
+			};
+		}
+
+		return { hasPhoto: false };
 	}
 
 	/**

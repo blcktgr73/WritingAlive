@@ -29,6 +29,9 @@ import type {
 	WholenessAnalysis,
 	UnityCheck,
 	AIOperation,
+	CenterFindingContext,
+	CenterFindingResult,
+	DiscoveredCenter,
 } from '../types';
 import type { AIProvider as AIProviderType } from '../../../settings/settings';
 import {
@@ -36,6 +39,7 @@ import {
 	createSuggestExpansionsPrompt,
 	createAnalyzeWholenessPrompt,
 	createCheckParagraphUnityPrompt,
+	createFindCentersFromSeedsPrompt,
 	validateJsonResponse,
 } from '../prompts';
 
@@ -230,6 +234,40 @@ export class ClaudeProvider extends BaseAIProvider {
 
 		// Parse and validate response
 		return this.parseClaudeUnityResponse(response);
+	}
+
+	/**
+	 * T-010: Find centers from seed notes
+	 *
+	 * Analyzes seed notes using Saligo Writing methodology to identify
+	 * structural centers with development potential.
+	 *
+	 * @param context - Complete center finding context with seeds
+	 * @returns Center finding result with usage stats
+	 * @throws {Error} If API call fails or response is invalid
+	 */
+	async findCentersFromSeeds(
+		context: CenterFindingContext
+	): Promise<CenterFindingResult> {
+		console.log('[ClaudeProvider] Finding centers from seeds', {
+			seedCount: context.seeds.length,
+			hasMOCContext: !!context.mocContext,
+		});
+
+		// Generate T-010 specific prompt
+		const prompt = createFindCentersFromSeedsPrompt(context);
+
+		// Call Claude API
+		const responseText = await this.makeClaudeRequest(
+			prompt.system,
+			prompt.user
+		);
+
+		// Parse and validate response
+		return this.parseCenterFindingResponse(
+			responseText,
+			context.seeds.length
+		);
 	}
 
 	/**
@@ -673,5 +711,160 @@ export class ClaudeProvider extends BaseAIProvider {
 			offTopicSentences,
 			suggestions,
 		};
+	}
+
+	/**
+	 * T-010: Parse Claude response for findCentersFromSeeds
+	 *
+	 * Parses and validates center finding response, converts to typed result.
+	 *
+	 * Expected JSON format:
+	 * {
+	 *   "centers": [
+	 *     {
+	 *       "name": "Center name",
+	 *       "explanation": "Why this is a center",
+	 *       "strength": "strong" | "medium" | "weak",
+	 *       "connectedSeeds": ["seed-1", "seed-2"],
+	 *       "recommendation": "Why to start here" (optional),
+	 *       "assessment": {
+	 *         "crossDomain": true,
+	 *         "emotionalResonance": false,
+	 *         "hasConcrete": true,
+	 *         "structuralPivot": true
+	 *       }
+	 *     }
+	 *   ]
+	 * }
+	 *
+	 * @param responseText - Raw response text from Claude
+	 * @param seedCount - Number of seeds analyzed (for validation)
+	 * @returns Parsed center finding result
+	 * @throws {Error} If response format is invalid
+	 */
+	private parseCenterFindingResponse(
+		responseText: string,
+		seedCount: number
+	): CenterFindingResult {
+		// Validate and parse JSON
+		const parsed = validateJsonResponse(responseText, ['centers']);
+		const centersData = parsed.centers;
+
+		if (!Array.isArray(centersData)) {
+			throw new Error('Invalid response: centers is not an array');
+		}
+
+		if (centersData.length === 0) {
+			throw new Error(
+				'Invalid response: no centers found. AI may have determined seeds are too disconnected.'
+			);
+		}
+
+		// Parse each center
+		const centers: DiscoveredCenter[] = centersData.map(
+			(centerData: any, index: number) => {
+				// Validate required fields
+				if (!centerData.name || typeof centerData.name !== 'string') {
+					throw new Error(`Invalid center ${index}: missing or invalid name`);
+				}
+
+				if (
+					!centerData.explanation ||
+					typeof centerData.explanation !== 'string'
+				) {
+					throw new Error(
+						`Invalid center ${index}: missing or invalid explanation`
+					);
+				}
+
+				// Validate strength
+				const strength = centerData.strength?.toLowerCase();
+				if (!['strong', 'medium', 'weak'].includes(strength)) {
+					throw new Error(
+						`Invalid center ${index}: strength must be 'strong', 'medium', or 'weak'`
+					);
+				}
+
+				// Validate connectedSeeds
+				if (!Array.isArray(centerData.connectedSeeds)) {
+					throw new Error(
+						`Invalid center ${index}: connectedSeeds must be an array`
+					);
+				}
+
+				// Map strength to confidence score
+				const confidenceMap = {
+					strong: 0.9,
+					medium: 0.7,
+					weak: 0.5,
+				};
+				const confidence = confidenceMap[strength as 'strong' | 'medium' | 'weak'];
+
+				// Parse assessment (with defaults)
+				const assessment = {
+					crossDomain: !!centerData.assessment?.crossDomain,
+					emotionalResonance: !!centerData.assessment?.emotionalResonance,
+					hasConcrete: !!centerData.assessment?.hasConcrete,
+					structuralPivot: !!centerData.assessment?.structuralPivot,
+				};
+
+				return {
+					name: centerData.name,
+					explanation: centerData.explanation,
+					strength: strength as 'strong' | 'medium' | 'weak',
+					connectedSeeds: centerData.connectedSeeds,
+					recommendation: centerData.recommendation,
+					confidence,
+					assessment,
+				};
+			}
+		);
+
+		// Sort centers by strength (strong > medium > weak)
+		const strengthOrder = { strong: 3, medium: 2, weak: 1 };
+		centers.sort(
+			(a, b) => strengthOrder[b.strength] - strengthOrder[a.strength]
+		);
+
+		// Estimate token usage (approximate)
+		// This is a rough estimate - real usage comes from API response
+		const promptTokens = this.estimatePromptTokens(seedCount);
+		const completionTokens = this.countTokens(responseText);
+		const totalTokens = promptTokens + completionTokens;
+
+		// Calculate cost
+		const inputCost = (promptTokens / 1_000_000) * this.pricing.input;
+		const outputCost = (completionTokens / 1_000_000) * this.pricing.output;
+		const estimatedCost = inputCost + outputCost;
+
+		return {
+			centers,
+			usage: {
+				promptTokens,
+				completionTokens,
+				totalTokens,
+			},
+			estimatedCost,
+			provider: this.name,
+			timestamp: new Date().toISOString(),
+		};
+	}
+
+	/**
+	 * Estimate prompt tokens for center finding
+	 *
+	 * Rough approximation based on seed count.
+	 * Actual prompt includes:
+	 * - System message (~400 tokens)
+	 * - User message format (~200 tokens)
+	 * - Per-seed content (~150 tokens average)
+	 *
+	 * @param seedCount - Number of seeds
+	 * @returns Estimated prompt tokens
+	 */
+	private estimatePromptTokens(seedCount: number): number {
+		const baseTokens = 600; // System + user message format
+		const perSeedTokens = 150; // Average content + metadata
+		return baseTokens + seedCount * perSeedTokens;
 	}
 }

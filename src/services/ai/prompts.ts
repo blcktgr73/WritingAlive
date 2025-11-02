@@ -19,7 +19,7 @@
  * @see https://www.agile.or.kr/saligo-writing (Saligo Writing introduction)
  */
 
-import type { Center } from './types';
+import type { Center, CenterFindingContext } from './types';
 
 /**
  * Saligo Writing context for all prompts
@@ -214,6 +214,106 @@ Return your response in JSON format:
 
 	return {
 		system: SALIGO_CONTEXT,
+		user: userMessage,
+	};
+}
+
+/**
+ * T-010: Generate prompt for finding centers from seed notes
+ *
+ * Creates a comprehensive prompt that asks Claude to identify structural centers
+ * across multiple seed notes, based on Saligo Writing methodology.
+ *
+ * This differs from createFindCentersPrompt which analyzes existing prose.
+ * This function analyzes scattered seed notes to find unifying themes.
+ *
+ * @param context - Complete center finding context with seeds and metadata
+ * @returns Formatted prompt object with system and user messages
+ */
+export function createFindCentersFromSeedsPrompt(
+	context: CenterFindingContext
+): { system: string; user: string } {
+	// Enhanced system prompt with T-010 specific methodology
+	const systemPrompt = `You are a Saligo Writing expert. Saligo Writing (살리고 글쓰기) is a generative, iterative writing methodology developed by June Kim (김창준), inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' practice philosophy.
+
+CORE PRINCIPLES:
+
+1. Start small and true: "Don't approximate the whole vaguely. Take a small part and be entirely true about it." (Bill Evans)
+
+2. Centers: Identify structural pivots where writing has the most "life" and can expand naturally. Centers are not just topics - they are ideas with:
+   - Cross-domain presence (appearing in multiple contexts)
+   - Emotional resonance (user expressed strong feeling)
+   - Concreteness (lived experience, not just abstract concepts)
+   - Structural pivot potential (can expand in multiple directions)
+
+3. Generative Sequence: Let structure emerge through writing, not predetermined outlines.
+
+YOUR TASK: Analyze seed notes to identify 2-4 "centers" - structural themes with the strongest potential for development into coherent writing.`;
+
+	// Format seeds for the prompt
+	const seedsSections = context.seeds.map((seed, index) => {
+		const photoNote = seed.hasPhoto
+			? `\n📸 Photo: ${seed.photoCaption || 'No caption'}`
+			: '';
+		const backlinkNote = seed.backlinkCount > 0
+			? `\n🔗 Backlinks: ${seed.backlinkCount}`
+			: '';
+
+		return `Seed ${index + 1}:
+Title: ${seed.title}
+Content: ${seed.content || '[No text content]'}
+Tags: ${seed.tags.join(', ')}
+Created: ${new Date(seed.createdAt).toLocaleDateString()}${photoNote}${backlinkNote}`;
+	}).join('\n\n---\n\n');
+
+	// Optional MOC context
+	const mocSection = context.mocContext
+		? `\n\nMOC CONTEXT:
+MOC Title: ${context.mocContext.title}
+Headings: ${context.mocContext.headings.join(' → ')}
+`
+		: '';
+
+	const userMessage = `Here are my seed notes:
+
+${seedsSections}${mocSection}
+
+EVALUATION CRITERIA:
+
+Identify centers using these criteria:
+- **Cross-domain presence**: Does this idea appear across multiple contexts/seeds?
+- **Emotional resonance**: Did I express strong feeling (keywords: "shocking", "amazing", "realized", "came easily")?
+- **Concreteness**: Do I have lived experience, or is it just an abstract concept?
+- **Structural pivot**: Can this idea expand in multiple directions?
+
+STRENGTH RATINGS:
+- **Strong** (⭐⭐⭐): Present in 3+ seeds + concrete experience + emotional resonance
+- **Medium** (⭐⭐): Present in 2 seeds OR has one strong quality
+- **Weak** (⭐): Mentioned once OR too abstract
+
+RETURN JSON FORMAT:
+{
+  "centers": [
+    {
+      "name": "Center theme (short phrase, e.g., 'Completeness vs Approximation')",
+      "explanation": "Why this is a center (2-3 sentences explaining cross-domain, emotional, concrete, structural pivot)",
+      "strength": "strong" | "medium" | "weak",
+      "connectedSeeds": ["seed-1", "seed-3"],
+      "recommendation": "Why to start here (only for strongest center)",
+      "assessment": {
+        "crossDomain": true,
+        "emotionalResonance": true,
+        "hasConcrete": true,
+        "structuralPivot": true
+      }
+    }
+  ]
+}
+
+Identify 2-4 centers. Rank by strength (strongest first). Include recommendation only for the top center.`;
+
+	return {
+		system: systemPrompt,
 		user: userMessage,
 	};
 }
