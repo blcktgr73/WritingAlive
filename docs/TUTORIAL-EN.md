@@ -108,40 +108,151 @@ You select "All". New note `My Practice Method.md` created.
 
 ## 🎯 Step 2: Center Finding
 
-### 2-1. AI Finds Centers for You
+### 2-1. Click "Find Centers" in Gather Seeds Modal
 
-WriteAlive analyzes your 4 seeds:
+After selecting your 4 seeds, you'll see two options:
+
+```
+🌱 Seeds Found (4)
+
+✅ 2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
+✅ 2025-11-05 - "First 4 bars perfectly" #idea #guitar #💡
+✅ 2025-11-06 - "One small function properly" #seed #programming
+✅ 2025-11-07 - "Trees grow from trunk to branches" #seed #nature
+   📷 tree-growth.jpg
+
+Actions:
+[Cancel]  [🎯 Find Centers]  [Start Writing]
+```
+
+**Two workflows available:**
+
+1. **🎯 Find Centers** (Recommended) - AI discovers themes for you
+2. **Start Writing** - Create document directly with seeds
+
+Choose **"🎯 Find Centers"** for guided writing.
+
+### 2-2. Center Discovery Modal Opens
+
+**Loading notice appears:**
+```
+🎯 Discovering centers... (3-5 seconds)
+```
+
+AI analyzes your 4 seeds using **Saligo Writing methodology** (Christopher Alexander's centers):
+- Cross-domain presence
+- Emotional resonance
+- Concreteness
+- Structural pivot potential
+
+**Center Discovery Modal shows:**
+
+```
+╔════════════════════════════════════════════════════════════╗
+║  🎯 Centers Discovered (from 4 seeds)                      ║
+╠════════════════════════════════════════════════════════════╣
+║                                                            ║
+║  ┌──────────────────────────────────────────────────────┐ ║
+║  │ ⭐⭐⭐ STRONG                    💡 Start Here        │ ║
+║  │                                                      │ ║
+║  │ Completeness vs Approximation                       │ ║
+║  │ ─────────────────────────────────────────────────── │ ║
+║  │ Core of Bill Evans' philosophy. This center         │ ║
+║  │ connects guitar practice, programming, and natural  │ ║
+║  │ growth patterns.                                    │ ║
+║  │                                                      │ ║
+║  │ Connects 3 seeds: guitar, programming, philosophy   │ ║
+║  │                                                      │ ║
+║  │ ✅ Cross-domain presence                            │ ║
+║  │ ✅ Emotional resonance                              │ ║
+║  │ ✅ Concreteness (has real examples)                 │ ║
+║  │ ✅ Structural pivot (core concept)                  │ ║
+║  │                                                      │ ║
+║  │         [Start Writing]  [Learn More ▼]             │ ║
+║  └──────────────────────────────────────────────────────┘ ║
+║                                                            ║
+║  ┌──────────────────────────────────────────────────────┐ ║
+║  │ ⭐⭐ MEDIUM                                           │ ║
+║  │                                                      │ ║
+║  │ Part to Whole Growth                                │ ║
+║  │ ─────────────────────────────────────────────────── │ ║
+║  │ Tree metaphor + practice pattern. Natural expansion │ ║
+║  │ from strong foundation to complete structure.       │ ║
+║  │                                                      │ ║
+║  │ Connects 2 seeds: tree photo, practice insight      │ ║
+║  │                                                      │ ║
+║  │         [Start Writing]  [Learn More ▼]             │ ║
+║  └──────────────────────────────────────────────────────┘ ║
+║                                                            ║
+║  [▼ Show Weak Centers (1)]                                 ║
+║                                                            ║
+╠════════════════════════════════════════════════════════════╣
+║  Used 1,670 tokens • $0.015 • Claude 3.5 Sonnet           ║
+║  [▼ Show cost breakdown]                                   ║
+╠════════════════════════════════════════════════════════════╣
+║                                   [Cancel]                 ║
+╚════════════════════════════════════════════════════════════╝
+```
+
+**Key features:**
+- **Visual hierarchy**: Gold border for strongest center, "💡 Start Here" badge
+- **Assessment criteria**: Shows why this is a strong center
+- **Connected seeds**: See which seeds contribute to this theme
+- **Cost transparency**: Exact API cost displayed
+- **Expandable sections**: "Learn More" shows detailed assessment
+
+### 2-3. Click "Start Writing" on Strongest Center
+
+You click **"Start Writing"** on "Completeness vs Approximation" (⭐⭐⭐).
+
+**What happens:**
+1. Modal closes
+2. New note created: `Completeness vs Approximation - 2025-11-02.md`
+3. File opens in editor
+4. Cursor positioned at writing prompt
+5. Success notice: "Created: Completeness vs Approximation"
+
+**Generated note structure:**
 
 ```markdown
-# My Practice Method (Draft)
+---
+writealive:
+  gathered_seeds:
+    - "daily/2025-11-04-subway-note.md"
+    - "daily/2025-11-05-lunch-idea.md"
+    - "daily/2025-11-06-meeting-thought.md"
+  selected_center:
+    name: "Completeness vs Approximation"
+    strength: "strong"
+    connectedSeeds: ["seed-0", "seed-1", "seed-2"]
+  gathered_at: "2025-11-02T10:30:00Z"
+---
 
-2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
-2025-11-05 - "First 4 bars perfectly" #idea #guitar
-2025-11-06 - "One small function properly" #seed #programming
-2025-11-07 - "Trees grow from trunk to branches" #seed #nature
+# Completeness vs Approximation
+
+> Core of Bill Evans' philosophy. This center connects guitar practice, programming, and natural growth patterns.
+
+What does this center mean to me?
+
+[Cursor is here - start writing!]
+
+
+
+
+---
+## Gathered Seeds (Reference)
+
+> "Don't approximate the whole vaguely" was shocking.
+> — [[2025-11-04-subway-note]]
+
+> When I practiced guitar yesterday, I practiced only the first 4 bars perfectly. The rest came easily after.
+> — [[2025-11-05-lunch-idea]]
+
+> Writing one small function properly is better than roughing out the whole structure.
+> — [[2025-11-06-meeting-thought]]
 ```
 
-**AI Analysis Result:**
-
-```
-🎯 Centers Discovered:
-
-1. [Strong Center ⭐⭐⭐] "Completeness vs Approximation"
-   - Core of Bill Evans' philosophy
-   - Principle that runs through guitar and programming
-
-2. [Medium Center ⭐⭐] "Part to Whole"
-   - Tree growth metaphor
-   - Natural expansion
-
-3. [Weak Center ⭐] "Cross-domain Application"
-   - Connecting music, coding, writing
-
-💡 Recommendation: Start with "Completeness vs Approximation"
-This is the most alive part.
-```
-
-### 2-2. Write First Paragraph
+### 2-4. Write First Paragraph (Low Energy!)
 
 Now that you've found the center, start with **low energy**:
 
