@@ -35,6 +35,49 @@ WriteAlive is an AI-assisted writing tool that enables writers to practice "Sali
 10. **User Self-Assessment**: 80% of users report "writing feels easier" after 2 weeks
 11. **Feedback Integration**: Users incorporate external feedback 2x faster with version tracking
 
+### Concrete Before/After Comparison (from Tutorial Data)
+
+**Traditional Writing Method** (Typical Outcome):
+- **Planning phase**: 30-60 minutes creating outline
+  - Introduction: The Importance of Practice
+  - Body 1: Bill Evans' Philosophy (need more research...)
+  - Body 2: Application to My Experience (how to structure this?)
+  - Conclusion: Future Commitment (feels cliche)
+- **Staring at blank page**: 15-30 minutes
+- **Writing**: Often abandoned due to exhaustion from planning
+- **Result**: 0 words written, high frustration, outline remains unused
+- **Total time invested**: 45-90 minutes with no output
+
+**Saligo Writing Method** (Tutorial Outcome):
+- **Monday-Thursday**: Capture 4 seeds (1-2 min each) = ~6 minutes distributed
+  - Subway: Bill Evans quote #seed
+  - Lunch: Guitar practice insight #idea #💡
+  - Office: Code review realization #seed
+  - Park walk: Tree photo + note #seed #nature
+- **Friday evening writing session**: 30 minutes
+  - Gather Seeds: 5 min
+  - Find Centers (AI): 3 min → Identifies "Completeness vs Approximation" (⭐⭐⭐)
+  - Write initial paragraph: 5 min (low energy, just 3 sentences)
+  - Expand Option A (concrete experience): 10 min → Wholeness 7.2/10
+  - Expand Option B (tree metaphor): 5 min → Wholeness 8.3/10
+  - Read aloud & polish: 2 min → Wholeness 9.1/10
+- **Result**: 600-800 word complete essay, publishable quality
+- **Total time**: ~35-40 minutes (including distributed seed capture)
+
+**Key Differences**:
+- **Energy barrier**: High (traditional) vs Low (Saligo) - 3 sentences is enough to start
+- **Structure**: Pre-determined (traditional) vs Emergent (Saligo) - centers discovered through writing
+- **Completion**: <20% (traditional) vs 70%+ (Saligo) - from tutorial user data
+- **Time efficiency**: 90 min = 0 words (traditional) vs 35 min = 800 words (Saligo)
+- **Quality**: N/A (traditional, never finished) vs 9.1/10 wholeness (Saligo)
+- **Mobile integration**: None (traditional) vs Critical (Saligo) - 50% of seeds captured on mobile
+- **Wholeness progression**: N/A (traditional) vs Measurable (Saligo) - 7.2 → 8.3 → 9.1 tracked
+
+**Target Metric**:
+- **90% reduction in "planning paralysis"** - users start writing within 5 min of opening tool
+- **3x completion rate** - 60% vs 20% industry baseline
+- **2x time efficiency** - complete 600-word essay in 30-40 min vs 2+ hours traditional
+
 ---
 
 ## Target User Personas
@@ -76,47 +119,351 @@ WriteAlive is an AI-assisted writing tool that enables writers to practice "Sali
 
 WriteAlive is designed to support how ideas actually emerge in daily life, not just at a desk with dedicated "writing time."
 
-#### Journey Example: "Weekend Observations Become an Essay"
+#### Journey Example: "Weekday Seed Collection → Weekend Writing"
 
-**Saturday 9 AM** - Reading "The Nature of Order" at a café
-📝 User highlights passage about centers, adds quick note in Obsidian:
-`"Alexander: strong centers make weak centers stronger #seed"`
+**Monday 7:30 AM** - Subway commute, watching Bill Evans video on phone
+📝 Quick mobile capture in Obsidian:
+```markdown
+# 2025-11-04-subway-note.md
+Watched Bill Evans video.
+"Don't approximate the whole vaguely" was shocking.
+I've always tried to play entire guitar songs roughly.
+#seed #practice
+```
 
-**Saturday 2 PM** - Watching Bill Evans documentary on YouTube
-📝 Pauses to capture idea:
-`"Evans philosophy: truth over approximation. Start small but accurate. #seed #practice"`
+**Tuesday 12:30 PM** - Lunch break, reflecting on yesterday's guitar practice
+📝 Mobile voice memo (auto-synced to Obsidian):
+```markdown
+# 2025-11-05-lunch-idea.md
+When I practiced guitar yesterday
+I practiced only the first 4 bars perfectly
+The rest came easily after
+#idea #guitar #💡
+```
 
-**Sunday 10 AM** - Walking in the park, observing tree growth patterns
-📝 Voice memo (later synced to Obsidian):
-`"Trees grow from trunk outward. Not all branches at once. Natural = generative. #seed #nature"`
+**Wednesday 2 PM** - During code review at work, sudden insight
+📝 Quick desktop note:
+```markdown
+# 2025-11-06-meeting-thought.md
+Realized during code review:
+Writing one small function properly
+is better than roughing out the whole structure
+This is also Bill Evans' approach, right?
+#seed #programming
+```
 
-**Sunday 7 PM** - Feels ready to write, but not sure where to start
+**Thursday Evening** - Walk in park, sees tree growth pattern
+📝 Mobile photo + note:
+```markdown
+# 2025-11-07-park-walk.md
+![[tree-growth.jpg]]
+Trees grow from trunk to branches.
+Shouldn't writing work the same way?
+#seed #nature
+```
 
-1. **Opens new note**: "On Creative Practice.md" (blank page, no outline)
-2. **Invokes WriteAlive command**: "Gather my seeds from this week"
-   → AI finds 3 tagged `#seed` notes + 5 related fleeting notes from vault
-3. **Selects starting seed**: "Evans philosophy: truth over approximation..."
-4. **AI suggests possible centers**:
-   - "How does 'truth over approximation' apply to your own practice?"
-   - "Connection between Evans' philosophy and Alexander's centers?"
-   - "What does 'starting small but accurate' mean in writing?"
-5. **User chooses**: "Connection between Evans & Alexander" ✓
-6. **AI generates expansion prompts**:
-   - "Describe one concrete example from your experience..."
-   - "What's the common pattern between music practice and writing?"
-   - "How does this challenge conventional wisdom about creativity?"
-7. **30 minutes of writing**: 4 paragraphs, 2 clear centers emerging naturally
-8. **Reads aloud** → Notices awkward transition → AI suggests refinement
-9. **Saves snapshot**: "First draft - found main centers"
+**Friday 7 PM** - Finally has time to write, but uncertain where to start
 
-**Result**: Zero-friction path from scattered weekend observations → coherent 600-word draft
+1. **Opens Obsidian** on desktop
+2. **Ctrl/Cmd + P** → `WriteAlive: Gather Seeds` command
+3. **WriteAlive displays results**:
+   ```markdown
+   🌱 Seeds Found (4)
+
+   ✅ 2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
+   ✅ 2025-11-05 - "First 4 bars perfectly" #idea #guitar #💡
+   ✅ 2025-11-06 - "One small function properly" #seed #programming
+   ✅ 2025-11-07 - "Trees grow from trunk to branches" #seed #nature
+      [Photo: tree-growth.jpg]
+
+   Select all? [All] [Custom] [Filter by Date]
+   ```
+4. **User selects "All"** → New note `My Practice Method.md` auto-created
+5. **AI analyzes seeds and suggests centers**:
+   ```
+   🎯 Centers Discovered:
+
+   1. [Strong Center ⭐⭐⭐] "Completeness vs Approximation"
+      Core of Bill Evans' philosophy
+      Connects guitar, programming, natural growth
+
+   2. [Medium Center ⭐⭐] "Part to Whole Growth"
+      Tree metaphor + practice pattern
+
+   3. [Weak Center ⭐] "Cross-domain Application"
+      Same principle across different fields
+
+   💡 Recommendation: Start with Center 1 - it's the most alive
+   ```
+6. **User writes first paragraph** (5 minutes, low energy):
+   ```markdown
+   Bill Evans said: "Don't approximate the whole vaguely.
+   Take a small part and be entirely true about it."
+   I heard this and reflected on my guitar practice.
+   ```
+7. **AI suggests expansion directions**:
+   ```
+   🌿 How your writing wants to grow:
+
+   Option A: Add Concrete Experience (⭐⭐⭐ Recommended)
+     "What happened when you practiced those 4 bars perfectly?
+      Make readers feel that experience."
+
+   Option B: Use Nature Metaphor (⭐⭐)
+     "How does tree growth mirror your practice?
+      Develop while looking at the photo."
+
+   Option C: Connect to Programming (⭐)
+     "Same discovery in code review?
+      What was that moment?"
+   ```
+8. **User chooses Option A** → Writes concrete guitar story (10 minutes)
+9. **User invokes Option B** → Adds tree metaphor (5 minutes)
+10. **Wholeness analysis**: `7.2 → 8.3 → 9.1/10` (tracked progression)
+11. **Read aloud** → AI catches awkward phrasing → Quick polish (2 minutes)
+12. **Saves snapshot**: "My Practice Method - Final (Wholeness 9.1)"
+
+**Result**: 4 mobile captures over 4 days → 30 minutes of focused writing → Complete essay with 9.1/10 wholeness
+
+**Time Breakdown (Total: ~35 minutes)**:
+- Monday-Thursday: 4x 1-2 min mobile captures = ~6 minutes (distributed)
+- Friday writing session: 30 minutes (Gather 5 min + Write 25 min)
+- vs Traditional method: 1+ hours of planning, never started writing
 
 **Key Usability Principles Demonstrated**:
-- ✅ **Low energy barrier**: Started writing without planning full structure
-- ✅ **Capture anywhere**: Ideas from book, video, walk all became seeds
-- ✅ **AI as connector**: Found relationships across scattered notes
-- ✅ **Generative discovery**: Centers emerged through writing, not before
-- ✅ **Works with existing workflow**: Pure Obsidian + markdown, no lock-in
+- ✅ **Low energy barrier**: 4 quick mobile captures (1-2 min each), no planning
+- ✅ **Capture anywhere**: Subway, lunch, office, park - all became writing seeds
+- ✅ **Multi-day collection**: Ideas gathered over week, not forced in single session
+- ✅ **Photo integration**: Tree photo became part of writing (visual seed)
+- ✅ **Emoji tag support**: `#💡` recognized equally with `#seed` and `#idea`
+- ✅ **Voice input**: Mobile voice memo auto-synced and tagged
+- ✅ **AI as connector**: Found the "completeness vs approximation" center across 4 disparate seeds
+- ✅ **Measurable progress**: Wholeness score progression (7.2 → 8.3 → 9.1) shows structural improvement
+- ✅ **Generative discovery**: Centers and expansions emerged through process, not predetermined
+- ✅ **Cross-device workflow**: Mobile capture → Desktop writing (seamless sync)
+- ✅ **Works with existing tools**: Pure Obsidian + markdown, no proprietary format
+
+---
+
+## Step-by-Step Saligo Writing Workflow
+
+This section describes the complete Saligo Writing process as experienced in the tutorial, with time estimates for each phase.
+
+### Phase 1: Seed Gathering (5-10 minutes total)
+
+**Multi-Day Collection Pattern** (Recommended):
+- **Monday-Thursday**: Capture 1-2 seeds per day (1-2 min each)
+  - Mobile capture during: commute, lunch break, meetings, walks
+  - Use quick tags: `#seed`, `#idea`, `#💡`, `#thought`
+  - Include photos when relevant (visual seeds)
+  - Voice memos auto-transcribed and synced
+- **Total distributed time**: ~6-8 minutes over 4 days
+- **Cognitive load**: Minimal (just capture, no organizing)
+
+**Single-Session Gathering** (Alternative):
+- **Friday evening**: Run `WriteAlive: Gather Seeds` command
+  - System finds all tagged seeds from vault
+  - Filter by date range ("This week", "This month")
+  - Review and select relevant seeds
+- **Time**: 5 minutes
+- **Output**: 4-10 seeds ready for writing
+
+### Phase 2: Center Discovery (3-5 minutes)
+
+**Command**: `WriteAlive: Find Centers` (auto-triggers after seed document creation)
+
+**AI Analysis**:
+- Analyzes selected seeds for common themes
+- Identifies 2-4 potential centers
+- Ranks by strength: Strong (⭐⭐⭐), Medium (⭐⭐), Weak (⭐)
+- Provides recommendation: "Start with Center X - it's the most alive"
+
+**Example Output**:
+```
+🎯 Centers Discovered:
+
+1. [Strong Center ⭐⭐⭐] "Completeness vs Approximation"
+   Core concept connecting all seeds
+
+2. [Medium Center ⭐⭐] "Part to Whole Growth"
+   Natural expansion pattern
+
+3. [Weak Center ⭐] "Cross-domain Application"
+   Same principle in different contexts
+```
+
+**User Action**:
+- Review suggested centers
+- Select starting center (usually the strongest)
+- Begin writing first paragraph
+
+### Phase 3: Initial Writing (5-10 minutes)
+
+**Low Energy Start**:
+- Write 1-3 paragraphs exploring chosen center
+- No need for complete structure or outline
+- Focus on being "entirely true" about small part (Bill Evans principle)
+- AI observes but doesn't interrupt
+
+**Example First Paragraph** (from tutorial):
+```markdown
+Bill Evans said: "Don't approximate the whole vaguely.
+Take a small part and be entirely true about it."
+I heard this and reflected on my guitar practice.
+```
+
+**Outcome**: 3-5 sentences that feel authentic and complete in themselves
+
+### Phase 4: Generative Expansion (10-20 minutes)
+
+**Command**: `WriteAlive: Suggest Expansions`
+
+**AI Offers Multiple Directions**:
+```
+🌿 How your writing wants to grow:
+
+Option A: Add Concrete Experience (⭐⭐⭐ Recommended)
+  "What happened when you practiced those 4 bars perfectly?
+   Make readers feel that experience."
+
+Option B: Use Nature Metaphor (⭐⭐)
+  "How does tree growth mirror your practice?
+   Develop while looking at the photo."
+
+Option C: Connect to Programming (⭐)
+  "Same discovery in code review?
+   What was that moment?"
+```
+
+**Iterative Expansion Process**:
+1. User selects Option A → Writes concrete experience (10 min)
+2. Wholeness check: 7.2/10
+3. User selects Option B → Adds tree metaphor (5 min)
+4. Wholeness check: 8.3/10
+5. Optional: Select Option C for additional depth
+
+**Key Principle**: Each expansion builds on previous work, not parallel branches
+
+### Phase 5: Wholeness Analysis (2-3 minutes)
+
+**Command**: `WriteAlive: Analyze Wholeness`
+
+**AI Structural Feedback**:
+```
+📊 Wholeness Analysis Result
+
+Overall Score: 8.3/10 (Very Good)
+
+✅ Strengths:
+  • Explains abstract concept with concrete experience (strong center)
+  • Natural flow: "hear → reflect → apply → understand"
+  • Tree metaphor reinforces practice principle
+
+⚠️ Room for Improvement:
+  • Programming example not yet connected (unused seed)
+  • Transition between paragraphs 2-3 slightly abrupt
+  • Conclusion could tie back to opening more explicitly
+
+💡 Next Iteration:
+  Adding Option C (programming) could raise wholeness to 9.0+
+  Smoothing transition would improve flow
+```
+
+**Progression Tracking**:
+- Initial: 7.2/10
+- After 1st expansion: 8.3/10
+- After polish: 9.1/10
+- **User sees concrete improvement metrics**
+
+### Phase 6: Refinement & Polish (2-5 minutes)
+
+**Command**: `WriteAlive: Read Aloud Feedback`
+
+**AI Identifies**:
+- Awkward phrasing (rhythm issues)
+- Overly long sentences
+- Unclear transitions
+- Redundant phrases
+
+**Example Feedback**:
+```
+🔊 Read Aloud Analysis
+
+✅ Reads Well:
+  • "Something amazing happened" - good rhythm
+  • "trunk → branches → leaves" - clear repetition
+
+⚠️ Awkward Parts:
+  • "That's when I understood physically" - slightly awkward
+  → Suggestion: "That's when I physically grasped"
+
+  • "Accurate notes came out without thinking" - too long
+  → Suggestion: "Notes came out effortlessly"
+```
+
+**User Makes Quick Edits**: Fix 2-3 awkward phrases
+
+### Phase 7: Snapshot & Completion (1 minute)
+
+**Command**: `WriteAlive: Save Snapshot`
+
+**Final Snapshot**:
+```
+✅ Snapshot saved: "My Practice Method - Final (Wholeness 9.1)"
+
+You can return to this version anytime.
+Safe to experiment further!
+```
+
+**Document Status**: Ready to share, publish, or develop further
+
+---
+
+### Total Time Investment
+
+**Multi-Day Workflow** (Recommended):
+- Seed capture (distributed): ~6-8 minutes over 4 days
+- Writing session: 30 minutes
+- **Total**: ~35-40 minutes
+- **Result**: Complete essay, 600-800 words, Wholeness 9.0+
+
+**Single-Session Workflow** (Alternative):
+- Gather seeds: 5 minutes
+- Find centers: 3 minutes
+- Write + expand: 30 minutes
+- Polish: 5 minutes
+- **Total**: ~45 minutes
+- **Result**: Same quality output
+
+**vs Traditional Method**:
+- Planning structure: 30-60 minutes
+- Staring at blank page: 15-30 minutes
+- Writing: Often abandoned due to exhaustion
+- **Result**: Incomplete or never started
+
+---
+
+### Workflow Diagram (Text)
+
+```
+Multi-Day Pattern:
+Mon-Thu: Capture Seeds (1-2 min/day) → [4 seeds collected]
+Friday:  Gather Seeds (5 min)
+         ↓
+         Find Centers (3 min) → [AI suggests 3 centers]
+         ↓
+         Write Initial (5 min) → [1st paragraph, low energy]
+         ↓
+         Expand Option A (10 min) → [Wholeness: 7.2]
+         ↓
+         Expand Option B (5 min) → [Wholeness: 8.3]
+         ↓
+         Analyze & Polish (5 min) → [Wholeness: 9.1]
+         ↓
+         Save Snapshot (1 min) → [Complete!]
+
+Total: ~35 minutes distributed time
+```
 
 ---
 
@@ -139,15 +486,34 @@ WriteAlive is designed to support how ideas actually emerge in daily life, not j
   - User can add custom tags: `#idea`, `#thought`, `#fleeting`, `#💡`, etc.
   - Support for multiple tags (OR logic): matches any of the configured tags
   - Tag aliases: `#씨앗` (Korean) = `#seed`
-- Returns results with metadata:
+- Returns results with metadata in modal/sidebar:
   - Original note title and path
   - Seed text (paragraph containing tag)
   - Creation date
   - Related backlinks (if any)
+  - Photo attachments (if any) with thumbnail preview
+  - Which tag(s) matched (e.g., `#seed`, `#💡`)
+- Display format (from tutorial):
+  ```markdown
+  🌱 Seeds Found (4)
+
+  ✅ 2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
+  ✅ 2025-11-05 - "First 4 bars perfectly" #idea #guitar #💡
+  ✅ 2025-11-06 - "One small function properly" #seed #programming
+  ✅ 2025-11-07 - "Trees grow from trunk to branches" #seed #nature
+     [Photo: tree-growth.jpg] 📷
+
+  Select all? [All] [Custom] [Filter by Date]
+  ```
 - Filter options: "This week", "This month", "All time", "From specific folder"
 - Results sorted by: recency (default), relevance, or manual
+- Photo seed support:
+  - Display photo thumbnail inline with seed text
+  - Photo icon indicator (📷) next to seeds with images
+  - Click to view full image
+  - Photos embedded as `![[image.jpg]]` in original note
 
-**Real-World Scenario**:
+**Real-World Scenario (Enhanced with Photo Support)**:
 ```
 User's custom seed tag configuration:
 - #seed (default)
@@ -155,22 +521,42 @@ User's custom seed tag configuration:
 - #💡 (emoji tag for inspiration moments)
 - #씨앗 (Korean preference)
 
-User has 200+ daily notes from past 6 months
-Contains 15 notes with any of these tags about "creativity" theme
-Command finds all 15 in < 2 seconds
-Presents organized list with context, showing which tag matched
+Monday-Thursday: User captured 4 seeds:
+- Subway (text): Bill Evans philosophy #seed
+- Lunch (voice memo): Guitar practice insight #idea #💡
+- Office (text): Code review realization #seed
+- Park walk (photo + text): Tree growth pattern #seed #nature
+  → Photo: tree-growth.jpg attached
+
+Friday evening: "Gather Seeds" command
+→ Finds all 4 in < 2 seconds
+→ Shows photo thumbnail for park walk seed
+→ Displays matched tags for each seed
+→ User can preview tree photo before starting to write
 ```
 
 **Settings UI Example**:
 ```
 Seed Tags (comma-separated)
-[seed, idea, 💡, 씨앗, fleeting, thought]
+[seed, idea, 💡, 씨앗, fleeting, thought, practice]
 
 ☑ Include default tags (#seed, #writealive-seed)
+☑ Include emoji tags (#💡, #🌱, #💭)
 ☐ Case-sensitive matching
+☑ Show photo previews in seed list
 ```
 
-**Structural Quality Metric**: 80% of users successfully gather seeds on first attempt; avg 5-10 seeds per gathering session
+**Photo Seed Capture Flow (Mobile)**:
+1. User sees inspiring tree growth pattern in park
+2. Opens Obsidian Mobile → Quick capture
+3. Takes photo (or selects from gallery)
+4. Adds quick note: "Trees grow from trunk to branches. Shouldn't writing work the same way?"
+5. Tags with `#seed #nature`
+6. Auto-syncs to vault
+7. Desktop "Gather Seeds" finds it with photo thumbnail
+8. Photo becomes visual seed for writing (can reference in essay)
+
+**Structural Quality Metric**: 80% of users successfully gather seeds on first attempt; avg 5-10 seeds per gathering session; 30% of seeds include photo attachments
 
 ---
 
@@ -180,40 +566,83 @@ Seed Tags (comma-separated)
 **So that** my writing starts from actual observations, not forced outlines
 
 **Acceptance Criteria**:
-- Seed gathering modal allows multi-select (checkbox UI)
+- Seed gathering modal allows multi-select (checkbox UI) or "All" quick selection
 - "Start Writing" button creates new note with:
-  - Filename: User-provided or auto-generated from seeds (e.g., "On Creativity - 2025-11-01")
-  - Content: Selected seeds inserted as blockquotes with source links
+  - Filename: User-provided or auto-generated from seeds (e.g., "My Practice Method - 2025-11-01")
+  - Content: Selected seeds as simple list format (readable, not cluttered)
   - YAML frontmatter: `gathered_seeds: [list of source note paths]`
-  - Cursor positioned after seeds with prompt: "What center do you see across these ideas?"
-- Alternative: Insert seeds into existing note at cursor position
+  - Immediately triggers AI center discovery (seamless flow)
+  - No cursor positioning needed - AI takes over to suggest centers
+- Alternative: "Insert into Current Note" button adds seeds at cursor position
+- Photo seeds: Images shown as inline embeds or attachment links
 
-**Real-World Scenario**:
-```
-User selects 3 seeds:
-1. "Evans: truth over approximation" (from YouTube notes)
-2. "Alexander: centers strengthen each other" (from book notes)
-3. "Trees grow from trunk outward" (from walk observation)
-
-New document created:
+**Document Initialization Format (from Tutorial)**:
+```markdown
 ---
-gathered_seeds: [daily/2025-10-28.md, books/Nature-of-Order.md, daily/2025-10-29.md]
+gathered_seeds:
+  - daily/2025-11-04-subway-note.md
+  - daily/2025-11-05-lunch-idea.md
+  - daily/2025-11-06-meeting-thought.md
+  - daily/2025-11-07-park-walk.md
 ---
 
-> "Evans: truth over approximation. Start small but accurate."
-> — [[daily/2025-10-28]]
+# My Practice Method (Draft)
 
-> "Alexander: strong centers make weak centers stronger"
-> — [[books/Nature-of-Order]]
+2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
+2025-11-05 - "First 4 bars perfectly" #idea #guitar #💡
+2025-11-06 - "One small function properly" #seed #programming
+2025-11-07 - "Trees grow from trunk to branches" #seed #nature
+![[tree-growth.jpg]]
 
-> "Trees grow from trunk outward. Not all branches at once."
-> — [[daily/2025-10-29]]
+---
 
-What center do you see across these ideas?
-[cursor here]
+[AI Center Discovery automatically runs here]
 ```
 
-**Structural Quality Metric**: 70% of documents created via seed gathering reach completion (vs 20% baseline for blank-page starts)
+**Real-World Scenario (Enhanced from Tutorial)**:
+```
+User gathered 4 seeds:
+1. Bill Evans philosophy (subway, text) #seed
+2. Guitar practice insight (lunch, voice memo) #idea #💡
+3. Code review realization (office, text) #seed
+4. Tree growth pattern (park walk, photo) #seed #nature
+
+Workflow:
+1. User reviews seeds in modal
+2. Clicks "Select All" (or manually checks 4 seeds)
+3. Clicks "Start Writing"
+4. WriteAlive creates "My Practice Method.md"
+5. Seeds listed in clean format with dates and tags
+6. Photo embedded inline (tree-growth.jpg)
+7. AI immediately analyzes and suggests centers:
+
+🎯 Centers Discovered:
+
+1. [Strong Center ⭐⭐⭐] "Completeness vs Approximation"
+   Core of Bill Evans' philosophy
+   Connects guitar, programming, natural growth
+
+2. [Medium Center ⭐⭐] "Part to Whole Growth"
+   Tree metaphor + practice pattern
+
+3. [Weak Center ⭐] "Cross-domain Application"
+   Same principle across different fields
+
+💡 Recommendation: Start with Center 1 - it's the most alive
+
+8. User immediately sees writing direction (no blank page anxiety)
+9. Can start writing first paragraph with low energy
+```
+
+**Key Workflow Principles**:
+- **No friction**: "All" button for quick selection
+- **Seamless flow**: Document creation → AI analysis (no manual trigger)
+- **Visual clarity**: Clean list format, not cluttered blockquotes
+- **Photo integration**: Images embedded inline for reference while writing
+- **Immediate guidance**: AI centers appear right after document creation
+- **Zero blank page anxiety**: User never stares at empty cursor
+
+**Structural Quality Metric**: 70% of documents created via seed gathering reach completion (vs 20% baseline for blank-page starts); 85% of users proceed to write within 2 minutes of seed document creation
 
 ---
 
@@ -444,14 +873,67 @@ Sunday: "Start from MOC"
 **So that** I can identify structural pivots for expansion without expertise in Alexander's methodology
 
 **Acceptance Criteria**:
-- User selects paragraph or section and invokes "Find Centers" command
-- AI analyzes text using GPT-4/Claude and returns 2-4 potential centers with explanations
-- Each center shows: "This phrase seems to hold energy because..."
-- User can accept, modify, or dismiss suggestions
-- Accepted centers are visually highlighted (subtle sidebar notation)
-- AI considers: recurring concepts, emotionally charged language, structural pivots, unresolved tensions
+- Auto-triggers after seed document creation (seamless workflow)
+- Manual trigger: User selects paragraph/section → "Find Centers" command
+- AI analyzes text using GPT-4/Claude and returns 2-4 potential centers
+- **Strength-based ranking** (from tutorial):
+  - Strong Center (⭐⭐⭐): High energy, connects multiple themes
+  - Medium Center (⭐⭐): Moderate energy, good potential
+  - Weak Center (⭐): Low energy, optional to explore
+- Each center includes:
+  - Center name/theme (e.g., "Completeness vs Approximation")
+  - Brief explanation (why this holds energy)
+  - Recommendation (which to start with)
+- Display format (from tutorial):
+  ```
+  🎯 Centers Discovered:
 
-**Structural Quality Metric**: Users accept 50%+ of suggested centers
+  1. [Strong Center ⭐⭐⭐] "Completeness vs Approximation"
+     Core of Bill Evans' philosophy
+     Connects guitar, programming, natural growth
+
+  2. [Medium Center ⭐⭐] "Part to Whole Growth"
+     Tree metaphor + practice pattern
+
+  3. [Weak Center ⭐] "Cross-domain Application"
+     Same principle across different fields
+
+  💡 Recommendation: Start with Center 1 - it's the most alive
+  ```
+- User can:
+  - Accept center (begins writing from that theme)
+  - Modify center name/focus
+  - Dismiss and request alternatives
+  - See all centers simultaneously (compare strength)
+- Accepted centers tracked in document metadata (for wholeness analysis)
+- AI considers: recurring concepts, emotional resonance, cross-seed connections, structural pivots, unresolved tensions
+
+**Real-World Scenario (from Tutorial)**:
+```
+Seeds analyzed:
+1. "Don't approximate the whole vaguely" #seed #practice
+2. "First 4 bars perfectly" #idea #guitar
+3. "One small function properly" #seed #programming
+4. "Trees grow from trunk to branches" #seed #nature
+
+AI identifies:
+- Strong Center (⭐⭐⭐): "Completeness over Approximation"
+  → Present in ALL 4 seeds (music, code, nature)
+  → Emotionally charged ("shocking", "realized")
+  → Actionable (user has concrete experiences)
+
+- Medium Center (⭐⭐): "Natural Growth Patterns"
+  → Tree metaphor + practice progression
+  → Visual seed (photo) strengthens it
+
+- Weak Center (⭐): "Cross-domain Learning"
+  → Observable but less developed
+  → Could be future expansion
+
+User chooses Strong Center → Writes first paragraph immediately
+```
+
+**Structural Quality Metric**: Users accept 60%+ of suggested Strong Centers (⭐⭐⭐); 50%+ overall center acceptance rate; 80% of users proceed to write within 2 minutes of seeing center suggestions
 
 ---
 
@@ -461,17 +943,77 @@ Sunday: "Start from MOC"
 **So that** I can overcome writer's block and explore multiple directions
 
 **Acceptance Criteria**:
-- User invokes "Grow This Center" on selected text
-- AI suggests 3-5 generative questions/prompts:
-  - "What concrete example illustrates this?"
-  - "What is the opposing perspective?"
-  - "What happens if you trace this backward in time?"
-  - "What structure underlies this observation?"
-- User selects one prompt and AI generates 2-3 starter sentences
-- User can iterate: "Show me more directions"
-- All suggestions are non-intrusive (modal/sidebar, easily dismissible)
+- User invokes "Suggest Expansions" command (Ctrl+P → WriteAlive: Suggest Expansions)
+- AI analyzes current draft + unused seeds to suggest 3-5 expansion directions
+- **Option-based presentation** (from tutorial):
+  - Each option labeled (Option A, B, C...)
+  - Strength rating: ⭐⭐⭐ (Recommended), ⭐⭐ (Good), ⭐ (Optional)
+  - Expansion strategy explained (what type of growth)
+  - Guiding question to help user write
+- Display format (from tutorial):
+  ```
+  🌿 How your writing wants to grow:
 
-**Structural Quality Metric**: 70% of stuck sessions (>5 min no text) successfully resume after prompt use
+  Option A: Add Concrete Experience (⭐⭐⭐ Recommended)
+    "What happened when you practiced those 4 bars perfectly?
+     Make readers feel that experience."
+
+  Option B: Use Nature Metaphor (⭐⭐)
+    "How does tree growth mirror your practice?
+     Develop while looking at the photo."
+
+  Option C: Connect to Programming (⭐)
+    "Same discovery in code review?
+     What was that moment?"
+  ```
+- User can:
+  - Select option → AI provides 2-3 starter prompts (optional, not auto-writing)
+  - Dismiss option → Show alternative directions
+  - Iterate: "Show more options" after completing one expansion
+  - Track which seeds have been used vs unused (visual indicator)
+- **Iterative workflow** (from tutorial):
+  - After Option A expansion → Wholeness check → Suggest next options
+  - Each expansion builds on previous (not parallel branches)
+  - Unused seeds highlighted as potential future options
+- All suggestions are non-intrusive (sidebar/modal, easily dismissible)
+- No auto-writing: AI suggests directions, user writes content
+
+**Expansion Strategy Types** (AI uses mix of these):
+1. **Concrete Experience**: Add specific story/example
+2. **Metaphor/Analogy**: Use visual or conceptual comparison
+3. **Cross-domain Connection**: Link to other fields/interests
+4. **Causal Exploration**: Trace backward (why?) or forward (what happens?)
+5. **Counter-perspective**: Explore opposing view or tension
+6. **Structural Pattern**: Identify underlying principle
+
+**Real-World Scenario (from Tutorial)**:
+```
+User has written first paragraph:
+"Bill Evans said: 'Don't approximate the whole vaguely.
+ Take a small part and be entirely true about it.'
+ I heard this and reflected on my guitar practice."
+
+Unused seeds:
+- Guitar practice (4 bars) #idea #💡
+- Code review insight #seed #programming
+- Tree photo #seed #nature
+
+AI analyzes and suggests:
+Option A (⭐⭐⭐): "Add your guitar story - you have concrete experience seed!"
+  → User selects, writes 3 paragraphs about 4-bar practice
+  → Wholeness: 7.2/10
+
+Option B (⭐⭐): "Your tree photo is waiting - natural growth metaphor"
+  → User selects, adds tree paragraph
+  → Wholeness: 8.3/10
+
+Option C (⭐): "Programming seed unused - cross-domain connection?"
+  → User skips (essay feels complete)
+
+AI notices: "Wholeness is 8.3 - very good! Option C could push to 9.0+, but not required."
+```
+
+**Structural Quality Metric**: 70% of stuck sessions (>5 min no text) successfully resume after prompt use; 85% of users explore 2+ expansion options; avg 2.5 expansions per document
 
 ---
 
@@ -481,17 +1023,76 @@ Sunday: "Start from MOC"
 **So that** I can identify weak connections, redundancies, or missing pieces
 
 **Acceptance Criteria**:
-- User invokes "Analyze Wholeness" on full document or section
+- User invokes "Analyze Wholeness" command (Ctrl+P → WriteAlive: Analyze Wholeness)
+- Can be run on: full document, selected section, or auto-triggered after expansions
 - AI evaluates:
   - Paragraph unity (does each paragraph have one clear message?)
   - Inter-paragraph transitions (do ideas flow naturally?)
   - Center hierarchy (are main ideas clearly dominant?)
   - Structural gaps (what's missing to complete the thought?)
-- Output: Visual map showing strong connections (green), weak links (yellow), gaps (red)
-- Specific suggestions: "Paragraph 3 and 7 seem to repeat the same idea - consider merging"
-- Wholeness score: 1-10 with explanation
+  - Unused seeds (what potential remains unexplored?)
+- **Wholeness score**: 1-10 with detailed explanation
+  - 7.0-7.9: Good writing, coherent structure
+  - 8.0-8.9: Very good, strong centers and flow
+  - 9.0-10.0: Excellent, high cohesion and wholeness
+- **Structured feedback format** (from tutorial):
+  ```
+  📊 Wholeness Analysis Result
 
-**Structural Quality Metric**: Documents with 7+ wholeness score are 90% complete by user assessment
+  Overall Score: 8.3/10 (Very Good)
+
+  ✅ Strengths:
+    • Explains abstract concept with concrete experience (strong center)
+    • Natural flow: "hear → reflect → apply → understand"
+    • Tree metaphor reinforces practice principle
+
+  ⚠️ Room for Improvement:
+    • Programming example not yet connected (unused seed)
+    • Transition between paragraphs 2-3 slightly abrupt
+    • Conclusion could tie back to opening more explicitly
+
+  💡 Next Iteration:
+    Adding Option C (programming) could raise wholeness to 9.0+
+    Smoothing transition would improve flow
+  ```
+- **Progression tracking** (from tutorial):
+  - Track wholeness scores over time: 7.2 → 8.3 → 9.1
+  - Show improvement graph (visual feedback)
+  - Celebrate milestones: "You've reached 9.0+ wholeness!"
+  - Store scores in document metadata for historical view
+- Specific actionable suggestions:
+  - "Paragraph 3 and 7 seem to repeat the same idea - consider merging"
+  - "Transition between Para 2→3 needs connector phrase"
+  - "Programming seed unused - potential for cross-domain depth"
+- Optional: Visual map showing strong connections (green), weak links (yellow), gaps (red)
+
+**Real-World Scenario (from Tutorial)**:
+```
+User writes initial draft → Wholeness: 7.2/10
+AI feedback:
+  ✅ Good: Concrete guitar story
+  ⚠️ Missing: Tree metaphor seed unused, conclusion weak
+
+User adds tree metaphor expansion → Wholeness: 8.3/10
+AI feedback:
+  ✅ Strengths: Metaphor reinforces concept, natural flow improved
+  ⚠️ Room: Programming seed still unused, could add depth
+
+User polishes transitions → Wholeness: 9.1/10
+AI feedback:
+  ✅ Excellent wholeness! Strong centers, natural flow, clear conclusion
+  💡 Programming seed optional at this point - essay feels complete
+
+User sees progression: 7.2 → 8.3 → 9.1 (concrete improvement)
+```
+
+**Key Principles**:
+- **Progressive scoring**: Not one-time pass/fail, but iterative improvement
+- **Actionable feedback**: Specific suggestions, not vague critique
+- **Celebrate progress**: Highlight improvements, not just deficits
+- **Unused seed awareness**: Remind of unexplored potential without pressure
+
+**Structural Quality Metric**: Documents with 7+ wholeness score are 90% complete by user assessment; users with progression tracking complete 40% more documents; avg 3 wholeness checks per document
 
 ---
 
@@ -502,18 +1103,68 @@ Sunday: "Start from MOC"
 
 #### US-3.1: Read-Aloud Review
 **As a** writer completing a draft
-**I want** to hear my text read aloud with AI voice
-**So that** I can identify awkward phrasing, rhythm issues, and unclear passages
+**I want** to hear my text read aloud with AI voice AND get feedback on awkward phrasing
+**So that** I can identify rhythm issues and unclear passages through both listening and AI analysis
 
 **Acceptance Criteria**:
-- User clicks "Read Aloud" button on paragraph or full document
-- Text-to-speech with natural intonation (browser API or service)
-- Reading highlights current sentence
-- Pause/resume controls
-- User can click to edit while listening (playback pauses)
-- Speed control: 0.8x, 1x, 1.2x
+- User invokes "Read Aloud Feedback" command (Ctrl+P → WriteAlive: Read Aloud Feedback)
+- **Two-part feature**:
+  1. **Audio playback**:
+     - Text-to-speech with natural intonation (browser API or service)
+     - Reading highlights current sentence
+     - Pause/resume controls
+     - User can click to edit while listening (playback pauses)
+     - Speed control: 0.8x, 1x, 1.2x
+  2. **AI rhythm analysis** (from tutorial):
+     - Identifies awkward phrasing, overly long sentences, unclear transitions
+     - Provides specific suggestions with before/after examples
+- **Feedback format** (from tutorial):
+  ```
+  🔊 Read Aloud Analysis
 
-**Structural Quality Metric**: 40% of documents use read-aloud before marking "complete"
+  ✅ Reads Well:
+    • "Something amazing happened" - good rhythm
+    • "trunk → branches → leaves" - clear repetition
+
+  ⚠️ Awkward Parts:
+    • "That's when I understood physically" - slightly awkward
+    → Suggestion: "That's when I physically grasped"
+
+    • "Accurate notes came out without thinking" - too long
+    → Suggestion: "Notes came out effortlessly"
+       OR split: "Accurate notes came out. I didn't need to think."
+  ```
+- User can:
+  - Accept suggestion (one-click edit)
+  - Modify suggestion
+  - Dismiss and keep original
+  - Re-run after edits to verify improvements
+- AI considers: sentence length (15-25 words ideal), rhythm variation, transition smoothness, redundant phrases
+
+**Real-World Scenario (from Tutorial)**:
+```
+User finishes draft, runs "Read Aloud Feedback"
+
+AI identifies:
+1. "That's when I understood physically" → awkward adverb placement
+   Suggestion: "That's when I physically grasped" ✓ (more natural)
+
+2. "Accurate notes came out without thinking" → 6 words, but feels long
+   Suggestion: "Notes came out effortlessly" ✓ (more concise)
+
+User accepts both → Re-runs wholeness → 8.3 → 9.1
+
+User also listens to audio → Catches one more awkward transition
+Edits manually → Final polish complete
+```
+
+**Key Principles**:
+- **Dual feedback**: Both AI analysis AND audio playback (complement each other)
+- **Specific suggestions**: Not "this is awkward" but "try this instead"
+- **Optional application**: User always in control, can dismiss all
+- **Fast iteration**: Quick re-run after edits to verify
+
+**Structural Quality Metric**: 40% of documents use read-aloud before marking "complete"; 70% of AI suggestions accepted; avg 2-3 phrasing improvements per document
 
 ---
 
@@ -637,25 +1288,81 @@ Sunday: "Start from MOC"
 - Touch-optimized (no hover states)
 - Performance: <100ms UI response on mid-range devices
 
-**Real-World Scenario**:
+**Real-World Scenarios (from Tutorial)**:
+
+**Scenario 1: Monday Subway Commute (Text Seed)**
 ```
-7:30 AM - On subway
-User sees inspiring quote in book
+7:30 AM - On subway, watching Bill Evans video on phone
 → Opens Obsidian Mobile
-→ Taps "Quick Seed" button
-→ Takes photo of page
-→ Speaks: "Alexander says strong centers make weak ones stronger"
-→ Auto-tags: #seed #reading #christopher-alexander
-→ Saved in < 5 seconds
-→ Back to reading
+→ Quick capture (templates or daily note)
+→ Types: "Watched Bill Evans video.
+         'Don't approximate the whole vaguely' was shocking.
+         I've always tried to play entire guitar songs roughly.
+         #seed #practice"
+→ Auto-saves in 2 seconds
+→ Back to video
+→ Total time: 1-2 minutes
 
-Evening - At desk
-→ Opens "Gather Seeds" on desktop
-→ Finds morning's subway seed with photo
-→ Starts writing essay
+Friday desktop: "Gather Seeds" finds this as first seed
 ```
 
-**Structural Quality Metric**: 70% of seeds captured on mobile are used in desktop writing within 7 days
+**Scenario 2: Tuesday Lunch Break (Voice Memo Seed)**
+```
+12:30 PM - Lunch break, reflecting on yesterday's guitar practice
+→ Opens Obsidian Mobile
+→ Taps microphone icon (voice input)
+→ Speaks: "When I practiced guitar yesterday, I practiced only
+           the first 4 bars perfectly. The rest came easily after."
+→ System transcribes and adds tags: #idea #guitar #💡
+→ Auto-saves with timestamp
+→ Total time: 1 minute
+
+Friday desktop: "Gather Seeds" shows voice memo with #💡 emoji tag
+```
+
+**Scenario 3: Thursday Evening Walk (Photo + Text Seed)**
+```
+6:00 PM - Walking in park, sees tree growth pattern
+→ Opens Obsidian Mobile
+→ Takes photo of tree (or selects from gallery)
+→ Taps "Add to note" or quick capture
+→ Types brief note: "Trees grow from trunk to branches.
+                     Shouldn't writing work the same way?"
+→ Tags: #seed #nature
+→ Photo embedded as ![[tree-growth.jpg]]
+→ Auto-syncs to vault
+→ Total time: 1-2 minutes
+
+Friday desktop: "Gather Seeds" shows tree seed with photo thumbnail 📷
+User can reference photo while writing essay
+```
+
+**Cross-Device Workflow**:
+```
+Week pattern (from tutorial):
+Monday (mobile): Bill Evans text seed #seed
+Tuesday (mobile): Guitar voice memo #idea #💡
+Wednesday (desktop): Code review note #seed #programming
+Thursday (mobile): Tree photo seed #seed #nature
+
+Friday (desktop):
+→ "Gather Seeds" command
+→ Finds all 4 seeds (3 mobile, 1 desktop)
+→ Photo thumbnail shown for tree seed
+→ Voice memo transcription shown for Tuesday
+→ Emoji tags recognized (#💡)
+→ User writes complete essay in 30 minutes
+```
+
+**Key Mobile Features Demonstrated**:
+- **Text capture**: Quick typing (1-2 min) for thoughts
+- **Voice input**: Hands-free capture while walking/commuting
+- **Photo seeds**: Visual inspiration embedded with notes
+- **Emoji tags**: #💡, #🌱, #💭 work alongside text tags
+- **Auto-sync**: Mobile → Desktop seamless (Obsidian Sync, iCloud, Git)
+- **Multi-day pattern**: 4 seeds over 4 days = low cognitive load per day
+
+**Structural Quality Metric**: 70% of seeds captured on mobile are used in desktop writing within 7 days; 50% of all seeds come from mobile devices; avg 2-3 mobile captures per week per user
 
 ---
 
@@ -1172,6 +1879,7 @@ This PRD is considered "shipped" when:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2025-11-01 | Claude (Transformation Agent) | Initial comprehensive PRD based on project context |
+| 1.1 | 2025-11-02 | Claude (Transformation Agent) | Updated with TUTORIAL-EN.md insights: Added 7-day user journey, Step-by-Step Workflow section, enhanced Gather Seeds feature with photo support, center strength scoring (⭐⭐⭐), Option A/B/C expansion style, wholeness progression tracking, before/after comparison, mobile scenarios with voice/photo examples |
 
 ---
 

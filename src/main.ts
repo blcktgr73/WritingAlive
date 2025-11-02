@@ -17,6 +17,7 @@ import { RateLimiter } from './services/storage/rate-limiter';
 
 // UI components
 import { SnapshotModal } from './ui/snapshot-modal';
+import { GatherSeedsModal } from './ui/gather-seeds-modal';
 
 /**
  * WriteAlive Plugin
@@ -487,11 +488,30 @@ export default class WriteAlivePlugin extends Plugin {
 	 * Called on plugin load after storage services are initialized.
 	 *
 	 * Commands registered:
+	 * - Gather Seeds: Open seed gathering modal
 	 * - Create Snapshot: Save current document state
 	 * - List Snapshots: View all snapshots for current file
 	 * - Restore Latest Snapshot: Restore most recent snapshot
 	 */
 	private registerCommands(): void {
+		// Command: Gather Seeds
+		this.addCommand({
+			id: 'gather-seeds',
+			name: 'Gather Seeds',
+			callback: () => {
+				if (!this.seedGatherer) {
+					new Notice('WriteAlive: Seed gatherer not initialized');
+					console.error(
+						'[WriteAlive] Cannot gather seeds: SeedGatherer not initialized'
+					);
+					return;
+				}
+
+				// Open gather seeds modal
+				new GatherSeedsModal(this.app, this.seedGatherer).open();
+			},
+		});
+
 		// Command: Create Snapshot
 		this.addCommand({
 			id: 'create-snapshot',
