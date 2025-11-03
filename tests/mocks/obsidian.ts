@@ -90,6 +90,66 @@ export interface Vault {
 }
 
 /**
+ * Mock CachedMetadata
+ */
+export interface CachedMetadata {
+	links?: LinkCache[];
+	tags?: TagCache[];
+	frontmatter?: Record<string, any>;
+	headings?: HeadingCache[];
+}
+
+/**
+ * Mock LinkCache
+ */
+export interface LinkCache {
+	link: string;
+	original: string;
+	position: {
+		start: { line: number; col: number; offset: number };
+		end: { line: number; col: number; offset: number };
+	};
+}
+
+/**
+ * Mock TagCache
+ */
+export interface TagCache {
+	tag: string;
+	position: {
+		start: { line: number; col: number; offset: number };
+		end: { line: number; col: number; offset: number };
+	};
+}
+
+/**
+ * Mock HeadingCache
+ */
+export interface HeadingCache {
+	heading: string;
+	level: number;
+	position: {
+		start: { line: number; col: number; offset: number };
+		end: { line: number; col: number; offset: number };
+	};
+}
+
+/**
+ * Mock MetadataCache
+ */
+export interface MetadataCache {
+	getFileCache(file: TFile): CachedMetadata | null;
+}
+
+/**
+ * Mock App
+ */
+export interface App {
+	vault: Vault;
+	metadataCache: MetadataCache;
+}
+
+/**
  * Parse YAML string to object
  *
  * Uses js-yaml library for proper YAML parsing in tests.

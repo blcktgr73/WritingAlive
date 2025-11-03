@@ -453,3 +453,79 @@ export interface LivingMOCUpdateResult {
 	 */
 	errors: Array<{ mocPath: string; error: string }>;
 }
+
+/**
+ * Seed Relationship Type
+ *
+ * Describes the type of relationship between two seeds.
+ */
+export type SeedRelationshipType = 'backlink' | 'wikilink' | 'shared-tag' | 'bidirectional';
+
+/**
+ * Seed Relationship
+ *
+ * Represents a connection between two seed notes.
+ */
+export interface SeedRelationship {
+	/**
+	 * The related seed note
+	 */
+	seed: SeedNote;
+
+	/**
+	 * Type of relationship
+	 */
+	type: SeedRelationshipType;
+
+	/**
+	 * Strength of relationship (0.0-1.0)
+	 * - 1.0: Bidirectional link (strongest)
+	 * - 0.8: Direct backlink or wikilink
+	 * - 0.3-0.7: Shared tags (higher for more tags)
+	 */
+	strength: number;
+
+	/**
+	 * Additional context about the relationship
+	 * - For shared-tag: List of shared tags
+	 * - For backlink/wikilink: Line content with link context
+	 */
+	context?: string[];
+}
+
+/**
+ * Seed Relationships Result
+ *
+ * All relationships discovered for a seed note.
+ */
+export interface SeedRelationshipsResult {
+	/**
+	 * The source seed being analyzed
+	 */
+	sourceSeed: SeedNote;
+
+	/**
+	 * Direct backlinks (notes that link TO this seed)
+	 */
+	backlinks: SeedRelationship[];
+
+	/**
+	 * Outgoing links (notes this seed links TO)
+	 */
+	wikilinks: SeedRelationship[];
+
+	/**
+	 * Seeds with shared tags
+	 */
+	sharedTags: SeedRelationship[];
+
+	/**
+	 * Total number of relationships
+	 */
+	totalCount: number;
+
+	/**
+	 * Strongest relationships (sorted by strength)
+	 */
+	strongest: SeedRelationship[];
+}

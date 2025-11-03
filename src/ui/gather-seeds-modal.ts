@@ -29,6 +29,9 @@ import type { SeedGatherer } from '../services/vault/seed-gatherer';
 import type { SeedNote, SeedGatherOptions } from '../services/vault/types';
 import type { AIService } from '../services/ai/ai-service';
 import { CenterDiscoveryModal } from './modals/center-discovery-modal';
+import { TagStatistics } from '../services/vault/tag-statistics';
+import { TagFilterPanel } from './components/tag-filter-panel';
+import type { TagFilterChangeEvent } from './components/tag-filter-panel';
 
 /**
  * Gather Seeds Modal
@@ -47,9 +50,14 @@ export class GatherSeedsModal extends Modal {
 	private readonly aiService: AIService | null;
 
 	/**
-	 * Currently loaded seeds
+	 * Currently loaded seeds (all from vault)
 	 */
 	private seeds: SeedNote[] = [];
+
+	/**
+	 * Filtered seeds (after tag filter applied)
+	 */
+	private filteredSeeds: SeedNote[] = [];
 
 	/**
 	 * Selected seeds (by path)
@@ -64,6 +72,21 @@ export class GatherSeedsModal extends Modal {
 		sortBy: 'created',
 		sortOrder: 'desc',
 	};
+
+	/**
+	 * Tag filter panel instance
+	 */
+	private tagFilterPanel: TagFilterPanel | null = null;
+
+	/**
+	 * Currently selected tag filter tags
+	 */
+	private selectedTagFilters: string[] = [];
+
+	/**
+	 * Tag filter mode (any/all)
+	 */
+	private tagFilterMode: 'any' | 'all' = 'any';
 
 	/**
 	 * Constructor
@@ -116,6 +139,11 @@ export class GatherSeedsModal extends Modal {
 	private async renderFilters(container: HTMLElement): Promise<void> {
 		const filtersDiv = container.createDiv({ cls: 'writealive-seeds-filters' });
 
+		// Tag filter panel (rendered first if seeds are available)
+		// This will be populated after initial seed load
+		const tagFilterContainer = filtersDiv.createDiv({ cls: 'tag-filter-container' });
+		tagFilterContainer.id = 'writealive-tag-filter-container';
+
 		// Date filter dropdown
 		new Setting(filtersDiv)
 			.setName('Date Range')
@@ -166,6 +194,9 @@ export class GatherSeedsModal extends Modal {
 			const result = await this.seedGatherer.gatherSeeds(this.filterOptions);
 			this.seeds = result.seeds;
 
+			// Initialize filtered seeds (no tag filter applied yet)
+			this.filteredSeeds = this.seeds;
+
 			// Clear loading state
 			container.empty();
 
@@ -183,25 +214,25 @@ export class GatherSeedsModal extends Modal {
 				return;
 			}
 
+			// Render tag filter panel now that we have seeds
+			this.renderTagFilterPanel();
+
 			// Show count
 			const headerDiv = container.createDiv({ cls: 'writealive-seeds-header' });
-			headerDiv.createEl('p', {
-				text: `🌱 Seeds Found: ${this.seeds.length}`,
-				cls: 'writealive-seeds-count',
-			});
+			this.updateSeedCount(headerDiv);
 
 			// "Select All" button
 			const selectAllButton = new ButtonComponent(headerDiv)
 				.setButtonText('Select All')
 				.onClick(() => {
-					// Toggle all selections
-					if (this.selectedSeeds.size === this.seeds.length) {
+					// Toggle all selections for FILTERED seeds
+					if (this.selectedSeeds.size === this.filteredSeeds.length) {
 						// Deselect all
 						this.selectedSeeds.clear();
 						selectAllButton.setButtonText('Select All');
 					} else {
-						// Select all
-						this.seeds.forEach(seed => this.selectedSeeds.add(seed.path));
+						// Select all filtered seeds
+						this.filteredSeeds.forEach(seed => this.selectedSeeds.add(seed.path));
 						selectAllButton.setButtonText('Deselect All');
 					}
 					this.refreshSeedList(container);
@@ -232,6 +263,86 @@ export class GatherSeedsModal extends Modal {
 	}
 
 	/**
+	 * Render tag filter panel
+	 *
+	 * Creates or updates the tag filter panel with current seeds.
+	 */
+	private renderTagFilterPanel(): void {
+		// Find tag filter container
+		const container = this.contentEl.querySelector('#writealive-tag-filter-container') as HTMLElement;
+		if (!container) {
+			return;
+		}
+
+		// Extract tag statistics from all seeds
+		const tagStats = TagStatistics.extractFromSeeds(this.seeds);
+
+		// Clear existing panel
+		container.empty();
+
+		// Create new tag filter panel
+		this.tagFilterPanel = new TagFilterPanel(container, {
+			tagStats: tagStats,
+			onChange: (event: TagFilterChangeEvent) => {
+				this.selectedTagFilters = event.selectedTags;
+				this.tagFilterMode = event.mode;
+				this.applyTagFilter();
+			},
+		});
+
+		// Render the panel
+		this.tagFilterPanel.render();
+	}
+
+	/**
+	 * Apply tag filter to seeds
+	 *
+	 * Filters the seed list based on selected tags and updates the UI.
+	 */
+	private applyTagFilter(): void {
+		// Apply tag filter
+		this.filteredSeeds = TagStatistics.filterSeedsByTags(this.seeds, {
+			tags: this.selectedTagFilters,
+			mode: this.tagFilterMode,
+		});
+
+		// Update seed count display
+		const headerDiv = this.contentEl.querySelector('.writealive-seeds-header') as HTMLElement;
+		if (headerDiv) {
+			this.updateSeedCount(headerDiv);
+		}
+
+		// Re-render seed list
+		const listDiv = this.contentEl.querySelector('.writealive-seeds-list') as HTMLElement;
+		if (listDiv) {
+			this.renderSeedList(listDiv);
+		}
+
+		// Update action buttons
+		this.updateActionButtons();
+	}
+
+	/**
+	 * Update seed count display
+	 *
+	 * @param container - Header container element
+	 */
+	private updateSeedCount(container: HTMLElement): void {
+		// Find or create count element
+		let countEl = container.querySelector('.writealive-seeds-count') as HTMLElement;
+		if (!countEl) {
+			countEl = container.createEl('p', { cls: 'writealive-seeds-count' });
+		}
+
+		// Update text based on filter state
+		if (this.selectedTagFilters.length > 0) {
+			countEl.textContent = `🌱 Seeds: ${this.filteredSeeds.length} of ${this.seeds.length} (filtered by ${this.selectedTagFilters.length} tag${this.selectedTagFilters.length !== 1 ? 's' : ''})`;
+		} else {
+			countEl.textContent = `🌱 Seeds Found: ${this.seeds.length}`;
+		}
+	}
+
+	/**
 	 * Render the list of seeds
 	 *
 	 * @param container - Container element
@@ -239,8 +350,22 @@ export class GatherSeedsModal extends Modal {
 	private renderSeedList(container: HTMLElement): void {
 		container.empty();
 
-		for (const seed of this.seeds) {
+		// Render filtered seeds
+		for (const seed of this.filteredSeeds) {
 			this.renderSeed(container, seed);
+		}
+
+		// Empty state for filtered results
+		if (this.filteredSeeds.length === 0 && this.seeds.length > 0) {
+			const emptyDiv = container.createDiv({ cls: 'writealive-empty-state' });
+			emptyDiv.createEl('p', {
+				text: 'No seeds match the selected tags',
+				cls: 'writealive-empty-message',
+			});
+			emptyDiv.createEl('p', {
+				text: 'Try selecting different tags or clearing the filter',
+				cls: 'writealive-empty-hint',
+			});
 		}
 	}
 
@@ -621,5 +746,9 @@ export class GatherSeedsModal extends Modal {
 		contentEl.empty();
 		this.selectedSeeds.clear();
 		this.seeds = [];
+		this.filteredSeeds = [];
+		this.tagFilterPanel = null;
+		this.selectedTagFilters = [];
+		this.tagFilterMode = 'any';
 	}
 }

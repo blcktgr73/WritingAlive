@@ -83,26 +83,64 @@ Shouldn't writing work the same way?
 
 1. **Open Obsidian**
 2. **Ctrl/Cmd + P** → Run `WriteAlive: Gather Seeds` command
-3. **Amazing result:**
+3. **See the Tag Filter Panel:**
+
+```markdown
+╔══════════════════════════════════════════════════════════╗
+║  🌱 Gather Seeds                                         ║
+╠══════════════════════════════════════════════════════════╣
+║                                                          ║
+║  📊 Filter by Tags (any/all) [Switch to: all ▼]         ║
+║  ┌────────────────────────────────────────────────────┐ ║
+║  │ #seed (8)  #idea (6)  #💡 (4)  #practice (3)      │ ║
+║  │ #guitar (2)  #programming (2)  #nature (1)        │ ║
+║  │                                                    │ ║
+║  │ [Show 12 more tags ▼]                             │ ║
+║  └────────────────────────────────────────────────────┘ ║
+║                                                          ║
+║  📅 Date Filter: [This Week ▼]                          ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+4. **Click tags to filter** (try clicking `#practice` and `#guitar`):
+
+```markdown
+🌱 Seeds Found (4) → Filtered to (2)
+
+[Tag Filter Active: #practice OR #guitar]
+
+✅ 2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
+✅ 2025-11-05 - "First 4 bars perfectly" #idea #guitar #💡
+
+[Clear Filter]
+```
+
+5. **Click "Clear Filter"** to see all seeds again:
 
 ```markdown
 🌱 Seeds Found (4)
 
 ✅ 2025-11-04 - "Don't approximate the whole vaguely" #seed #practice
-✅ 2025-11-05 - "First 4 bars perfectly" #idea #guitar
+✅ 2025-11-05 - "First 4 bars perfectly" #idea #guitar #💡
 ✅ 2025-11-06 - "One small function properly" #seed #programming
 ✅ 2025-11-07 - "Trees grow from trunk to branches" #seed #nature
+   📷 tree-growth.jpg
 
-Select all? [All] [Custom]
+[Select All] [Select None]
 ```
 
 **Why is this amazing?**
+- **Smart tag filtering**: Click tags to instantly filter seeds
+- **AND/OR modes**: Switch between "any tag" (OR) or "all tags" (AND) logic
+- **Tag statistics**: See how many seeds have each tag (e.g., `#seed (8)`)
 - **Recognizes emoji tags** (`#💡`)
 - **Auto-syncs mobile notes**
-- **Includes photos**
+- **Includes photos** with 📷 indicator
 - **Bilingual support** (works with any language)
+- **Session memory**: Remembers your last filter when you reopen
 
-You select "All". New note `My Practice Method.md` created.
+You select "All". Ready for next step!
 
 ---
 

@@ -1,0 +1,357 @@
+/**
+ * Related Seeds Panel Styles
+ *
+ * Styling for the related seeds UI component.
+ * Supports both desktop sidebar and mobile inline modes.
+ *
+ * Part of T-20251103-012b: Related Seeds UI
+ */
+
+/* Panel container */
+.writealive-related-seeds-panel {
+	background-color: var(--background-secondary);
+	border-radius: var(--radius-m);
+	border: 1px solid var(--background-modifier-border);
+}
+
+/* Desktop sidebar mode */
+.writealive-related-seeds-panel.mode-sidebar {
+	width: 30%;
+	min-width: 250px;
+	max-width: 400px;
+	height: 100%;
+	overflow-y: auto;
+	position: sticky;
+	top: 0;
+}
+
+/* Mobile inline mode */
+.writealive-related-seeds-panel.mode-inline {
+	width: 100%;
+	margin-bottom: var(--size-4-4);
+}
+
+.related-seeds-panel {
+	padding: var(--size-4-2);
+}
+
+/* Header */
+.related-seeds-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--size-4-2);
+	padding-bottom: var(--size-2-2);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.related-seeds-title {
+	display: flex;
+	align-items: center;
+	gap: var(--size-2-2);
+}
+
+.related-seeds-title h4 {
+	margin: 0;
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+}
+
+.related-count-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 24px;
+	padding: 0 var(--size-2-1);
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	border-radius: var(--radius-s);
+}
+
+/* Toggle button (inline mode) */
+.toggle-expand-btn {
+	padding: var(--size-2-1) var(--size-2-2);
+	background-color: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	color: var(--text-muted);
+	font-size: var(--font-ui-medium);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.toggle-expand-btn:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+	border-color: var(--interactive-accent);
+}
+
+.toggle-expand-btn:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Content */
+.related-seeds-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-3);
+}
+
+.related-seeds-empty {
+	padding: var(--size-4-4);
+	text-align: center;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	font-style: italic;
+}
+
+/* Relationship section */
+.relationship-section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-2);
+}
+
+.section-header h5 {
+	margin: 0 0 var(--size-2-1) 0;
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+}
+
+.section-description {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	margin-bottom: var(--size-2-2);
+}
+
+/* Relationship list */
+.relationship-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-2);
+}
+
+/* Relationship item */
+.relationship-item {
+	position: relative;
+	padding: var(--size-2-2) var(--size-2-3);
+	background-color: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	transition: all 0.2s ease;
+	overflow: hidden;
+}
+
+.relationship-item.clickable {
+	cursor: pointer;
+}
+
+.relationship-item.clickable:hover {
+	background-color: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+	transform: translateX(2px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.relationship-item:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Strength indicator */
+.strength-indicator {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 3px;
+	background-color: var(--text-muted);
+	transition: width 0.3s ease;
+}
+
+.strength-indicator.strength-high {
+	background-color: var(--color-green);
+}
+
+.strength-indicator.strength-medium {
+	background-color: var(--color-yellow);
+}
+
+.strength-indicator.strength-low {
+	background-color: var(--color-orange);
+}
+
+/* Item content */
+.item-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-1);
+	margin-top: var(--size-2-1);
+}
+
+.item-title {
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-medium);
+	color: var(--text-normal);
+}
+
+/* Type badge */
+.type-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px var(--size-2-1);
+	background-color: var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	border-radius: var(--radius-s);
+	white-space: nowrap;
+}
+
+.type-badge.type-bidirectional {
+	background-color: var(--color-green);
+	color: white;
+}
+
+.type-badge.type-backlink {
+	background-color: var(--color-blue);
+	color: white;
+}
+
+.type-badge.type-wikilink {
+	background-color: var(--color-purple);
+	color: white;
+}
+
+.type-badge.type-shared-tag {
+	background-color: var(--color-orange);
+	color: white;
+}
+
+/* Context */
+.item-context {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+	padding: var(--size-2-1);
+	background-color: var(--background-secondary);
+	border-radius: var(--radius-s);
+}
+
+/* Excerpt */
+.item-excerpt {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+/* Show more indicator */
+.show-more-indicator {
+	padding: var(--size-2-2);
+	text-align: center;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-style: italic;
+	border-top: 1px dashed var(--background-modifier-border);
+	margin-top: var(--size-2-1);
+}
+
+/* Responsive design - Mobile */
+@media (max-width: 768px) {
+	.writealive-related-seeds-panel.mode-sidebar {
+		/* Force inline mode on mobile */
+		width: 100%;
+		max-width: none;
+		position: static;
+		margin-bottom: var(--size-4-4);
+	}
+
+	.relationship-item {
+		/* Larger tap targets on mobile */
+		min-height: 44px;
+		padding: var(--size-2-3) var(--size-2-3);
+	}
+
+	.item-title {
+		font-size: var(--font-ui-medium);
+	}
+}
+
+/* Accessibility - High contrast mode */
+@media (prefers-contrast: high) {
+	.relationship-item {
+		border-width: 2px;
+	}
+
+	.strength-indicator {
+		height: 4px;
+	}
+
+	.type-badge {
+		border: 1px solid currentColor;
+	}
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.relationship-item,
+	.toggle-expand-btn,
+	.strength-indicator {
+		transition: none;
+	}
+
+	.relationship-item.clickable:hover {
+		transform: none;
+	}
+}
+
+/* Dark theme specific adjustments */
+.theme-dark .relationship-item:hover {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .strength-indicator.strength-high {
+	background-color: var(--color-green);
+}
+
+.theme-dark .strength-indicator.strength-medium {
+	background-color: var(--color-yellow);
+}
+
+.theme-dark .strength-indicator.strength-low {
+	background-color: var(--color-orange);
+}
+
+/* Loading state */
+.related-seeds-loading {
+	padding: var(--size-4-4);
+	text-align: center;
+	color: var(--text-muted);
+}
+
+.related-seeds-loading::after {
+	content: '...';
+	animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+	0%,
+	20% {
+		content: '.';
+	}
+	40% {
+		content: '..';
+	}
+	60%,
+	100% {
+		content: '...';
+	}
+}

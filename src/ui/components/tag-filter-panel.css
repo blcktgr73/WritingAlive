@@ -1,0 +1,272 @@
+/**
+ * Tag Filter Panel Styles
+ *
+ * Styling for the tag filter UI component.
+ * Follows Obsidian design patterns and supports both light/dark themes.
+ *
+ * Part of T-20251103-011b: Tag Filter UI Component
+ */
+
+/* Panel container */
+.writealive-tag-filter-panel {
+	margin-bottom: var(--size-4-4);
+	padding: var(--size-4-2);
+	background-color: var(--background-secondary);
+	border-radius: var(--radius-m);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.tag-filter-panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+}
+
+/* Header */
+.tag-filter-header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-2);
+}
+
+.tag-filter-title {
+	margin: 0;
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+}
+
+.tag-filter-info {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+}
+
+/* Mode toggle buttons */
+.filter-mode-toggle {
+	display: flex;
+	gap: var(--size-2-2);
+	padding: var(--size-2-1) 0;
+}
+
+.mode-btn {
+	flex: 1;
+	padding: var(--size-2-2) var(--size-4-2);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background-color: var(--background-primary);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-medium);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.mode-btn.active {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+	font-weight: var(--font-semibold);
+}
+
+.mode-btn:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Tag chips container */
+.tag-chips-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--size-2-2);
+	padding: var(--size-2-2) 0;
+}
+
+/* Individual tag chip */
+.tag-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-2-1);
+	padding: var(--size-2-1) var(--size-2-3);
+	background-color: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	user-select: none;
+}
+
+.tag-chip:hover {
+	background-color: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tag-chip.selected {
+	background-color: var(--interactive-accent);
+	border-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.tag-chip.selected .tag-name {
+	color: var(--text-on-accent);
+	font-weight: var(--font-semibold);
+}
+
+.tag-chip.selected .tag-count {
+	background-color: rgba(255, 255, 255, 0.3);
+	color: var(--text-on-accent);
+}
+
+.tag-chip:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Tag name */
+.tag-name {
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+	font-weight: var(--font-medium);
+}
+
+/* Tag count badge */
+.tag-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 var(--size-2-1);
+	background-color: var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	border-radius: var(--radius-s);
+}
+
+/* Empty state */
+.tag-chips-empty {
+	padding: var(--size-4-4);
+	text-align: center;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	font-style: italic;
+}
+
+/* Footer */
+.tag-filter-footer {
+	display: flex;
+	gap: var(--size-2-2);
+	padding-top: var(--size-2-2);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.clear-filters-btn,
+.show-all-tags-btn {
+	padding: var(--size-2-2) var(--size-4-2);
+	background-color: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.clear-filters-btn {
+	flex: 1;
+}
+
+.show-all-tags-btn {
+	flex: 0 0 auto;
+}
+
+.clear-filters-btn:hover,
+.show-all-tags-btn:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+	border-color: var(--interactive-accent);
+}
+
+.clear-filters-btn:focus-visible,
+.show-all-tags-btn:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Responsive design - Mobile */
+@media (max-width: 768px) {
+	.writealive-tag-filter-panel {
+		padding: var(--size-4-1);
+	}
+
+	.tag-chip {
+		/* Larger tap targets on mobile */
+		min-height: 44px;
+		padding: var(--size-2-2) var(--size-2-3);
+	}
+
+	.filter-mode-toggle {
+		flex-direction: column;
+	}
+
+	.mode-btn {
+		/* Larger tap targets on mobile */
+		min-height: 44px;
+	}
+
+	.tag-filter-footer {
+		flex-direction: column;
+	}
+
+	.clear-filters-btn,
+	.show-all-tags-btn {
+		/* Larger tap targets on mobile */
+		min-height: 44px;
+	}
+}
+
+/* Accessibility - High contrast mode */
+@media (prefers-contrast: high) {
+	.tag-chip {
+		border-width: 2px;
+	}
+
+	.tag-chip.selected {
+		border-width: 3px;
+	}
+
+	.mode-btn.active {
+		border-width: 3px;
+	}
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.tag-chip,
+	.mode-btn,
+	.clear-filters-btn,
+	.show-all-tags-btn {
+		transition: none;
+	}
+
+	.tag-chip:hover {
+		transform: none;
+	}
+}
+
+/* Dark theme specific adjustments */
+.theme-dark .tag-chip:hover {
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .tag-chip.selected {
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}

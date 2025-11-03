@@ -1,8 +1,64 @@
 # Product Requirements Document: WriteAlive
 
 **Version**: 1.0
-**Last Updated**: 2025-11-01
+**Last Updated**: 2025-11-03
 **Status**: Living Document (Evolving with Transformations)
+
+---
+
+## Implementation Status (As of 2025-11-03)
+
+### ✅ Completed Features
+
+**Core Workflow (T-20251103-013)**:
+- **Seed Gathering**: Tag-based collection from vault with photo support (T-007)
+- **Center Discovery Modal**: AI-powered center finding with visual UI (T-011b)
+  - Multi-center display with strength indicators (⭐⭐⭐ Strong, ⭐⭐ Medium, ⭐ Weak)
+  - Connected seed visualization
+  - Cost transparency ($0.015/analysis average)
+  - Assessment criteria display (cross-domain, emotional resonance, concreteness, structural pivot)
+- **Document Creator**: Automated note creation from selected center (T-011a)
+  - YAML frontmatter with seed references and center metadata
+  - Initial content generation with writing prompts
+  - Cursor positioning in writing area
+- **Complete Integration**: Seamless Gather Seeds → Find Centers → Start Writing workflow (<15s automation)
+
+**Technical Infrastructure**:
+- AI Service Layer with Claude 3.5 Sonnet integration
+- Tag filtering and statistics (emoji tags, Korean/English support)
+- Relationship detection across notes
+- Comprehensive test coverage (unit + integration tests)
+
+**Performance Metrics**:
+- Seed gathering: <5s for typical vault
+- AI center analysis: 3-5s average
+- Document creation: <2s
+- Total automation time: ~10-15s (well under 90s budget)
+
+### 📝 In Progress
+
+**Phase 4 Features**:
+- Generative expansion suggestions
+- Wholeness analysis scoring
+- Read-aloud feedback
+- Version snapshots and comparison
+
+### 🔜 Planned (MVP)
+
+**Epic 2 Completion**:
+- Center refinement workflow
+- Multi-iteration center discovery
+- Center validation feedback
+
+**Epic 3: Iterative Refinement**:
+- AI-powered expansion suggestions
+- Wholeness score calculation
+- Version history and rollback
+
+**Epic 4: Academic Writing Support**:
+- MOC (Map of Contents) auto-update
+- Bibliography integration
+- Academic structure templates
 
 ---
 
@@ -822,6 +878,399 @@ Sunday: "Start from MOC"
 - If markers missing, suggest adding them (don't auto-inject)
 - If multiple MOCs match same seed tags, ask user which to update
 - Undo support: "Revert last auto-update"
+
+---
+
+### Epic 0.7: Enhanced Seed Discovery & Filtering (MVP)
+**Priority**: P0 (Must Have - Critical UX Improvement)
+**Effort**: Medium-Large (8-13 story points)
+**Rationale**: Current workflow requires users to manually scan all seeds. Tag-based navigation and relationship awareness makes discovery intentional, focused, and reveals natural connections between ideas.
+
+---
+
+#### US-0.7.1: Tag-Based Seed Filtering
+
+**As a** knowledge worker with 100+ seed notes across multiple topics
+**I want** to filter seeds by specific tags before selecting
+**So that** I can focus on a coherent theme rather than scanning unrelated ideas
+
+**Acceptance Criteria**:
+
+**Tag Filter UI (Gather Seeds Modal Enhancement)**:
+- Display available tags with counts above seed list:
+  ```
+  🏷️ Filter by Tags (showing 15 tags):
+
+  #practice (12)  #creativity (8)  #programming (15)  #nature (5)
+  #writing (20)   #idea (45)       #💡 (23)           #guitar (6)
+
+  [Show all tags ▼]
+  ```
+- Tags sorted by: frequency (default), alphabetical, or recent usage
+- Multi-select tags with AND/OR toggle:
+  ```
+  Filter Mode: [ANY tag] [ALL tags]
+
+  Selected: #practice AND #creativity (3 seeds)
+  ```
+- "Clear filters" button resets to all seeds
+- Tag selection persists across modal re-opens (session storage)
+
+**Tag Metadata Enhancements**:
+- Show tag co-occurrence: "Often paired with #creativity, #idea"
+- Display date range: "Used from 2025-10-15 to 2025-11-03"
+- Show related tags (appear in same notes): "#practice → #guitar (60%), #programming (40%)"
+
+**Filter Interaction**:
+- Clicking tag toggles selection (visual state: selected/unselected)
+- Selected tags highlighted with accent color
+- Real-time seed count update: "Showing 12 of 45 seeds"
+- Combine with existing date filters: "This week + #practice (5 seeds)"
+
+**Real-World Scenario**:
+```markdown
+User opens "Gather Seeds" with 150 total seeds
+
+🏷️ Available Tags:
+#practice (12)  #creativity (8)  #idea (45)  #programming (15)
+
+1. User clicks #practice → 12 seeds shown
+   "Seeds about practice methods from past 2 weeks"
+
+2. User clicks #creativity (while #practice still selected)
+   Filter Mode: [ANY tag]
+   → 20 seeds shown (12 practice + 8 creativity)
+
+3. User toggles to [ALL tags]
+   → 3 seeds shown (have BOTH #practice AND #creativity)
+
+4. User sees: "3 seeds found: practice methods applied to creative work"
+   These are likely highly related!
+
+5. Click "Find Centers" → AI discovers theme:
+   "Deliberate Practice for Creative Mastery"
+```
+
+**Structural Quality Metric**:
+- Tag navigation reduces time-to-relevant-seeds by 60% (from 3 min → 70 sec)
+- 80% of users who filter by tag complete writing session
+- Average 2.5 tags used per session
+- Tag filter accuracy: 95% of filtered seeds are relevant to user's writing goal
+
+---
+
+#### US-0.7.2: Related Notes Visualization
+
+**As a** writer exploring seed ideas
+**I want** to see which seeds reference each other or share backlinks
+**So that** I can understand the network of connections before selecting
+
+**Acceptance Criteria**:
+
+**Relationship Indicators (Per Seed Item)**:
+- **Backlink Badge**:
+  ```
+  🔗 3 related notes
+  ```
+  - Clicking expands inline list of backlinks
+  - Backlinks that are also seeds highlighted with "🌱" indicator
+
+- **Wikilink Detection**:
+  - Seeds that link to other displayed seeds get connection icon
+  ```
+  📎 Links to: "Guitar Practice Method" seed
+  ```
+
+- **Shared Tags**:
+  ```
+  🏷️ Shares tags with 5 other seeds (#practice, #music)
+  ```
+
+**Related Seeds Panel** (Desktop: Sidebar, Mobile: Inline Expansion):
+- When seed selected, show "Related Seeds" section:
+  ```markdown
+  📋 Related to "Bill Evans Practice" seed:
+
+  Direct Links (2):
+  🌱 "Guitar 4-bar method" (2025-11-05)
+  🌱 "Code review insight" (2025-11-06)
+
+  Shared Tags (3):
+  🌱 "Tree growth pattern" (#practice)
+  🌱 "Piano practice notes" (#practice, #music)
+  🌱 "Deliberate practice reading" (#practice)
+
+  Backlinks from MOCs (1):
+  📚 "Creativity and Practice MOC" (links to this seed)
+  ```
+
+**Interaction Design**:
+- Hover over relationship badge → tooltip preview
+- Click relationship badge → highlight related seeds in list
+- "Show only related" filter option (hide unrelated seeds)
+- Desktop: Sidebar panel (30% width) always visible
+- Mobile: Inline expansion (tap to show/hide)
+
+**Real-World Scenario**:
+```markdown
+User selects seed: "Bill Evans Practice Philosophy"
+
+Related Seeds panel appears:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Related to "Bill Evans Practice Philosophy":
+
+Direct Links (2):
+🌱 "Guitar 4-bar practice"
+   → This seed mentions Bill Evans quote
+🌱 "Code review realization"
+   → Links to Evans note
+
+Shared Tags (#practice, #deliberate) (3):
+🌱 "Tree growth observation"
+🌱 "Piano practice session"
+🌱 "Learning method notes"
+
+In MOCs (1):
+📚 "Creativity and Practice MOC"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+User realizes: "These 3 seeds form a cluster!"
+User selects all 3 → "Find Centers"
+AI: "Strong Center ⭐⭐⭐: Part-to-Whole Mastery"
+```
+
+**Structural Quality Metric**:
+- 60% of users explore related seeds before final selection
+- Related-seed clusters have 15% higher center strength scores (⭐⭐⭐ vs ⭐⭐)
+- Average 1.8 related seeds per selected seed
+- Relationship detection accuracy: 90% (verified via user acceptance)
+
+---
+
+#### US-0.7.3: Integrated Center Finding Workflow
+
+**As a** writer selecting seeds
+**I want** center finding to be a natural next step, not a separate command
+**So that** I experience a seamless flow from gathering to discovery to writing
+
+**Acceptance Criteria**:
+
+**Current Workflow** (Before Enhancement):
+```
+1. Gather Seeds modal → Select seeds → "Start Writing"
+2. New document created with seeds
+3. User manually runs "Find Centers" command
+4. Centers displayed
+5. User copies centers to document
+```
+
+**Enhanced Workflow** (Integrated):
+```
+1. Gather Seeds modal → Select seeds
+2. "🎯 Find Centers" button prominently displayed
+3. Click → Center Discovery Modal opens (seamless)
+4. Choose center → "Start Writing from Center" button
+5. Document Creator creates note with:
+   - Selected seeds
+   - Chosen center as title/theme
+   - Writing prompt based on center
+```
+
+**UI Changes in Gather Seeds Modal**:
+- **Three action buttons** (vs current two):
+  ```
+  [Cancel]  [🎯 Find Centers]  [Start Writing]
+  ```
+- "Find Centers" button:
+  - Enabled when: 2+ seeds selected AND AI service available
+  - Tooltip: "Discover themes across selected seeds (AI-powered)"
+  - Primary CTA styling (most prominent)
+
+- "Start Writing" button:
+  - Secondary styling
+  - Tooltip: "Create document directly without AI analysis"
+
+**Center Discovery Modal Integration**:
+- Opens immediately after "Find Centers" clicked (no page navigation)
+- Shows loading state: "🎯 Discovering centers... (3-5 seconds)"
+- Displays results (existing modal implementation)
+- **New feature**: "Start Writing from Center" button on each center:
+  ```
+  ⭐⭐⭐ Strong Center
+  "Completeness vs Approximation"
+
+  Connects: Bill Evans philosophy + guitar practice + coding
+
+  [↩ Back to Seeds]  [✍️ Start Writing from This Center]
+  ```
+
+**Document Creator Enhancement**:
+- When creating from center, document includes:
+  ```yaml
+  ---
+  writealive:
+    gathered_seeds:
+      - "Bill Evans note.md"
+      - "Guitar practice.md"
+      - "Code review.md"
+    discovered_center:
+      name: "Completeness vs Approximation"
+      strength: "strong"
+      explanation: "..."
+    created_via: "center_discovery"
+  ---
+
+  # Completeness vs Approximation
+
+  ## Discovered Center
+
+  **Core Theme**: Bill Evans' philosophy applied across domains
+
+  **Why this center is alive** (⭐⭐⭐):
+  - Present in all 3 seeds (music, coding, practice)
+  - Emotionally resonant ("shocking", "realized")
+  - Concrete experiences (4-bar practice, code review)
+
+  ## Gathered Seeds
+
+  > "Don't approximate the whole vaguely..."
+  > — [[Bill Evans Practice Philosophy]]
+
+  > "Practiced first 4 bars perfectly, rest came easy"
+  > — [[Guitar Practice Session]]
+
+  > "One small function properly > rough whole structure"
+  > — [[Code Review Insight]]
+
+  ## Writing Prompt
+
+  Start with your strongest concrete experience:
+  What happened when you practiced those 4 bars perfectly?
+  Make the reader *feel* that moment.
+  ```
+
+**Real-World Scenario (Complete Flow)**:
+```markdown
+Monday-Thursday: User captures 4 seeds (mobile + desktop)
+
+Friday Evening:
+1. Opens Obsidian → "Gather Seeds"
+   → 4 seeds displayed
+
+2. Filters by #practice tag
+   → 3 seeds remain (focused selection)
+
+3. Selects all 3 → "🎯 Find Centers" button glows
+
+4. Clicks "Find Centers"
+   → Loading: "Discovering centers... 3s"
+   → Center Discovery Modal opens
+
+5. AI shows:
+   ⭐⭐⭐ "Completeness vs Approximation"
+   ⭐⭐ "Part-to-Whole Growth"
+   ⭐ "Cross-Domain Learning"
+
+6. User clicks "Start Writing from This Center" (first one)
+
+7. Document Creator modal:
+   - Title: "Completeness vs Approximation"
+   - Seeds pre-filled
+   - Writing prompt: "Start with guitar story..."
+
+8. User clicks "Create"
+   → New document created, opens in editor
+   → Cursor positioned after writing prompt
+   → User immediately starts writing (low friction!)
+
+Total time: 90 seconds from Gather Seeds to writing first sentence
+vs Traditional: 5-10 minutes of planning, often abandoned
+```
+
+**Structural Quality Metric**:
+- 70% of Gather Seeds sessions use "Find Centers" workflow (vs 20% current)
+- Time from seed selection to writing start: <90 seconds (vs 5+ min current)
+- Documents created via integrated flow: 80% completion rate (vs 70% manual)
+- User satisfaction: 85% report workflow feels "natural and effortless"
+
+---
+
+#### US-0.7.4: Keyword-Tagged Content Preview
+
+**As a** writer reviewing seeds before selection
+**I want** to see keyword highlights and tag context within seed excerpts
+**So that** I can quickly assess relevance without opening each note
+
+**Acceptance Criteria**:
+
+**Enhanced Seed Item Display**:
+- **Keyword Highlighting**:
+  - Selected tags highlighted in excerpt text:
+    ```markdown
+    "Watched Bill Evans video. 'Don't approximate...' was shocking.
+     I've always tried to play entire guitar songs roughly."
+                         ^^^^^^^^^^             ^^^^^^
+
+    Matched: #practice  (appears in frontmatter)
+    Keywords: "practice", "entire", "shocking" (highlighted in excerpt)
+    ```
+
+- **Tag Context Line**:
+  - Show where tags appear:
+    ```
+    Tags: #practice (inline), #seed (frontmatter), #💡 (inline)
+    ```
+
+- **Related Keyword Cloud** (for filtered view):
+  - When filtering by tag, show common words across filtered seeds:
+    ```
+    🔑 Common themes: practice (8), complete (5), method (4), grow (3)
+    ```
+
+**Excerpt Enhancement**:
+- Longer excerpts for filtered seeds: 150 → 250 chars
+- Multi-paragraph preview if first para is <50 chars:
+  ```
+  "Don't approximate the whole vaguely." ¶
+  This Bill Evans quote was shocking...
+  ```
+
+**Interaction**:
+- Hover over highlighted keyword → shows definition/first use
+- Click tag → filter by that tag
+- Click keyword → highlight in other seeds
+
+**Real-World Scenario**:
+```markdown
+User filters by #practice tag → 12 seeds
+
+Seed 1:
+┌────────────────────────────────────────────┐
+│ Bill Evans Practice Philosophy             │
+│                                            │
+│ "Watched Bill Evans video. 'Don't         │
+│  approximate the whole vaguely...' was     │
+│  ^^^^^^^^^^                                │
+│  shocking. I've always tried to play       │
+│  entire guitar songs roughly."             │
+│  ^^^^^^                                    │
+│                                            │
+│ 🏷️ #practice (inline), #seed (frontmatter) │
+│ 🔗 2 backlinks  📅 2025-11-04             │
+└────────────────────────────────────────────┘
+
+🔑 Common themes across #practice seeds:
+"approximate" (4), "entire" (3), "complete" (5)
+
+User notices: "All my practice seeds mention completeness!"
+This is the emerging center before AI even analyzes!
+```
+
+**Structural Quality Metric**:
+- Keyword highlighting reduces time-to-understand by 40%
+- 50% of users discover themes manually before AI (increased awareness)
+- Highlight accuracy: 85% of keywords are semantically relevant
+- User reports: "Keywords helped me see the pattern immediately"
 
 ---
 
