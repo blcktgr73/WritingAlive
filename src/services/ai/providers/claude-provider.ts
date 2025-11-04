@@ -103,8 +103,9 @@ export class ClaudeProvider extends BaseAIProvider {
 
 	/**
 	 * Model identifier for Claude 3.5 Sonnet
+	 * Using latest stable version (as of 2024)
 	 */
-	private readonly model = 'claude-3-5-sonnet-20241022';
+	private readonly model = 'claude-3-5-sonnet-20240620';
 
 	/**
 	 * Maximum output tokens per request
