@@ -148,15 +148,22 @@
 
 /* ===== Gather Seeds Modal ===== */
 
+/* Target the modal container itself */
+.modal:has(.writealive-gather-seeds-modal) {
+	width: 85vw !important;
+	max-width: 1200px !important;
+	height: 80vh !important;
+	max-height: 800px !important;
+}
+
 .writealive-gather-seeds-modal {
 	padding: 1.5em;
-	width: 85vw;
-	max-width: 1200px;
-	height: 80vh;
-	max-height: 800px;
+	width: 100%;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	box-sizing: border-box;
 }
 
 .writealive-gather-seeds-modal h2 {
