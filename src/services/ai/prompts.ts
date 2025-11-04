@@ -335,12 +335,26 @@ export function validateJsonResponse(
 ): Record<string, unknown> {
 	let parsed: unknown;
 
+	// Extract JSON from response (Claude often wraps JSON in explanatory text)
+	let cleanedJson = jsonString.trim();
+
+	// Try to find JSON object boundaries
+	const jsonMatch = cleanedJson.match(/\{[\s\S]*\}/);
+	if (jsonMatch) {
+		cleanedJson = jsonMatch[0];
+	}
+
 	try {
-		parsed = JSON.parse(jsonString);
+		parsed = JSON.parse(cleanedJson);
 	} catch (error) {
-		throw new Error(
-			`Invalid JSON response: ${error instanceof Error ? error.message : String(error)}`
-		);
+		// If extraction failed, try parsing the original string
+		try {
+			parsed = JSON.parse(jsonString);
+		} catch (secondError) {
+			throw new Error(
+				`Invalid JSON response: ${error instanceof Error ? error.message : String(error)}\nResponse preview: ${jsonString.substring(0, 200)}...`
+			);
+		}
 	}
 
 	if (!parsed || typeof parsed !== 'object') {
