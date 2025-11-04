@@ -335,6 +335,9 @@ export function validateJsonResponse(
 ): Record<string, unknown> {
 	let parsed: unknown;
 
+	console.log('[validateJsonResponse] Raw response length:', jsonString.length);
+	console.log('[validateJsonResponse] Raw response (first 500 chars):', jsonString.substring(0, 500));
+
 	// Extract JSON from response (Claude often wraps JSON in explanatory text)
 	let cleanedJson = jsonString.trim();
 
@@ -342,15 +345,23 @@ export function validateJsonResponse(
 	const jsonMatch = cleanedJson.match(/\{[\s\S]*\}/);
 	if (jsonMatch) {
 		cleanedJson = jsonMatch[0];
+		console.log('[validateJsonResponse] Extracted JSON length:', cleanedJson.length);
+		console.log('[validateJsonResponse] Extracted JSON (first 500 chars):', cleanedJson.substring(0, 500));
+	} else {
+		console.warn('[validateJsonResponse] No JSON object found in response');
 	}
 
 	try {
 		parsed = JSON.parse(cleanedJson);
+		console.log('[validateJsonResponse] Successfully parsed JSON');
 	} catch (error) {
+		console.error('[validateJsonResponse] First parse attempt failed:', error);
 		// If extraction failed, try parsing the original string
 		try {
 			parsed = JSON.parse(jsonString);
+			console.log('[validateJsonResponse] Successfully parsed original string');
 		} catch (secondError) {
+			console.error('[validateJsonResponse] Second parse attempt failed:', secondError);
 			throw new Error(
 				`Invalid JSON response: ${error instanceof Error ? error.message : String(error)}\nResponse preview: ${jsonString.substring(0, 200)}...`
 			);
@@ -358,16 +369,21 @@ export function validateJsonResponse(
 	}
 
 	if (!parsed || typeof parsed !== 'object') {
+		console.error('[validateJsonResponse] Parsed value is not an object:', typeof parsed);
 		throw new Error('Invalid response: not a JSON object');
 	}
 
 	const obj = parsed as Record<string, unknown>;
 
+	console.log('[validateJsonResponse] Parsed object keys:', Object.keys(obj));
+
 	for (const field of expectedFields) {
 		if (!(field in obj)) {
+			console.error(`[validateJsonResponse] Missing required field: ${field}`);
 			throw new Error(`Invalid response: missing required field '${field}'`);
 		}
 	}
 
+	console.log('[validateJsonResponse] Validation successful');
 	return obj;
 }

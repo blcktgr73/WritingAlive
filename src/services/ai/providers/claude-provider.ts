@@ -392,6 +392,10 @@ export class ClaudeProvider extends BaseAIProvider {
 					}
 
 					// Client errors - don't retry
+					console.error('[ClaudeProvider] API client error:', {
+						statusCode,
+						errorText: errorText.substring(0, 500),
+					});
 					throw new Error(
 						`Claude API error (${statusCode}): ${errorText}`
 					);
@@ -413,6 +417,7 @@ export class ClaudeProvider extends BaseAIProvider {
 					outputTokens: data.usage.output_tokens,
 					responseLength: text.length,
 				});
+				console.log('[ClaudeProvider] Response text (first 500 chars):', text.substring(0, 500));
 
 				return text;
 			} catch (error) {
