@@ -103,6 +103,16 @@ export class DocumentCreator {
 			// 1. Generate filename
 			const filename = this.generateFilename(center);
 			const folder = options?.folder || '';
+
+			// Ensure folder exists if specified
+			if (folder) {
+				const folderExists = this.app.vault.getAbstractFileByPath(folder);
+				if (!folderExists) {
+					await this.app.vault.createFolder(folder);
+					console.log('[DocumentCreator] Created folder:', folder);
+				}
+			}
+
 			const filepath = folder ? `${folder}/${filename}` : filename;
 
 			console.log('[DocumentCreator] Creating note:', filepath);

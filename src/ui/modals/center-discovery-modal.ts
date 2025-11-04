@@ -30,6 +30,7 @@
 import { Modal, App, Notice } from 'obsidian';
 import type { DiscoveredCenter } from '../../services/ai/types';
 import type { SeedNote } from '../../services/vault/types';
+import type { WriteAliveSettings } from '../../settings/settings';
 import { CenterCard } from './components/center-card';
 import { CostDisplay } from './components/cost-display';
 import { ErrorState, type ErrorAction } from './components/error-state';
@@ -391,6 +392,36 @@ export class CenterDiscoveryModal extends Modal {
 	}
 
 	/**
+	 * Get output folder based on settings
+	 *
+	 * @returns Folder path where new note should be created
+	 */
+	private getOutputFolder(): string {
+		const plugin = (this.app as any).plugins.plugins.writealive;
+		const settings: WriteAliveSettings | undefined = plugin?.settings;
+
+		if (!settings) {
+			return ''; // Default to vault root if settings not available
+		}
+
+		switch (settings.documentOutputLocation) {
+			case 'vault-root':
+				return '';
+
+			case 'same-folder':
+				// Get current active file's folder
+				const activeFile = this.app.workspace.getActiveFile();
+				return activeFile?.parent?.path || '';
+
+			case 'custom-folder':
+				return settings.customOutputFolder;
+
+			default:
+				return '';
+		}
+	}
+
+	/**
 	 * Handle "Start Writing" action
 	 *
 	 * Creates a new note from the selected center.
@@ -404,10 +435,14 @@ export class CenterDiscoveryModal extends Modal {
 				this.onStartWriting(center);
 			}
 
+			// Get output folder from settings
+			const folder = this.getOutputFolder();
+
 			// Create note using DocumentCreator
 			const file = await this.documentCreator.createNoteFromCenter(
 				center,
-				this.seeds
+				this.seeds,
+				{ folder }
 			);
 
 			// Show success notice

@@ -32,6 +32,7 @@ import { CenterDiscoveryModal } from './modals/center-discovery-modal';
 import { TagStatistics } from '../services/vault/tag-statistics';
 import { TagFilterPanel } from './components/tag-filter-panel';
 import type { TagFilterChangeEvent } from './components/tag-filter-panel';
+import type { WriteAliveSettings } from '../settings/settings';
 
 /**
  * Gather Seeds Modal
@@ -646,6 +647,36 @@ export class GatherSeedsModal extends Modal {
 	}
 
 	/**
+	 * Get output folder based on settings
+	 *
+	 * @returns Folder path where new note should be created
+	 */
+	private getOutputFolder(): string {
+		const plugin = (this.app as any).plugins.plugins.writealive;
+		const settings: WriteAliveSettings | undefined = plugin?.settings;
+
+		if (!settings) {
+			return ''; // Default to vault root if settings not available
+		}
+
+		switch (settings.documentOutputLocation) {
+			case 'vault-root':
+				return '';
+
+			case 'same-folder':
+				// Get current active file's folder
+				const activeFile = this.app.workspace.getActiveFile();
+				return activeFile?.parent?.path || '';
+
+			case 'custom-folder':
+				return settings.customOutputFolder;
+
+			default:
+				return '';
+		}
+	}
+
+	/**
 	 * Create new document from selected seeds
 	 *
 	 * Creates a new markdown file with seeds as quoted content.
@@ -678,9 +709,22 @@ export class GatherSeedsModal extends Modal {
 		content += '## Writing\n\n';
 		content += 'What center do you see across these ideas?\n\n';
 
+		// Get output folder from settings
+		const folder = this.getOutputFolder();
+
+		// Create file path
+		let filePath = title + '.md';
+		if (folder) {
+			// Ensure folder exists
+			const folderExists = this.app.vault.getAbstractFileByPath(folder);
+			if (!folderExists) {
+				await this.app.vault.createFolder(folder);
+			}
+			filePath = `${folder}/${title}.md`;
+		}
+
 		// Create file
-		const fileName = `${title}.md`;
-		const file = await this.app.vault.create(fileName, content);
+		const file = await this.app.vault.create(filePath, content);
 
 		// Open the new file
 		const leaf = this.app.workspace.getLeaf();

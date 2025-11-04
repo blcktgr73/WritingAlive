@@ -13,6 +13,11 @@ import type { EncryptedKey } from '../services/encryption';
 export type AIProvider = 'claude' | 'gpt' | 'gemini';
 
 /**
+ * Document output location types
+ */
+export type DocumentOutputLocation = 'vault-root' | 'same-folder' | 'custom-folder';
+
+/**
  * WriteAlive Plugin Settings
  *
  * Contains all user-configurable options.
@@ -86,6 +91,19 @@ export interface WriteAliveSettings {
 	 * @default 'en' - English
 	 */
 	language: 'en' | 'ko';
+
+	/**
+	 * Document output location
+	 * @default 'vault-root' - Save to vault root
+	 */
+	documentOutputLocation: DocumentOutputLocation;
+
+	/**
+	 * Custom folder path for document output
+	 * Only used when documentOutputLocation is 'custom-folder'
+	 * @default '' - Empty string
+	 */
+	customOutputFolder: string;
 }
 
 /**
@@ -107,6 +125,8 @@ export const DEFAULT_SETTINGS: WriteAliveSettings = {
 	autoSaveInterval: 30,
 	showCostWarnings: true,
 	language: 'en',
+	documentOutputLocation: 'vault-root',
+	customOutputFolder: '',
 };
 
 /**

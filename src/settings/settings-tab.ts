@@ -1,8 +1,8 @@
-import type { App } from 'obsidian';
+import type { App, TFolder } from 'obsidian';
 import { PluginSettingTab, Setting, Notice } from 'obsidian';
 import type WriteAlivePlugin from '../main';
 import { encryptionService } from '../services/encryption';
-import type { AIProvider } from './settings';
+import type { AIProvider, DocumentOutputLocation } from './settings';
 
 /**
  * WriteAlive Settings Tab
@@ -39,6 +39,28 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 	constructor(app: App, plugin: WriteAlivePlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+	}
+
+	/**
+	 * Get all folders in the vault
+	 *
+	 * @returns Array of folder paths
+	 */
+	private getAllFolders(): string[] {
+		const folders: string[] = [];
+		const allFiles = this.app.vault.getAllLoadedFiles();
+
+		for (const file of allFiles) {
+			// Check if this is a folder by checking if it's an instance of TFolder
+			if ((file as TFolder).children !== undefined) {
+				folders.push(file.path);
+			}
+		}
+
+		// Sort folders alphabetically
+		folders.sort();
+
+		return folders;
 	}
 
 	async display(): Promise<void> {
@@ -366,5 +388,49 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+
+		// Document Output Location
+		new Setting(containerEl)
+			.setName('새 노트를 생성하는 위치')
+			.setDesc('Start Writing 또는 Find Centers에서 생성되는 노트의 저장 위치')
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption('vault-root', '보관함 최상위 폴더')
+					.addOption('same-folder', '현재 파일과 동일한 폴더')
+					.addOption('custom-folder', '아래에 지정된 폴더')
+					.setValue(this.plugin.settings.documentOutputLocation)
+					.onChange(async (value) => {
+						this.plugin.settings.documentOutputLocation = value as DocumentOutputLocation;
+						await this.plugin.saveSettings();
+						// Refresh to show/hide custom folder input
+						this.display();
+					})
+			);
+
+		// Custom Output Folder (only shown when custom-folder is selected)
+		if (this.plugin.settings.documentOutputLocation === 'custom-folder') {
+			// Get all folders in vault
+			const folders = this.getAllFolders();
+
+			new Setting(containerEl)
+				.setName('출력 폴더 선택')
+				.setDesc('새 노트가 저장될 폴더를 선택하세요')
+				.addDropdown((dropdown) => {
+					// Add vault root option
+					dropdown.addOption('', '보관함 루트 (/)');
+
+					// Add all folders
+					folders.forEach(folder => {
+						dropdown.addOption(folder, folder);
+					});
+
+					dropdown
+						.setValue(this.plugin.settings.customOutputFolder)
+						.onChange(async (value) => {
+							this.plugin.settings.customOutputFolder = value;
+							await this.plugin.saveSettings();
+						});
+				});
+		}
 	}
 }
