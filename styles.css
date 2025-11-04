@@ -182,6 +182,8 @@
 	border-radius: 6px;
 	border: 1px solid var(--background-modifier-border);
 	flex-shrink: 0;
+	max-height: 200px;
+	overflow-y: auto;
 }
 
 .writealive-seeds-filters .setting-item {
@@ -206,11 +208,10 @@
 
 .writealive-seeds-container {
 	margin-bottom: 1em;
-	flex: 1 1 auto;
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	min-height: 0;
-	overflow: visible;
 }
 
 .writealive-seeds-header {

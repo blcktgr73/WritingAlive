@@ -172,7 +172,7 @@ export class DocumentCreator {
 		// Could use js-yaml library for complex cases
 		const yaml = this.objectToYaml(frontmatterObj, 0);
 
-		return `---\n${yaml}---\n`;
+		return `---\n${yaml}\n---\n`;
 	}
 
 	/**
