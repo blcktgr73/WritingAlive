@@ -310,7 +310,10 @@ RETURN JSON FORMAT:
   ]
 }
 
-Identify 2-4 centers. Rank by strength (strongest first). Include recommendation only for the top center.`;
+Identify 2-4 centers. Rank by strength (strongest first). Include recommendation only for the top center.
+
+LANGUAGE INSTRUCTION:
+Detect the primary language of the seed notes. If the seeds are primarily in Korean (한글), respond with center names and explanations in Korean. If the seeds are in English or mixed languages, respond in English.`;
 
 	return {
 		system: systemPrompt,

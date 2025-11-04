@@ -1,0 +1,445 @@
+/**
+ * WriteAlive Plugin Styles
+ *
+ * Custom styles for WriteAlive UI components.
+ * Uses Obsidian CSS variables for theme compatibility.
+ */
+
+/* ===== Snapshot Modal ===== */
+
+.writealive-snapshot-modal {
+	padding: 0;
+}
+
+.writealive-snapshot-modal h2 {
+	margin-bottom: 1em;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* Snapshot List */
+
+.writealive-snapshot-list {
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: 0.5em 0;
+}
+
+/* Snapshot Item */
+
+.writealive-snapshot-item {
+	margin-bottom: 1em;
+	padding: 1em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background-color: var(--background-primary);
+	transition: all 0.2s ease;
+}
+
+.writealive-snapshot-item:hover {
+	background-color: var(--background-primary-alt);
+	border-color: var(--interactive-accent);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.writealive-snapshot-item:last-child {
+	margin-bottom: 0;
+}
+
+/* Snapshot Header */
+
+.writealive-snapshot-header {
+	margin-bottom: 0.5em;
+}
+
+.writealive-snapshot-name {
+	margin: 0;
+	font-size: 1.1em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+/* Snapshot Metadata */
+
+.writealive-snapshot-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+	margin-bottom: 0.75em;
+	font-size: 0.9em;
+}
+
+.writealive-snapshot-timestamp,
+.writealive-snapshot-stats,
+.writealive-snapshot-analysis,
+.writealive-snapshot-source {
+	display: flex;
+	gap: 0.5em;
+	align-items: center;
+}
+
+.writealive-meta-value {
+	color: var(--text-muted);
+}
+
+.writealive-source-badge {
+	display: inline-block;
+	padding: 0.15em 0.5em;
+	border-radius: 4px;
+	font-size: 0.85em;
+	background-color: var(--background-modifier-border);
+	color: var(--text-muted);
+}
+
+/* Snapshot Actions */
+
+.writealive-snapshot-actions {
+	display: flex;
+	gap: 0.5em;
+	margin-top: 0.5em;
+}
+
+.writealive-snapshot-actions button {
+	padding: 0.4em 1em;
+	font-size: 0.9em;
+	cursor: pointer;
+}
+
+/* Empty State */
+
+.writealive-empty-state {
+	padding: 2em;
+	text-align: center;
+}
+
+.writealive-empty-message {
+	font-size: 1.1em;
+	font-weight: 600;
+	color: var(--text-muted);
+	margin-bottom: 0.5em;
+}
+
+.writealive-empty-hint {
+	font-size: 0.9em;
+	color: var(--text-faint);
+	margin: 0;
+}
+
+/* Error State */
+
+.writealive-error-state {
+	padding: 2em;
+	text-align: center;
+}
+
+.writealive-error-message {
+	font-size: 1.1em;
+	font-weight: 600;
+	color: var(--text-error);
+	margin-bottom: 0.5em;
+}
+
+.writealive-error-details {
+	font-size: 0.9em;
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+	margin: 0;
+}
+
+/* ===== Gather Seeds Modal ===== */
+
+.writealive-gather-seeds-modal {
+	padding: 0;
+	min-width: 80vw;
+	max-width: 1200px;
+	min-height: 70vh;
+	max-height: 85vh;
+}
+
+.writealive-gather-seeds-modal h2 {
+	margin-bottom: 1em;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* Filter Controls */
+
+.writealive-seeds-filters {
+	margin-bottom: 1em;
+	padding: 1em;
+	background-color: var(--background-secondary);
+	border-radius: 6px;
+	border: 1px solid var(--background-modifier-border);
+}
+
+.writealive-seeds-filters .setting-item {
+	border-top: none;
+	padding: 0.5em 0;
+}
+
+.writealive-seeds-filters .setting-item:first-child {
+	padding-top: 0;
+}
+
+.writealive-seeds-filters .setting-item-info {
+	flex-grow: 1;
+}
+
+.writealive-seeds-filters .setting-item-control {
+	flex-grow: 0;
+	min-width: 150px;
+}
+
+/* Seeds Container */
+
+.writealive-seeds-container {
+	margin-bottom: 1em;
+}
+
+.writealive-seeds-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5em;
+	padding: 0.5em 0;
+}
+
+.writealive-seeds-count {
+	font-size: 1em;
+	font-weight: 600;
+	color: var(--text-normal);
+	margin: 0;
+}
+
+/* Seeds List */
+
+.writealive-seeds-list {
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: 0.5em 0;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background-color: var(--background-primary);
+}
+
+/* Seed Item */
+
+.writealive-seed-item {
+	display: flex;
+	gap: 1em;
+	padding: 1em;
+	border-bottom: 1px solid var(--background-modifier-border);
+	transition: all 0.2s ease;
+}
+
+.writealive-seed-item:last-child {
+	border-bottom: none;
+}
+
+.writealive-seed-item.writealive-seed-clickable {
+	cursor: pointer;
+}
+
+.writealive-seed-item.writealive-seed-clickable:hover {
+	background-color: var(--background-primary-alt);
+}
+
+.writealive-seed-item.writealive-seed-selected {
+	background-color: var(--background-modifier-hover);
+	border-left: 3px solid var(--interactive-accent);
+}
+
+/* Seed Checkbox */
+
+.writealive-seed-checkbox {
+	flex-shrink: 0;
+	display: flex;
+	align-items: flex-start;
+	padding-top: 0.2em;
+}
+
+.writealive-seed-checkbox input[type="checkbox"] {
+	cursor: pointer;
+	width: 18px;
+	height: 18px;
+}
+
+/* Seed Content */
+
+.writealive-seed-content {
+	flex-grow: 1;
+	min-width: 0; /* Allow text truncation */
+}
+
+.writealive-seed-title {
+	margin: 0 0 0.5em 0;
+	font-size: 1em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.writealive-seed-excerpt {
+	margin: 0 0 0.75em 0;
+	font-size: 0.9em;
+	color: var(--text-muted);
+	line-height: 1.5;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+/* Seed Metadata */
+
+.writealive-seed-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+	align-items: center;
+	font-size: 0.85em;
+}
+
+.writealive-seed-date {
+	color: var(--text-faint);
+}
+
+.writealive-seed-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35em;
+}
+
+.writealive-seed-tag {
+	padding: 0.15em 0.5em;
+	border-radius: 4px;
+	background-color: var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: 0.9em;
+}
+
+.writealive-seed-tag-more {
+	color: var(--text-faint);
+	font-style: italic;
+}
+
+.writealive-seed-backlinks {
+	color: var(--text-faint);
+}
+
+/* Action Buttons */
+
+.writealive-seeds-actions {
+	display: flex;
+	gap: 0.5em;
+	justify-content: flex-end;
+	margin-top: 1em;
+	padding-top: 1em;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.writealive-seeds-actions button {
+	padding: 0.5em 1.5em;
+	font-size: 0.95em;
+	cursor: pointer;
+}
+
+/* Loading State */
+
+.writealive-loading {
+	padding: 2em;
+	text-align: center;
+}
+
+.writealive-loading p {
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+/* ===== Confirmation Modal ===== */
+
+.modal-button-container {
+	display: flex;
+	gap: 0.5em;
+	justify-content: flex-end;
+	margin-top: 1em;
+}
+
+/* ===== Responsive Design ===== */
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+	/* Snapshot Modal */
+	.writealive-snapshot-list {
+		max-height: 50vh;
+	}
+
+	.writealive-snapshot-meta {
+		font-size: 0.85em;
+	}
+
+	.writealive-snapshot-actions {
+		flex-direction: column;
+	}
+
+	.writealive-snapshot-actions button {
+		width: 100%;
+	}
+
+	/* Gather Seeds Modal */
+	.writealive-gather-seeds-modal {
+		min-width: unset;
+		max-width: 100%;
+	}
+
+	.writealive-seeds-list {
+		max-height: 40vh;
+	}
+
+	.writealive-seed-meta {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5em;
+	}
+
+	.writealive-seeds-actions {
+		flex-direction: column;
+	}
+
+	.writealive-seeds-actions button {
+		width: 100%;
+	}
+}
+
+/* ===== Accessibility ===== */
+
+/* Focus indicators */
+.writealive-snapshot-item:focus-within {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Button states */
+.writealive-snapshot-actions button:hover {
+	opacity: 0.8;
+}
+
+.writealive-snapshot-actions button:active {
+	transform: scale(0.98);
+}
+
+.writealive-snapshot-actions button:focus {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	.writealive-snapshot-item,
+	.writealive-snapshot-actions button {
+		transition: none;
+	}
+
+	.writealive-snapshot-actions button:active {
+		transform: none;
+	}
+}

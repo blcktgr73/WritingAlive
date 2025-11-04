@@ -196,6 +196,15 @@ export class DocumentCreator {
 	): string {
 		const lines: string[] = [];
 
+		// Detect if center name/explanation is in Korean
+		const isKorean = this.detectKorean(center.name + center.explanation);
+		const writingPrompt = isKorean
+			? '이 센터는 나에게 어떤 의미를 갖는가?'
+			: 'What does this center mean to me?';
+		const referenceTitle = isKorean
+			? '## 모아온 씨앗들 (참고자료)'
+			: '## Gathered Seeds (Reference)';
+
 		// 1. Title
 		lines.push(`# ${center.name}`);
 		lines.push('');
@@ -204,12 +213,11 @@ export class DocumentCreator {
 		lines.push(`> ${center.explanation}`);
 		lines.push('');
 
-		// 3. Writing prompt
-		lines.push('What does this center mean to me?');
+		// 3. Writing prompt (in appropriate language)
+		lines.push(writingPrompt);
 		lines.push('');
 
-		// 4. Cursor placeholder
-		lines.push('[Cursor positioned here]');
+		// 4. Space for writing (removed red placeholder)
 		lines.push('');
 		lines.push('');
 		lines.push('');
@@ -218,8 +226,8 @@ export class DocumentCreator {
 		// 5. Horizontal rule
 		lines.push('---');
 
-		// 6. Seeds reference section
-		lines.push('## Gathered Seeds (Reference)');
+		// 6. Seeds reference section (in appropriate language)
+		lines.push(referenceTitle);
 		lines.push('');
 
 		// Add each seed as blockquote with wikilink
@@ -344,6 +352,27 @@ export class DocumentCreator {
 				`Failed to open file: ${error instanceof Error ? error.message : String(error)}`
 			);
 		}
+	}
+
+	/**
+	 * Detect if text is primarily in Korean
+	 *
+	 * Checks if text contains significant Korean characters (Hangul).
+	 *
+	 * @param text - Text to analyze
+	 * @returns True if text is primarily Korean
+	 */
+	private detectKorean(text: string): boolean {
+		// Count Korean characters (Hangul syllables: 0xAC00-0xD7AF)
+		const koreanChars = text.match(/[\uAC00-\uD7AF]/g);
+		const koreanCount = koreanChars ? koreanChars.length : 0;
+
+		// Count total meaningful characters (exclude whitespace and punctuation)
+		const meaningfulChars = text.match(/[\w\uAC00-\uD7AF]/g);
+		const totalCount = meaningfulChars ? meaningfulChars.length : 0;
+
+		// Consider Korean if > 30% of characters are Hangul
+		return totalCount > 0 && koreanCount / totalCount > 0.3;
 	}
 
 	/**

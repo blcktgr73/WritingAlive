@@ -43,4 +43,3 @@ coverage/
 # Plugin build artifacts
 main.js
 *.js.map
-styles.css
