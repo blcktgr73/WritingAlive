@@ -42,6 +42,7 @@ import {
 	createFindCentersFromSeedsPrompt,
 	validateJsonResponse,
 } from '../prompts';
+import { requestUrl } from 'obsidian';
 
 /**
  * Claude API Request/Response Types
@@ -351,8 +352,9 @@ export class ClaudeProvider extends BaseAIProvider {
 					userMessageLength: userMessage.length,
 				});
 
-				// Make API request
-				const response = await fetch(this.apiEndpoint, {
+				// Make API request using Obsidian's requestUrl
+				const response = await requestUrl({
+					url: this.apiEndpoint,
 					method: 'POST',
 					headers: {
 						'x-api-key': this.apiKey,
@@ -360,16 +362,17 @@ export class ClaudeProvider extends BaseAIProvider {
 						'content-type': 'application/json',
 					},
 					body: JSON.stringify(requestBody),
+					throw: false, // Don't throw on HTTP errors, handle manually
 				});
 
 				// Handle HTTP errors
-				if (!response.ok) {
-					const errorText = await response.text();
+				if (response.status >= 400) {
+					const errorText = response.text || JSON.stringify(response.json);
 					const statusCode = response.status;
 
 					// Rate limit - retry with backoff
 					if (statusCode === 429) {
-						const retryAfter = response.headers.get('retry-after');
+						const retryAfter = response.headers['retry-after'];
 						const delay = retryAfter
 							? parseInt(retryAfter) * 1000
 							: this.calculateBackoffDelay(attempt);
@@ -402,7 +405,7 @@ export class ClaudeProvider extends BaseAIProvider {
 				}
 
 				// Parse response
-				const data = (await response.json()) as ClaudeResponse;
+				const data = response.json as ClaudeResponse;
 
 				// Validate response structure
 				if (!data.content || data.content.length === 0) {
