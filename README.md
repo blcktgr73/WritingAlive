@@ -143,9 +143,15 @@ npm run dev
 ```
 
 ### Testing in Obsidian
-1. Copy `dist/` contents to `.obsidian/plugins/writealive/` in your test vault
-2. Enable "WriteAlive" in Obsidian Settings → Community Plugins
-3. Configure AI API key in plugin settings
+1. Build the plugin (creates the following files):
+   - `main.js` - Plugin code
+   - `manifest.json` - Plugin metadata
+   - `styles.css` - Plugin styles
+2. Copy these 3 files to `.obsidian/plugins/writealive/` in your test vault
+3. Enable "WriteAlive" in Obsidian Settings → Community Plugins
+4. Configure AI API key in plugin settings
+
+**Note**: Only these 3 files are needed for the plugin to work in Obsidian.
 
 ## 📖 Usage Example
 
