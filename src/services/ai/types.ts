@@ -736,3 +736,107 @@ export type AIErrorCode =
 	| 'QUOTA_EXCEEDED'
 	| 'INVALID_REQUEST'
 	| 'INSUFFICIENT_SEEDS'; // T-010: Not enough seeds for center finding
+
+/**
+ * Next Step Suggestion (T-024)
+ *
+ * Represents an AI-suggested direction for expanding/developing a document.
+ * Based on analysis of current document content and metadata.
+ */
+export interface NextStepSuggestion {
+	/**
+	 * Unique identifier for this suggestion
+	 */
+	id: string;
+
+	/**
+	 * Type of expansion suggested
+	 */
+	type: 'deepen' | 'connect' | 'question' | 'contrast';
+
+	/**
+	 * Brief title describing the direction (5-8 words)
+	 */
+	direction: string;
+
+	/**
+	 * Why this expansion improves document wholeness (2-3 sentences)
+	 */
+	rationale: string;
+
+	/**
+	 * Specific content hints (3-5 bullet points)
+	 */
+	contentHints: string[];
+
+	/**
+	 * Strength of this suggestion
+	 */
+	strength: 'strong' | 'medium' | 'weak';
+
+	/**
+	 * Estimated length to add (words)
+	 */
+	estimatedLength: number;
+
+	/**
+	 * Related seed note paths (if applicable)
+	 */
+	relatedSeeds?: string[];
+}
+
+/**
+ * Next Steps Result (T-024)
+ *
+ * Complete result from AI next steps analysis
+ */
+export interface NextStepsResult {
+	/**
+	 * All suggested next steps (2-4 suggestions)
+	 */
+	suggestions: NextStepSuggestion[];
+
+	/**
+	 * Current document wholeness score (1-10)
+	 */
+	currentWholeness: number;
+
+	/**
+	 * Key themes identified in document
+	 */
+	keyThemes: string[];
+
+	/**
+	 * Related seeds discovered in vault (optional)
+	 */
+	relatedSeeds?: string[];
+
+	/**
+	 * Token usage statistics
+	 */
+	usage: {
+		promptTokens: number;
+		completionTokens: number;
+		totalTokens: number;
+	};
+
+	/**
+	 * Estimated cost in USD
+	 */
+	estimatedCost: number;
+
+	/**
+	 * Provider used
+	 */
+	provider: 'claude' | 'gpt' | 'gemini';
+
+	/**
+	 * Whether this was a cached request
+	 */
+	cached?: boolean;
+
+	/**
+	 * Timestamp
+	 */
+	timestamp: string;
+}

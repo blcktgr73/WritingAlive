@@ -17,7 +17,7 @@
  * 4. Open file in editor
  * 5. Position cursor at writing prompt (TODO)
  *
- * Output Format:
+ * Output Format (top-to-bottom growth):
  * ```markdown
  * ---
  * writealive:
@@ -26,18 +26,18 @@
  *   gathered_at: ISO timestamp
  * ---
  *
+ * ## Gathered Seeds (Reference)
+ *
+ * > Seed excerpts with wikilinks
+ *
+ * ---
  * # Center Name
  *
  * > Center explanation
  *
  * What does this center mean to me?
  *
- * [Cursor positioned here]
- *
- * ---
- * ## Gathered Seeds (Reference)
- *
- * > Seed excerpts with wikilinks
+ * [Cursor positioned here - document grows downward from seeds]
  * ```
  */
 
@@ -188,13 +188,15 @@ export class DocumentCreator {
 	/**
 	 * Generate initial content for the note
 	 *
-	 * Structure:
-	 * 1. Title (H1): Center name
-	 * 2. Explanation: Center explanation as blockquote
-	 * 3. Writing prompt: "What does this center mean to me?"
-	 * 4. Cursor placeholder with spacing
-	 * 5. Horizontal rule separator
-	 * 6. Seeds reference section with excerpts
+	 * Structure (top-to-bottom growth):
+	 * 1. Seeds reference section with excerpts (at top)
+	 * 2. Horizontal rule separator
+	 * 3. Title (H1): Center name
+	 * 4. Explanation: Center explanation as blockquote
+	 * 5. Writing prompt: "What does this center mean to me?"
+	 * 6. Cursor placeholder with spacing
+	 *
+	 * This structure allows the document to grow naturally downward from the seeds.
 	 *
 	 * @param center - Selected center
 	 * @param seeds - Seed notes analyzed
@@ -215,28 +217,7 @@ export class DocumentCreator {
 			? '## 모아온 씨앗들 (참고자료)'
 			: '## Gathered Seeds (Reference)';
 
-		// 1. Title
-		lines.push(`# ${center.name}`);
-		lines.push('');
-
-		// 2. Explanation as blockquote
-		lines.push(`> ${center.explanation}`);
-		lines.push('');
-
-		// 3. Writing prompt (in appropriate language)
-		lines.push(writingPrompt);
-		lines.push('');
-
-		// 4. Space for writing (removed red placeholder)
-		lines.push('');
-		lines.push('');
-		lines.push('');
-		lines.push('');
-
-		// 5. Horizontal rule
-		lines.push('---');
-
-		// 6. Seeds reference section (in appropriate language)
+		// 1. Seeds reference section (at top)
 		lines.push(referenceTitle);
 		lines.push('');
 
@@ -252,6 +233,29 @@ export class DocumentCreator {
 			lines.push(`> — [[${wikilinkPath}]]`);
 			lines.push('');
 		}
+
+		lines.push('');
+
+		// 2. Horizontal rule
+		lines.push('---');
+
+		// 3. Title
+		lines.push(`# ${center.name}`);
+		lines.push('');
+
+		// 4. Explanation as blockquote
+		lines.push(`> ${center.explanation}`);
+		lines.push('');
+
+		// 5. Writing prompt (in appropriate language)
+		lines.push(writingPrompt);
+		lines.push('');
+
+		// 6. Space for writing
+		lines.push('');
+		lines.push('');
+		lines.push('');
+		lines.push('');
 
 		return lines.join('\n');
 	}

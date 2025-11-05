@@ -1,4 +1,4 @@
-import { Plugin, Notice } from 'obsidian';
+import { Plugin, Notice, Menu } from 'obsidian';
 import type { WriteAliveSettings } from './settings/settings';
 import { DEFAULT_SETTINGS, needsMigration } from './settings/settings';
 import type { LegacySettings } from './settings/settings';
@@ -195,6 +195,9 @@ export default class WriteAlivePlugin extends Plugin {
 
 		// Initialize storage services (Phase 2)
 		this.initializeStorageServices();
+
+		// Register ribbon button (T-024)
+		this.registerRibbonButton();
 
 		// Register command palette commands (Phase 3)
 		this.registerCommands();
@@ -708,7 +711,297 @@ export default class WriteAlivePlugin extends Plugin {
 			},
 		});
 
+		// Command: Suggest Next Steps (T-024)
+		this.addCommand({
+			id: 'suggest-next-steps',
+			name: 'Suggest Next Steps',
+			callback: async () => {
+				await this.openSuggestNextSteps();
+			},
+		});
+
 		console.log('[WriteAlive] Commands registered');
+	}
+
+	/**
+	 * Register ribbon button with context menu (T-024)
+	 *
+	 * Creates a unified ribbon button (🌱 icon) that:
+	 * - Left-click: Opens Gather Seeds modal (primary action)
+	 * - Right-click: Shows context menu with all WriteAlive commands
+	 *
+	 * This provides visual discoverability for mouse-centric users
+	 * while maintaining command palette access for keyboard users.
+	 */
+	private registerRibbonButton(): void {
+		const ribbonIcon = this.addRibbonIcon(
+			'sprout',
+			'WriteAlive - Click for Seeds, Right-click for Menu',
+			(evt) => {
+				// Left-click: Open Gather Seeds modal (primary action)
+				if (evt.button === 0) {
+					this.openGatherSeeds();
+				}
+			}
+		);
+
+		// Right-click: Show context menu with all commands
+		ribbonIcon.addEventListener('contextmenu', (evt) => {
+			evt.preventDefault();
+
+			const menu = new Menu();
+
+			// Workflow commands section
+			menu.addItem((item) =>
+				item
+					.setTitle('🌱 Gather Seeds')
+					.setSection('workflow')
+					.onClick(() => this.openGatherSeeds())
+			);
+
+			menu.addItem((item) =>
+				item
+					.setTitle('💡 Suggest Next Steps')
+					.setSection('workflow')
+					.onClick(() => this.openSuggestNextSteps())
+			);
+
+			menu.addSeparator();
+
+			// Snapshot commands section
+			menu.addItem((item) =>
+				item
+					.setTitle('📊 Create Snapshot')
+					.setSection('snapshots')
+					.onClick(() => this.createSnapshot())
+			);
+
+			menu.addItem((item) =>
+				item
+					.setTitle('📂 List Snapshots')
+					.setSection('snapshots')
+					.onClick(() => this.listSnapshots())
+			);
+
+			menu.addItem((item) =>
+				item
+					.setTitle('⏮️ Restore Latest Snapshot')
+					.setSection('snapshots')
+					.onClick(() => this.restoreLatestSnapshot())
+			);
+
+			menu.showAtMouseEvent(evt);
+		});
+
+		console.log('[WriteAlive] Ribbon button registered');
+	}
+
+	/**
+	 * Open Gather Seeds modal
+	 *
+	 * Helper method for ribbon button and commands.
+	 */
+	private openGatherSeeds(): void {
+		if (!this.seedGatherer) {
+			new Notice('WriteAlive: Seed gatherer not initialized');
+			console.error('[WriteAlive] Cannot gather seeds: SeedGatherer not initialized');
+			return;
+		}
+
+		new GatherSeedsModal(this.app, this.seedGatherer, this.aiService).open();
+	}
+
+	/**
+	 * Open Suggest Next Steps (T-024 Phase 2)
+	 *
+	 * Helper method for ribbon button and commands.
+	 * Analyzes current document and appends AI-generated suggestions.
+	 */
+	private async openSuggestNextSteps(): Promise<void> {
+		const file = this.app.workspace.getActiveFile();
+
+		if (!file) {
+			new Notice('WriteAlive: Please open a document first');
+			return;
+		}
+
+		if (!this.aiService) {
+			new Notice('WriteAlive: AI service not configured. Please add API key in settings.');
+			return;
+		}
+
+		// Get content from active editor
+		const { MarkdownView } = require('obsidian');
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView) as any;
+		if (!view || !view.editor) {
+			new Notice('WriteAlive: No active editor');
+			return;
+		}
+
+		const content = view.editor.getValue();
+
+		if (!content || content.trim().length < 100) {
+			new Notice('WriteAlive: Document is too short for meaningful suggestions (min 100 characters)');
+			return;
+		}
+
+		// Show loading notice
+		const loadingNotice = new Notice('💡 Analyzing document for next steps... (5-7 seconds)', 0);
+
+		try {
+			// Call AI service
+			const result = await this.aiService.suggestNextSteps(content, file);
+
+			// Hide loading notice
+			loadingNotice.hide();
+
+			// Format suggestions as markdown and append to document
+			let suggestionsText = '\n\n---\n\n## 💡 Suggested Next Steps\n';
+			suggestionsText += `*Generated on ${new Date().toLocaleString()}*\n\n`;
+			suggestionsText += `**Document Analysis:**\n`;
+			suggestionsText += `- Wholeness Score: ${result.currentWholeness}/10\n`;
+			suggestionsText += `- Key Themes: ${result.keyThemes.join(', ')}\n\n`;
+
+			result.suggestions.forEach((suggestion, index) => {
+				const strengthIcon = suggestion.strength === 'strong' ? '⭐⭐⭐' : suggestion.strength === 'medium' ? '⭐⭐' : '⭐';
+				const typeEmoji: Record<string, string> = {
+					deepen: '🔍',
+					connect: '🔗',
+					question: '❓',
+					contrast: '⚖️'
+				};
+
+				suggestionsText += `### ${index + 1}. ${typeEmoji[suggestion.type] || '💡'} ${suggestion.direction} ${strengthIcon}\n\n`;
+				suggestionsText += `**Type:** ${suggestion.type.charAt(0).toUpperCase() + suggestion.type.slice(1)}\n\n`;
+				suggestionsText += `**Why this matters:**\n${suggestion.rationale}\n\n`;
+				suggestionsText += `**Content Hints:**\n`;
+				suggestion.contentHints.forEach(hint => {
+					suggestionsText += `- ${hint}\n`;
+				});
+				suggestionsText += `\n**Estimated Length:** +${suggestion.estimatedLength} words\n\n`;
+
+				if (suggestion.relatedSeeds && suggestion.relatedSeeds.length > 0) {
+					suggestionsText += `**Related Seeds:** ${suggestion.relatedSeeds.map(s => `[[${s}]]`).join(', ')}\n\n`;
+				}
+
+				suggestionsText += `---\n\n`;
+			});
+
+			suggestionsText += `💰 **Cost:** $${result.estimatedCost.toFixed(4)} | **Tokens:** ${result.usage.totalTokens.toLocaleString()}\n\n`;
+
+			// Add natural continuation prompt
+			const isKorean = /[\uAC00-\uD7AF]/.test(content);
+			const continuationPrompt = isKorean
+				? '---\n\n이러한 제안을 보시고, 쓰셨던 글을 어떤 방향으로 진행해 보고 싶으세요?\n\n'
+				: '---\n\nAfter reviewing these suggestions, which direction would you like to take your writing?\n\n';
+
+			suggestionsText += continuationPrompt;
+
+			// Append to document
+			const currentContent = view.editor.getValue();
+			view.editor.setValue(currentContent + suggestionsText);
+
+			// Scroll to bottom
+			view.editor.setCursor(view.editor.lastLine());
+
+			new Notice(`✅ Generated ${result.suggestions.length} suggestions (Cost: $${result.estimatedCost.toFixed(4)})`);
+		} catch (error) {
+			loadingNotice.hide();
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			new Notice(`❌ Failed to generate suggestions: ${errorMessage}`, 8000);
+			console.error('[WriteAlive] Suggest next steps failed:', error);
+		}
+	}
+
+	/**
+	 * Create snapshot for current file
+	 *
+	 * Helper method for ribbon button and commands.
+	 */
+	private async createSnapshot(): Promise<void> {
+		const file = this.app.workspace.getActiveFile();
+
+		if (!file) {
+			new Notice('WriteAlive: No active file');
+			return;
+		}
+
+		if (!this.snapshotManager) {
+			new Notice('WriteAlive: Snapshot manager not initialized');
+			console.error('[WriteAlive] Cannot create snapshot: SnapshotManager not initialized');
+			return;
+		}
+
+		try {
+			const snapshot = await this.snapshotManager.createSnapshot(file);
+			new Notice(`WriteAlive: Snapshot created - ${snapshot.metadata.name}`);
+			console.log('[WriteAlive] Snapshot created:', snapshot.metadata);
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			new Notice(`WriteAlive: Failed to create snapshot - ${errorMessage}`);
+			console.error('[WriteAlive] Snapshot creation failed:', error);
+		}
+	}
+
+	/**
+	 * List snapshots for current file
+	 *
+	 * Helper method for ribbon button and commands.
+	 */
+	private listSnapshots(): void {
+		const file = this.app.workspace.getActiveFile();
+
+		if (!file) {
+			new Notice('WriteAlive: No active file');
+			return;
+		}
+
+		if (!this.snapshotManager) {
+			new Notice('WriteAlive: Snapshot manager not initialized');
+			console.error('[WriteAlive] Cannot list snapshots: SnapshotManager not initialized');
+			return;
+		}
+
+		new SnapshotModal(this.app, file, this.snapshotManager).open();
+	}
+
+	/**
+	 * Restore latest snapshot for current file
+	 *
+	 * Helper method for ribbon button and commands.
+	 */
+	private async restoreLatestSnapshot(): Promise<void> {
+		const file = this.app.workspace.getActiveFile();
+
+		if (!file) {
+			new Notice('WriteAlive: No active file');
+			return;
+		}
+
+		if (!this.snapshotManager) {
+			new Notice('WriteAlive: Snapshot manager not initialized');
+			console.error('[WriteAlive] Cannot restore snapshot: SnapshotManager not initialized');
+			return;
+		}
+
+		try {
+			const snapshots = await this.snapshotManager.listSnapshots(file);
+
+			if (snapshots.length === 0) {
+				new Notice('WriteAlive: No snapshots available');
+				return;
+			}
+
+			const latestSnapshot = snapshots[0];
+			await this.snapshotManager.restoreSnapshot(file, latestSnapshot.id);
+
+			new Notice(`WriteAlive: Restored snapshot - ${latestSnapshot.name}`);
+			console.log('[WriteAlive] Snapshot restored:', latestSnapshot);
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			new Notice(`WriteAlive: Failed to restore snapshot - ${errorMessage}`);
+			console.error('[WriteAlive] Snapshot restore failed:', error);
+		}
 	}
 
 	/**

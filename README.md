@@ -153,6 +153,29 @@ npm run dev
 
 **Note**: Only these 3 files are needed for the plugin to work in Obsidian.
 
+## 🚀 Quick Start
+
+### Accessing WriteAlive Commands
+
+**Two Ways to Access**:
+
+1. **🌱 Ribbon Button (Visual Entry Point)**
+   - Look for the 🌱 icon in the left sidebar
+   - **Left-click**: Opens Gather Seeds (most common action)
+   - **Right-click**: Shows menu with all commands:
+     - 🌱 Gather Seeds
+     - 💡 Suggest Next Steps
+     - 📊 Create Snapshot
+     - 📂 List Snapshots
+     - ⏮️ Restore Latest Snapshot
+
+2. **⌨️ Command Palette (Keyboard Access)**
+   - Press `Cmd+P` (Mac) or `Ctrl+P` (Windows/Linux)
+   - Type "WriteAlive" to see all commands
+   - Select any command to run
+
+**Tip**: Use ribbon button for quick mouse access, command palette for keyboard-centric workflow!
+
 ## 📖 Usage Example
 
 ### Method 1: Seed Gathering (Spontaneous Ideas)

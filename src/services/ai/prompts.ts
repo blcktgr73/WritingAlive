@@ -390,3 +390,96 @@ export function validateJsonResponse(
 	console.log('[validateJsonResponse] Validation successful');
 	return obj;
 }
+
+/**
+ * Generate prompt for suggesting next steps (T-024)
+ *
+ * Analyzes current document and suggests 2-4 expansion directions
+ * categorized by type (deepen, connect, question, contrast).
+ *
+ * @param content - Current document content
+ * @param metadata - Optional document metadata from YAML frontmatter
+ * @returns Formatted prompt object
+ */
+export function createSuggestNextStepsPrompt(
+	content: string,
+	metadata?: {
+		gatheredSeeds?: string[];
+		selectedCenter?: { name: string; explanation: string };
+		keywords?: string[];
+	}
+): { system: string; user: string } {
+	const system = `${SALIGO_CONTEXT}
+
+Your task is to analyze a document and suggest next steps for expansion.
+
+Focus on suggestions that:
+1. **Enhance Wholeness**: Improve the document's structural coherence
+2. **Preserve Truth**: Stay faithful to the writer's authentic voice
+3. **Build Naturally**: Suggest organic growth from existing centers
+4. **Enable Discovery**: Help the writer discover what they didn't know they wanted to say
+
+Suggestion Categories:
+- **Deepen**: Add concrete examples, case studies, or detailed analysis
+- **Connect**: Link to related ideas, seeds, or external concepts
+- **Question**: Pose provocative questions to explore further
+- **Contrast**: Add contrasting perspectives or counterexamples
+
+Return JSON only, no markdown formatting.`;
+
+	const metadataSection = metadata
+		? `
+
+Document Metadata:
+- Gathered Seeds: ${metadata.gatheredSeeds?.length || 0} seeds referenced
+- Selected Center: ${metadata.selectedCenter?.name || 'None'}
+${metadata.keywords ? `- Keywords: ${metadata.keywords.join(', ')}` : ''}`
+		: '';
+
+	const user = `Analyze this document and suggest 2-4 expansion directions.
+
+Current Document:
+---
+${content}
+---
+${metadataSection}
+
+Provide suggestions in these categories (at least 2, maximum 4 total):
+1. **Deepen**: Add concrete examples, case studies, detailed analysis, or specific scenarios
+2. **Connect**: Link to related concepts, connect multiple ideas, or reference external sources
+3. **Question**: Pose thought-provoking questions that invite deeper exploration
+4. **Contrast**: Add contrasting perspectives, counterexamples, or opposing viewpoints
+
+For each suggestion, provide:
+- **type**: "deepen" | "connect" | "question" | "contrast"
+- **direction**: Brief title (5-8 words max)
+- **rationale**: Why this expansion improves wholeness (2-3 sentences)
+- **contentHints**: 3-5 specific bullet points of what to add
+- **strength**: "strong" | "medium" | "weak"
+- **estimatedLength**: Number of words to add (realistic estimate)
+- **relatedSeeds** (optional): Array of seed note titles if applicable
+
+Also analyze:
+- **currentWholeness**: Rate document coherence (1-10 scale)
+- **keyThemes**: 3-5 main themes in the document
+
+Return ONLY valid JSON (no markdown code blocks):
+{
+  "suggestions": [
+    {
+      "id": "suggestion-1",
+      "type": "deepen",
+      "direction": "Short title here",
+      "rationale": "Why this matters...",
+      "contentHints": ["Specific hint 1", "Specific hint 2", "Specific hint 3"],
+      "strength": "strong",
+      "estimatedLength": 250,
+      "relatedSeeds": ["optional-seed-1"]
+    }
+  ],
+  "currentWholeness": 7,
+  "keyThemes": ["theme1", "theme2", "theme3"]
+}`;
+
+	return { system, user };
+}

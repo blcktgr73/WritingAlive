@@ -39,6 +39,8 @@ import type {
 	MOCContext,
 	CenterFindingResult,
 	DiscoveredCenter,
+	NextStepsResult,
+	NextStepSuggestion,
 } from './types';
 import { ClaudeProvider } from './providers/claude-provider';
 import type { AIProvider as AIProviderType } from '../../settings/settings';
@@ -469,6 +471,235 @@ export class AIService {
 				error
 			);
 		}
+	}
+
+	/**
+	 * T-024: Suggest next steps for document expansion
+	 *
+	 * Analyzes current document and suggests 2-4 directions for expansion
+	 * categorized by type (deepen, connect, question, contrast).
+	 *
+	 * This method:
+	 * 1. Parses document content and metadata
+	 * 2. Calls AI provider with next steps prompt
+	 * 3. Parses and validates suggestions
+	 * 4. Returns structured results with usage stats
+	 *
+	 * @param content - Current document content (full markdown)
+	 * @param file - TFile reference for metadata extraction
+	 * @returns Next steps result with suggestions and analysis
+	 * @throws {AIServiceError} If API error or invalid response
+	 */
+	async suggestNextSteps(content: string, file: any): Promise<NextStepsResult> {
+		console.log('[AIService] Suggesting next steps', {
+			contentLength: content.length,
+			fileName: file?.name,
+		});
+
+		// Extract metadata from YAML frontmatter (if exists)
+		const metadata = this.extractDocumentMetadata(content);
+
+		// Import prompt function
+		const { createSuggestNextStepsPrompt } = await import('./prompts');
+
+		// Generate prompt
+		const prompt = createSuggestNextStepsPrompt(content, metadata);
+
+		console.log('[AIService] Generated next steps prompt');
+
+		try {
+			// Call provider (similar to findCentersFromSeeds pattern)
+			const responseText = await (this.provider as any).makeClaudeRequest(
+				prompt.system,
+				prompt.user
+			);
+
+			console.log('[AIService] Received response from provider');
+
+			// Parse response
+			const parsed = this.parseNextStepsResponse(responseText);
+
+			// Estimate token usage (approximate)
+			const promptTokens = this.provider.countTokens(prompt.system + prompt.user);
+			const completionTokens = this.provider.countTokens(responseText);
+
+			// Calculate costs (using provider's pricing)
+			const pricing = (this.provider as any).pricing;
+			const inputCost = (promptTokens / 1_000_000) * pricing.input;
+			const outputCost = (completionTokens / 1_000_000) * pricing.output;
+			const estimatedCost = inputCost + outputCost;
+
+			// Build result
+			const result: NextStepsResult = {
+				suggestions: parsed.suggestions,
+				currentWholeness: parsed.currentWholeness,
+				keyThemes: parsed.keyThemes,
+				relatedSeeds: parsed.relatedSeeds,
+				usage: {
+					promptTokens,
+					completionTokens,
+					totalTokens: promptTokens + completionTokens,
+				},
+				estimatedCost,
+				provider: this.config.provider,
+				cached: false,
+				timestamp: new Date().toISOString(),
+			};
+
+			console.log('[AIService] Next steps suggestion complete', {
+				suggestionCount: result.suggestions.length,
+				wholeness: result.currentWholeness,
+				cost: result.estimatedCost,
+			});
+
+			return result;
+		} catch (error) {
+			console.error('[AIService] Failed to suggest next steps:', error);
+			throw this.createError(
+				'PROVIDER_ERROR',
+				'Failed to suggest next steps',
+				error
+			);
+		}
+	}
+
+	/**
+	 * Extract document metadata from YAML frontmatter
+	 *
+	 * Parses writealive metadata if present.
+	 *
+	 * @param content - Document content
+	 * @returns Parsed metadata or undefined
+	 */
+	private extractDocumentMetadata(content: string): {
+		gatheredSeeds?: string[];
+		selectedCenter?: { name: string; explanation: string };
+		keywords?: string[];
+	} | undefined {
+		// Check if content starts with frontmatter
+		if (!content.trim().startsWith('---')) {
+			return undefined;
+		}
+
+		try {
+			// Extract frontmatter
+			const lines = content.split('\n');
+			const frontmatterEnd = lines.findIndex((line, i) => i > 0 && line.trim() === '---');
+
+			if (frontmatterEnd === -1) {
+				return undefined;
+			}
+
+			const frontmatter = lines.slice(1, frontmatterEnd).join('\n');
+
+			// Simple YAML parsing for writealive section
+			// (In production, use a proper YAML parser)
+			const writeAliveMatch = frontmatter.match(/writealive:([\s\S]*?)(?=\n\w+:|$)/);
+			if (!writeAliveMatch) {
+				return undefined;
+			}
+
+			const writeAliveSection = writeAliveMatch[1];
+
+			// Extract gathered_seeds
+			const seedsMatch = writeAliveSection.match(/gathered_seeds:\s*\[(.*?)\]/s);
+			const gatheredSeeds = seedsMatch
+				? seedsMatch[1]
+						.split(',')
+						.map(s => s.trim().replace(/['"]/g, ''))
+						.filter(Boolean)
+				: undefined;
+
+			// Extract selected_center
+			const centerNameMatch = writeAliveSection.match(/name:\s*['"](.*?)['"]/);
+			const centerExplanationMatch = writeAliveSection.match(/explanation:\s*['"](.*?)['"]/);
+
+			const selectedCenter =
+				centerNameMatch && centerExplanationMatch
+					? {
+							name: centerNameMatch[1],
+							explanation: centerExplanationMatch[1],
+					  }
+					: undefined;
+
+			return {
+				gatheredSeeds,
+				selectedCenter,
+			};
+		} catch (error) {
+			console.warn('[AIService] Failed to parse document metadata:', error);
+			return undefined;
+		}
+	}
+
+	/**
+	 * Parse AI response for next steps suggestions
+	 *
+	 * Validates and structures the JSON response.
+	 *
+	 * @param content - AI response content
+	 * @returns Parsed suggestions and analysis
+	 */
+	private parseNextStepsResponse(content: string): {
+		suggestions: NextStepSuggestion[];
+		currentWholeness: number;
+		keyThemes: string[];
+		relatedSeeds?: string[];
+	} {
+		// Import validation utility
+		const { validateJsonResponse } = require('./prompts');
+
+		// Validate JSON structure
+		const parsed = validateJsonResponse(content, [
+			'suggestions',
+			'currentWholeness',
+			'keyThemes',
+		]) as any;
+
+		// Validate suggestions array
+		if (!Array.isArray(parsed.suggestions)) {
+			throw new Error('Invalid response: suggestions must be an array');
+		}
+
+		if (parsed.suggestions.length < 2 || parsed.suggestions.length > 4) {
+			console.warn('[AIService] Suggestion count outside expected range (2-4)');
+		}
+
+		// Validate each suggestion
+		const suggestions: NextStepSuggestion[] = parsed.suggestions.map((s: any, index: number) => {
+			// Ensure required fields
+			if (!s.type || !s.direction || !s.rationale || !s.contentHints || !s.strength) {
+				throw new Error(`Invalid suggestion at index ${index}: missing required fields`);
+			}
+
+			// Validate type
+			if (!['deepen', 'connect', 'question', 'contrast'].includes(s.type)) {
+				throw new Error(`Invalid suggestion type at index ${index}: ${s.type}`);
+			}
+
+			// Validate strength
+			if (!['strong', 'medium', 'weak'].includes(s.strength)) {
+				throw new Error(`Invalid suggestion strength at index ${index}: ${s.strength}`);
+			}
+
+			return {
+				id: s.id || `suggestion-${index + 1}`,
+				type: s.type,
+				direction: s.direction,
+				rationale: s.rationale,
+				contentHints: Array.isArray(s.contentHints) ? s.contentHints : [],
+				strength: s.strength,
+				estimatedLength: s.estimatedLength || 200,
+				relatedSeeds: s.relatedSeeds,
+			};
+		});
+
+		return {
+			suggestions,
+			currentWholeness: parsed.currentWholeness,
+			keyThemes: Array.isArray(parsed.keyThemes) ? parsed.keyThemes : [],
+			relatedSeeds: parsed.relatedSeeds,
+		};
 	}
 
 	/**

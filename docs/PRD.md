@@ -6,11 +6,11 @@
 
 ---
 
-## Implementation Status (As of 2025-11-03)
+## Implementation Status (As of 2025-11-06)
 
 ### ✅ Completed Features
 
-**Core Workflow (T-20251103-013)**:
+**Core Workflow (T-20251103-013, T-20251106-024)**:
 - **Seed Gathering**: Tag-based collection from vault with photo support (T-007)
 - **Center Discovery Modal**: AI-powered center finding with visual UI (T-011b)
   - Multi-center display with strength indicators (⭐⭐⭐ Strong, ⭐⭐ Medium, ⭐ Weak)
@@ -21,6 +21,14 @@
   - YAML frontmatter with seed references and center metadata
   - Initial content generation with writing prompts
   - Cursor positioning in writing area
+- **Ribbon Button with Context Menu (T-024)**:
+  - Unified 🌱 icon in left sidebar for visual discoverability
+  - Left-click: Opens Gather Seeds (primary action)
+  - Right-click: Shows context menu with all 5 commands
+  - Dual access pattern: Ribbon (mouse users) + Command Palette (keyboard users)
+- **Command: Suggest Next Steps (T-024 Phase 1)**:
+  - Registered in command palette
+  - Placeholder implementation (Phase 2 coming soon)
 - **Complete Integration**: Seamless Gather Seeds → Find Centers → Start Writing workflow (<15s automation)
 
 **Technical Infrastructure**:
@@ -38,7 +46,7 @@
 ### 📝 In Progress
 
 **Phase 4 Features**:
-- Generative expansion suggestions
+- Suggest Next Steps AI implementation (T-024 Phase 2)
 - Wholeness analysis scoring
 - Read-aloud feedback
 - Version snapshots and comparison

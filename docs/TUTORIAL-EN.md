@@ -312,25 +312,71 @@ No need for complete structure or outline. Just this part is **true** right now.
 
 ### 3-1. AI Suggests Expansion Directions
 
-**Cmd/Ctrl + P** → `WriteAlive: Suggest Expansions`
+After writing your initial draft, ask WriteAlive for next step suggestions:
+
+**Method 1: Ribbon Button**
+- Right-click the 🌱 icon in the left sidebar
+- Select "Suggest Next Steps"
+
+**Method 2: Command Palette**
+- **Cmd/Ctrl + P** → `WriteAlive: Suggest Next Steps`
+
+WriteAlive analyzes your document and suggests 2-4 expansion directions:
 
 ```
-🌿 Directions your writing wants to grow:
+---
 
-Option A: Add Concrete Experience (⭐⭐⭐ Recommended)
-  "What happened when you practiced the first 4 bars perfectly?
-   Write so readers can feel that experience."
+## 🌿 Next Steps for Your Writing
 
-Option B: Use Nature Metaphor (⭐⭐)
-  "How does tree growth resemble your practice?
-   Develop thoughts while looking at the photo."
+**Current Wholeness**: 6.5/10
+**Key Themes**: practice method, perfectionism, learning process
 
-Option C: Connect to Other Domains (⭐)
-  "You discovered the same principle in programming?
-   What was that moment?"
+### ⭐⭐⭐ Deepen - Add Concrete Experience
+**Direction**: What happened when you practiced the first 4 bars perfectly?
+
+**Why this matters**: Your writing has a strong concept but needs lived experience to ground it. Readers connect through sensory details and specific moments.
+
+**Content hints**:
+- Describe the physical sensation when your fingers "knew" the pattern
+- What changed in your body between attempt 1 and attempt 20?
+- Include a specific mistake you made and how you caught it
+
+**Estimated length**: 2-3 paragraphs
+
+---
+
+### ⭐⭐ Connect - Link to Other Domains
+**Direction**: You mentioned discovering the same principle in programming. Develop this connection.
+
+**Why this matters**: Cross-domain connections reveal deeper patterns and make your insight more universal.
+
+**Content hints**:
+- Which programming practice mirrors "small part, entirely true"?
+- Was there a specific bug or refactoring moment?
+- How did both experiences teach you the same lesson?
+
+**Estimated length**: 2-3 paragraphs
+
+---
+
+### ⭐ Question - Explore Tension
+**Direction**: What happens when you can't find "the small part" to focus on?
+
+**Why this matters**: Addressing limitations and challenges adds depth and honesty to your writing.
+
+**Content hints**:
+- When does the "perfect 4 bars" method fail?
+- Are there times when you need to see the whole first?
+- How do you know when to zoom in vs. zoom out?
+
+**Estimated length**: 1-2 paragraphs
+
+---
+
+**Cost**: $0.02 (3,247 tokens) • **Provider**: Claude 3.5 Sonnet
 ```
 
-You choose **Option A** (feels most alive).
+You choose the **"Deepen"** suggestion (feels most alive).
 
 ### 3-2. Add Concrete Experience
 
