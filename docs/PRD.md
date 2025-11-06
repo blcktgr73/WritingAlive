@@ -26,9 +26,17 @@
   - Left-click: Opens Gather Seeds (primary action)
   - Right-click: Shows context menu with all 5 commands
   - Dual access pattern: Ribbon (mouse users) + Command Palette (keyboard users)
-- **Command: Suggest Next Steps (T-024 Phase 1)**:
-  - Registered in command palette
-  - Placeholder implementation (Phase 2 coming soon)
+- **Command: Suggest Next Steps (T-024)**: ✅
+  - Fully implemented AI-powered next steps analysis
+  - Appends suggestions to document for iterative writing guidance
+  - Includes wholeness score, key themes, and 2-4 expansion directions
+  - Natural continuation prompts for user reflection
+- **Snapshot & Version Management (T-012, T-013, T-014)**: ✅
+  - Create, list, restore, and delete document snapshots
+  - Hybrid storage (metadata in frontmatter, content in `.writealive/` folder)
+  - Diff comparison between snapshots and current document
+  - Automatic backup before restore operations
+  - Statistics tracking (word count, paragraph count, wholeness score)
 - **Complete Integration**: Seamless Gather Seeds → Find Centers → Start Writing workflow (<15s automation)
 
 **Technical Infrastructure**:
@@ -46,10 +54,9 @@
 ### 📝 In Progress
 
 **Phase 4 Features**:
-- Suggest Next Steps AI implementation (T-024 Phase 2)
-- Wholeness analysis scoring
-- Read-aloud feedback
-- Version snapshots and comparison
+- Wholeness analysis scoring (full implementation)
+- Read-aloud feedback with AI rhythm analysis
+- Enhanced snapshot comparison UI
 
 ### 🔜 Planned (MVP)
 
