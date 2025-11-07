@@ -28,8 +28,16 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
   - Configurable seed tags: `#seed`, `#idea`, `#💡`, `#씨앗`, or your custom tags
   - Support for multiple tags (finds notes matching any configured tag)
   - Bilingual support: Korean and English tags work seamlessly
+  - **Quick Start Mode**: Auto-select recent 10 seeds for instant center discovery
 - **MOC Integration**: Start writing from your Map of Contents notes
   - Works with `#moc` tag, folder patterns, or YAML frontmatter
+  - **NEW: Find Centers from MOC** - Discover structural centers from organized note collections
+    - AI analysis of 10-30 linked notes in your MOCs
+    - MOC structure awareness (headings, cross-domain patterns)
+    - Validation warnings for optimal MOC quality
+    - Cost-transparent analysis ($0.020-0.035 per MOC)
+    - Documents include MOC source attribution
+  - See tutorials: [English](docs/TUTORIAL-USING-MOC-EN.md) | [한국어](docs/TUTORIAL-USING-MOC-KR.md)
 - **Living MOCs**: Auto-update your MOCs with new seeds matching specific themes
   - Set tags per MOC: e.g., `seed_tags: [creativity, practice, 창의성]`
   - Three modes: realtime, daily notifications, or manual
@@ -38,9 +46,13 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 - Works with existing Zettelkasten, PARA, and other PKM workflows
 
 ### 🎯 AI-Assisted Center Discovery
-- Identify the strongest "centers" in your writing
+- **Two Discovery Workflows**:
+  1. **From Scattered Seeds**: Discover patterns across 5-15 tagged notes (exploratory writing)
+  2. **From Organized MOCs**: Synthesize 10-30 linked notes into thesis statements (academic writing)
+- Identify the strongest "centers" that unify your ideas
+- Visual strength indicators: ⭐⭐⭐ Strong, ⭐⭐ Medium, ⭐ Weak
 - Get suggestions for where your writing naturally wants to grow
-- Powered by Claude, GPT, or Gemini
+- Powered by Claude 3.5 Sonnet, GPT-4, or Gemini Pro
 
 ### 🌿 Generative Expansion
 - AI suggests multiple directions to develop your ideas

@@ -626,7 +626,7 @@ export default class WriteAlivePlugin extends Plugin {
 			},
 		});
 
-		// T-010 Command: Find Centers from Gathered Seeds
+		// T-010 Command: Find Centers from Gathered Seeds (Quick Start)
 		this.addCommand({
 			id: 'find-centers',
 			name: 'Find Centers from Gathered Seeds',
@@ -643,61 +643,27 @@ export default class WriteAlivePlugin extends Plugin {
 				}
 
 				try {
-					// Gather seeds (recent 10)
-					new Notice('Gathering seeds...');
-					const result = await this.seedGatherer.gatherSeeds({
-						limit: 10,
-						sortBy: 'created',
-						sortOrder: 'desc',
-					});
-
-					if (result.seeds.length < 2) {
-						new Notice(`Need at least 2 seeds, found only ${result.seeds.length}. Create more seed notes with configured tags.`);
-						return;
-					}
-
-					// Find centers
-					new Notice(`Analyzing ${result.seeds.length} seeds for centers...`);
-					const centerResult = await this.aiService.findCentersFromSeeds(
-						result.seeds,
-						this.app
+					// Open Gather Seeds Modal with recent 10 seeds auto-selected
+					const { GatherSeedsModal } = await import('./ui/gather-seeds-modal');
+					const modal = new GatherSeedsModal(
+						this.app,
+						this.seedGatherer,
+						this.aiService
 					);
 
-					// Display results
-					const strong = centerResult.centers.filter(c => c.strength === 'strong');
-					const medium = centerResult.centers.filter(c => c.strength === 'medium');
-					const weak = centerResult.centers.filter(c => c.strength === 'weak');
+					// Open modal first
+					modal.open();
 
-					const summary = `Found ${centerResult.centers.length} centers:\n` +
-						`⭐⭐⭐ Strong: ${strong.length}\n` +
-						`⭐⭐ Medium: ${medium.length}\n` +
-						`⭐ Weak: ${weak.length}\n` +
-						`Cost: $${centerResult.estimatedCost.toFixed(4)}`;
+					// Wait a bit for modal to render
+					await new Promise(resolve => setTimeout(resolve, 100));
 
-					new Notice(summary);
+					// Then auto-select recent seeds
+					await modal.autoSelectRecentSeeds(10);
 
-					// Log detailed results for now (Phase 4 will add UI modal)
-					console.log('[WriteAlive] Center Finding Results:', {
-						centers: centerResult.centers.map(c => ({
-							name: c.name,
-							strength: c.strength,
-							explanation: c.explanation,
-							connectedSeeds: c.connectedSeeds,
-						})),
-						usage: centerResult.usage,
-						cost: centerResult.estimatedCost,
-					});
-
-					// Show first center details
-					if (centerResult.centers.length > 0) {
-						const topCenter = centerResult.centers[0];
-						const details = `\nTop Center: "${topCenter.name}" (${topCenter.strength})\n\n${topCenter.explanation}`;
-						new Notice(details);
-					}
 				} catch (error) {
 					const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-					new Notice(`Failed to find centers: ${errorMessage}`);
-					console.error('[WriteAlive] Center finding failed:', error);
+					new Notice(`Failed to open gather seeds modal: ${errorMessage}`);
+					console.error('[WriteAlive] Find centers quick-start failed:', error);
 				}
 			},
 		});

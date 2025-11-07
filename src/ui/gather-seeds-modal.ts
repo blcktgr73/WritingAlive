@@ -133,6 +133,52 @@ export class GatherSeedsModal extends Modal {
 	}
 
 	/**
+	 * Open modal with recent seeds auto-selected
+	 *
+	 * Provides quick-start path for power users who want to immediately
+	 * find centers from recent seeds without manual selection.
+	 *
+	 * This should be called AFTER modal.open() in main.ts
+	 *
+	 * @param limit - Number of recent seeds to auto-select (default: 10)
+	 */
+	async autoSelectRecentSeeds(limit: number = 10): Promise<void> {
+		// Wait for seeds to load
+		if (this.filteredSeeds.length === 0) {
+			new Notice('No seeds found. Create notes with configured seed tags first.');
+			return;
+		}
+
+		// Auto-select recent N seeds
+		const recentSeeds = this.filteredSeeds.slice(0, Math.min(limit, this.filteredSeeds.length));
+		recentSeeds.forEach(seed => this.selectedSeeds.add(seed.path));
+
+		// Update UI to reflect auto-selection
+		const seedsContainer = this.contentEl.querySelector('.writealive-seeds-container') as HTMLElement;
+		if (seedsContainer) {
+			const listContainer = seedsContainer.querySelector('.writealive-seeds-list') as HTMLElement;
+			if (listContainer) {
+				this.renderSeedList(listContainer);
+			}
+		}
+
+		// Update action buttons
+		this.updateActionButtons();
+
+		// Highlight "Find Centers" button as primary action
+		if (this.findCentersButton) {
+			this.findCentersButton.buttonEl.addClass('mod-cta');
+		}
+
+		// Show guidance notice
+		new Notice(
+			`🌱 Auto-selected ${recentSeeds.length} recent seeds\n` +
+			`💡 Adjust selection if needed, or click "Find Centers"`,
+			5000
+		);
+	}
+
+	/**
 	 * Render filter controls
 	 *
 	 * @param container - Container element

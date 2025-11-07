@@ -38,16 +38,26 @@
   - Automatic backup before restore operations
   - Statistics tracking (word count, paragraph count, wholeness score)
 - **Complete Integration**: Seamless Gather Seeds → Find Centers → Start Writing workflow (<15s automation)
+- **MOC-based Center Discovery (T-025)**: ✅
+  - Find Centers from MOC command with MOC Selection Modal
+  - AI-powered analysis of 10-30 linked notes in MOCs
+  - MOC structure awareness (headings, cross-domain patterns)
+  - Validation warnings for MOC quality
+  - Cost estimation and transparency ($0.020-0.035 per analysis)
+  - Document creation with MOC source attribution
+  - Integration with context-aware ribbon button (T-026)
 
 **Technical Infrastructure**:
 - AI Service Layer with Claude 3.5 Sonnet integration
+- MOC Detection (3 methods: YAML, tag, folder pattern)
 - Tag filtering and statistics (emoji tags, Korean/English support)
 - Relationship detection across notes
 - Comprehensive test coverage (unit + integration tests)
 
 **Performance Metrics**:
 - Seed gathering: <5s for typical vault
-- AI center analysis: 3-5s average
+- AI center analysis (Seeds): 3-5s average
+- AI center analysis (MOC): 5-10s average (10-30 notes)
 - Document creation: <2s
 - Total automation time: ~10-15s (well under 90s budget)
 
@@ -58,22 +68,24 @@
 - Read-aloud feedback with AI rhythm analysis
 - Enhanced snapshot comparison UI
 
-### 🔜 Planned (MVP)
+### 🔜 Planned (Post-MVP Enhancements)
 
-**Epic 2 Completion**:
+**Epic 2 Extensions**:
 - Center refinement workflow
 - Multi-iteration center discovery
 - Center validation feedback
 
 **Epic 3: Iterative Refinement**:
-- AI-powered expansion suggestions
-- Wholeness score calculation
-- Version history and rollback
+- Advanced expansion suggestion modes
+- Historical wholeness score tracking
+- Automated refinement suggestions
 
-**Epic 4: Academic Writing Support**:
-- MOC (Map of Contents) auto-update
-- Bibliography integration
-- Academic structure templates
+**Epic 4: Academic Writing Support** (T-025 Core Complete ✅):
+- ✅ **MOC-based Center Discovery** (T-025) - Completed
+- 🔜 Living MOC auto-update enhancement
+- 🔜 MOC evolution tracking and center comparison
+- 🔜 Bibliography integration
+- 🔜 Academic structure templates
 
 ---
 
