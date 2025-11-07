@@ -724,28 +724,31 @@ export default class WriteAlivePlugin extends Plugin {
 	}
 
 	/**
-	 * Register ribbon button with context menu (T-024)
+	 * Register ribbon button with context-aware actions (T-026)
 	 *
 	 * Creates a unified ribbon button (🌱 icon) that:
-	 * - Left-click: Opens Gather Seeds modal (primary action)
-	 * - Right-click: Shows context menu with all WriteAlive commands
+	 * - Left-click: Context-aware primary action
+	 *   - No active file → Gather Seeds
+	 *   - Regular document → Suggest Next Steps
+	 *   - MOC document → Find Centers from MOC
+	 * - Right-click: Shows full context menu with all WriteAlive commands
 	 *
-	 * This provides visual discoverability for mouse-centric users
-	 * while maintaining command palette access for keyboard users.
+	 * This provides intelligent workflow shortcuts while maintaining
+	 * access to all commands via right-click menu.
 	 */
 	private registerRibbonButton(): void {
 		const ribbonIcon = this.addRibbonIcon(
 			'sprout',
-			'WriteAlive - Click for Seeds, Right-click for Menu',
-			(evt) => {
-				// Left-click: Open Gather Seeds modal (primary action)
+			'Write Alive',
+			async (evt) => {
+				// Left-click: Context-aware action
 				if (evt.button === 0) {
-					this.openGatherSeeds();
+					await this.handleContextAwareClick();
 				}
 			}
 		);
 
-		// Right-click: Show context menu with all commands
+		// Right-click: Show full context menu
 		ribbonIcon.addEventListener('contextmenu', (evt) => {
 			evt.preventDefault();
 
@@ -801,6 +804,40 @@ export default class WriteAlivePlugin extends Plugin {
 		});
 
 		console.log('[WriteAlive] Ribbon button registered');
+	}
+
+	/**
+	 * Handle context-aware ribbon click (T-026)
+	 *
+	 * Determines the appropriate action based on the current context:
+	 * - No active file → Gather Seeds (start workflow)
+	 * - Regular document → Suggest Next Steps (continue writing)
+	 * - MOC document → Find Centers from MOC (center discovery)
+	 *
+	 * This implements intelligent workflow routing based on user context.
+	 */
+	private async handleContextAwareClick(): Promise<void> {
+		const activeFile = this.app.workspace.getActiveFile();
+
+		// Case 1: No active file → Gather Seeds (start new workflow)
+		if (!activeFile) {
+			this.openGatherSeeds();
+			return;
+		}
+
+		// Case 2: Check if active file is MOC
+		if (this.mocDetector) {
+			const isMOC = await this.mocDetector.isMOC(activeFile);
+
+			if (isMOC) {
+				// Case 2a: Active file is MOC → Find Centers from MOC
+				await this.findCentersFromMOC();
+				return;
+			}
+		}
+
+		// Case 3: Regular document → Suggest Next Steps (continue writing)
+		await this.openSuggestNextSteps();
 	}
 
 	/**
