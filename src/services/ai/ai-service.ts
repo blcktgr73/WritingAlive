@@ -564,6 +564,104 @@ export class AIService {
 	}
 
 	/**
+	 * Discover centers from MOC
+	 *
+	 * Analyzes notes linked in a MOC (Map of Content) to discover structural centers.
+	 * Unlike findCentersFromSeeds (scattered notes by tags), this method:
+	 * - Starts from user's existing MOC organization
+	 * - Considers MOC structure (headings, groupings)
+	 * - Analyzes 10-30 notes (larger than typical seed gathering)
+	 * - Emphasizes structural coherence within organized context
+	 *
+	 * This method is optimized for:
+	 * - Academic writing (literature reviews, thesis chapters)
+	 * - Professional reports (customer interviews, research synthesis)
+	 * - Knowledge base synthesis (monthly notes, project summaries)
+	 *
+	 * @param mocContext - MOC structure (title, headings, seed groupings)
+	 * @param seeds - All notes linked in MOC (10-30 typical)
+	 * @param options - Min/max centers to discover
+	 * @returns Center finding result with MOC-specific context
+	 * @throws {AIServiceError} If API error or invalid response
+	 */
+	async discoverCentersFromMOC(
+		mocContext: MOCContext,
+		seeds: SeedNote[],
+		options?: {
+			minCenters?: number;
+			maxCenters?: number;
+		}
+	): Promise<CenterFindingResult> {
+		console.log('[AIService] Discovering centers from MOC', {
+			mocTitle: mocContext.title,
+			seedCount: seeds.length,
+			headings: mocContext.headings.length,
+		});
+
+		// Validate input
+		if (!seeds || seeds.length < 5) {
+			throw this.createError(
+				'INVALID_REQUEST',
+				`MOC has only ${seeds.length} notes. Need at least 5 notes for meaningful center discovery. Consider adding more related notes to your MOC.`
+			);
+		}
+
+		if (seeds.length > 30) {
+			console.warn(
+				`[AIService] MOC has ${seeds.length} notes. Analysis may be slow and expensive. Consider splitting into multiple MOCs or using section-based analysis.`
+			);
+		}
+
+		// Import prompt function
+		const { createDiscoverCentersFromMOCPrompt } = await import('./prompts');
+
+		// Generate MOC-specific prompt with language preference
+		const prompt = createDiscoverCentersFromMOCPrompt(
+			mocContext,
+			seeds,
+			this.config.language || 'en',
+			options
+		);
+
+		console.log('[AIService] Generated MOC center discovery prompt', {
+			systemPromptLength: prompt.system.length,
+			userPromptLength: prompt.user.length,
+		});
+
+		try {
+			// Call provider (same pattern as findCentersFromSeeds)
+			const responseText = await (this.provider as any).makeClaudeRequest(
+				prompt.system,
+				prompt.user
+			);
+
+			console.log('[AIService] Received response from provider');
+
+			// Parse response using provider's parser
+			const parsed = (this.provider as any).parseCenterFindingResponse(
+				responseText,
+				seeds.length
+			);
+
+			console.log('[AIService] MOC center discovery complete', {
+				centerCount: parsed.centers.length,
+				strongCenters: parsed.centers.filter((c: any) => c.strength === 'strong').length,
+				cost: parsed.estimatedCost,
+				totalTokens: parsed.usage.totalTokens,
+			});
+
+			return parsed;
+		} catch (error) {
+			console.error('[AIService] Failed to discover centers from MOC:', error);
+			throw this.createError(
+				'PROVIDER_ERROR',
+				'Failed to discover centers from MOC',
+				error
+			);
+		}
+	}
+
+	/**
 	 * Extract document metadata from YAML frontmatter
 	 *
 	 * Parses writealive metadata if present.

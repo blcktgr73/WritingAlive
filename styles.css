@@ -467,3 +467,143 @@
 		transform: none;
 	}
 }
+
+/* ===== MOC Selection Modal ===== */
+
+.writealive-moc-selection-modal {
+	padding: 0;
+}
+
+.writealive-moc-selection-modal h2 {
+	margin-bottom: 0.5em;
+}
+
+.writealive-modal-description {
+	color: var(--text-muted);
+	margin-bottom: 1.5em;
+	font-size: 0.9em;
+}
+
+.writealive-loading,
+.writealive-warning,
+.writealive-error {
+	padding: 1em;
+	text-align: center;
+	font-style: italic;
+	color: var(--text-muted);
+}
+
+.writealive-error {
+	color: var(--text-error);
+}
+
+/* Search and Sort Controls */
+.writealive-search-container,
+.writealive-sort-container {
+	margin-bottom: 1em;
+}
+
+/* MOC List */
+.writealive-moc-list {
+	max-height: 50vh;
+	overflow-y: auto;
+	margin-bottom: 1.5em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+}
+
+.writealive-moc-item {
+	padding: 1em;
+	border-bottom: 1px solid var(--background-modifier-border);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.writealive-moc-item:last-child {
+	border-bottom: none;
+}
+
+.writealive-moc-item:hover {
+	background-color: var(--background-primary-alt);
+}
+
+.writealive-moc-item.selected {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.writealive-moc-item.selected .writealive-moc-info,
+.writealive-moc-item.selected .writealive-moc-path {
+	color: var(--text-on-accent);
+	opacity: 0.9;
+}
+
+.writealive-moc-title {
+	margin-bottom: 0.5em;
+	font-size: 1.1em;
+}
+
+.writealive-moc-info {
+	display: flex;
+	gap: 1em;
+	margin-bottom: 0.3em;
+	font-size: 0.85em;
+	color: var(--text-muted);
+}
+
+.writealive-moc-stat {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3em;
+}
+
+.writealive-moc-path {
+	font-size: 0.75em;
+	color: var(--text-faint);
+	font-family: var(--font-monospace);
+}
+
+.writealive-no-results {
+	text-align: center;
+	padding: 2em;
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+/* Modal Buttons */
+.writealive-modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5em;
+	margin-top: 1em;
+	padding-top: 1em;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+/* ===== Center Discovery Modal - MOC Extensions (T-025) ===== */
+
+/* MOC Info Header */
+.center-discovery-modal__moc-info {
+	display: flex;
+	gap: 1.5em;
+	align-items: center;
+	margin-top: 0.5em;
+	padding: 0.75em 0;
+	font-size: 0.9em;
+	color: var(--text-muted);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.center-discovery-modal__moc-name {
+	font-weight: 500;
+	color: var(--text-normal);
+}
+
+.center-discovery-modal__moc-coverage {
+	color: var(--text-muted);
+}
+
+/* Ensure proper spacing in MOC context */
+.center-discovery-modal__header .center-discovery-modal__moc-info {
+	margin-bottom: 1em;
+}

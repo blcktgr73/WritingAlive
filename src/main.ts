@@ -367,12 +367,14 @@ export default class WriteAlivePlugin extends Plugin {
 				this.aiService = new AIService({
 					provider: this.settings.aiProvider,
 					apiKey: this.decryptedApiKey,
+					language: this.settings.language,
 					enableCache: true,
 					enableRateLimit: true,
 				});
 
 				console.log('[WriteAlive] AI service initialized', {
 					provider: this.settings.aiProvider,
+					language: this.settings.language,
 				});
 			} catch (error) {
 				console.error('[WriteAlive] Failed to initialize AI service', error);
@@ -700,14 +702,12 @@ export default class WriteAlivePlugin extends Plugin {
 			},
 		});
 
-		// T-010 Command: Find Centers from MOC (future enhancement)
-		// This command will be implemented in Phase 2-3 when MOC integration is complete
-		// Placeholder for now
+		// T-025 Command: Find Centers from MOC
 		this.addCommand({
 			id: 'find-centers-from-moc',
 			name: 'Find Centers from MOC',
-			callback: () => {
-				new Notice('This feature will be available after MOC detection is implemented (T-008/T-009).');
+			callback: async () => {
+				await this.findCentersFromMOC();
 			},
 		});
 
@@ -764,6 +764,13 @@ export default class WriteAlivePlugin extends Plugin {
 					.setTitle('💡 Suggest Next Steps')
 					.setSection('workflow')
 					.onClick(() => this.openSuggestNextSteps())
+			);
+
+			menu.addItem((item) =>
+				item
+					.setTitle('🗺️ Find Centers from MOC')
+					.setSection('workflow')
+					.onClick(() => this.findCentersFromMOC())
 			);
 
 			menu.addSeparator();
@@ -1069,6 +1076,210 @@ export default class WriteAlivePlugin extends Plugin {
 	 */
 	getApiKey(): string {
 		return this.decryptedApiKey;
+	}
+
+	/**
+	 * Find Centers from MOC (T-025)
+	 *
+	 * Workflow:
+	 * 1. Detect all MOCs in vault
+	 * 2. Present selection modal (MVP: use first MOC or active file)
+	 * 3. Validate MOC (note count, broken links)
+	 * 4. Analyze MOC with AI to discover centers
+	 * 5. Display results in Center Discovery Modal
+	 * 6. Create document from selected center
+	 *
+	 * This is a simplified MVP implementation.
+	 * Full UI (MOCSelectionModal) will be added in T-MOC-005.
+	 */
+	private async findCentersFromMOC(): Promise<void> {
+		// Check services initialized
+		if (!this.mocDetector) {
+			new Notice('WriteAlive: MOC detector not initialized');
+			console.error('[WriteAlive] Cannot find centers from MOC: MOCDetector not initialized');
+			return;
+		}
+
+		if (!this.aiService) {
+			new Notice('WriteAlive: AI service not configured. Please add API key in settings.');
+			return;
+		}
+
+		try {
+			// Check if active file is a MOC
+			const activeFile = this.app.workspace.getActiveFile();
+			let shouldShowModal = true;
+
+			if (activeFile) {
+				const isMOC = await this.mocDetector.isMOC(activeFile);
+				if (isMOC) {
+					// Active file is a MOC, skip modal and use it directly
+					shouldShowModal = false;
+					console.log('[WriteAlive] Using active file as MOC:', activeFile.path);
+					await this.analyzeMOC(activeFile);
+					return;
+				}
+			}
+
+			// Show MOC selection modal
+			if (shouldShowModal) {
+				const { MOCSelectionModal } = await import('./ui/modals/moc-selection-modal');
+				const modal = new MOCSelectionModal(
+					this.app,
+					this.mocDetector,
+					async (result) => {
+						await this.analyzeMOC(result.mocFile);
+					}
+				);
+				modal.open();
+			}
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			const errorStack = error instanceof Error ? error.stack : '';
+
+			console.error('[WriteAlive] Find centers from MOC failed:');
+			console.error('Error message:', errorMessage);
+			console.error('Error stack:', errorStack);
+			console.error('Full error:', error);
+
+			new Notice(`❌ Failed to find centers from MOC:\n${errorMessage}\n\nCheck console for details.`, 10000);
+		}
+	}
+
+	/**
+	 * Analyze MOC for centers
+	 *
+	 * Internal method that performs the actual analysis.
+	 * Called by findCentersFromMOC after MOC selection.
+	 *
+	 * @param mocFile - MOC file to analyze
+	 */
+	private async analyzeMOC(mocFile: any): Promise<void> {
+		if (!this.aiService) {
+			new Notice('WriteAlive: AI service not configured.');
+			return;
+		}
+
+		try {
+			// Import MOCCenterFinder
+			const { MOCCenterFinder } = await import('./services/moc/moc-center-finder');
+			const mocCenterFinder = new MOCCenterFinder(this.app, this.mocDetector!, this.aiService);
+
+			// Validate MOC
+			new Notice('Validating MOC...');
+			const validation = await mocCenterFinder.validateMOC(mocFile);
+
+			if (!validation.valid) {
+				const errorMsg = validation.warnings
+					.filter(w => w.severity === 'high')
+					.map(w => w.message)
+					.join('\n');
+				new Notice(`MOC validation failed:\n${errorMsg}`);
+				return;
+			}
+
+			// Show warnings if any
+			const highWarnings = validation.warnings.filter(w => w.severity === 'high');
+			if (highWarnings.length > 0) {
+				const warningMsg = highWarnings.map(w => w.message).join('\n');
+				new Notice(`⚠️ Warning:\n${warningMsg}\n\nProceed with analysis? (Will continue in 3 seconds)`, 3000);
+				await new Promise(resolve => setTimeout(resolve, 3000));
+			}
+
+			// Find centers with progress feedback
+			const analysisNotice = new Notice(
+				`🔍 Analyzing ${validation.noteCount.readable} notes from MOC...\n` +
+				`⏱️ Est: ${validation.estimatedTime}s | 💰 Cost: $${validation.estimatedCost.toFixed(4)}`,
+				0 // Keep visible until dismissed
+			);
+
+			console.log('[WriteAlive] Starting MOC center analysis...');
+
+			const result = await mocCenterFinder.findCentersFromMOC(mocFile);
+
+			// Dismiss progress notice
+			analysisNotice.hide();
+
+			// Show completion notice
+			new Notice('✅ Analysis complete! Preparing results...', 2000);
+
+			console.log('[WriteAlive] Analysis complete, displaying results...');
+
+			// Display results in modal (T-MOC-006)
+			console.log('[WriteAlive] MOC Center Finding Results:', {
+				sourceMOC: result.sourceMOC,
+				centers: result.centers.map(c => ({
+					name: c.name,
+					strength: c.strength,
+					explanation: c.explanation,
+					connectedSeeds: c.connectedSeeds,
+				})),
+				coverage: result.coverage,
+				usage: result.usage,
+				cost: result.estimatedCost,
+			});
+
+			// Show success notice
+			const strong = result.centers.filter(c => c.strength === 'strong');
+			const medium = result.centers.filter(c => c.strength === 'medium');
+			const weak = result.centers.filter(c => c.strength === 'weak');
+
+			const summary = `✅ Found ${result.centers.length} centers:\n` +
+				`⭐⭐⭐ Strong: ${strong.length} | ⭐⭐ Medium: ${medium.length} | ⭐ Weak: ${weak.length}`;
+
+			new Notice(summary, 5000);
+
+			// Open CenterDiscoveryModal with MOC context (T-MOC-006)
+			const { CenterDiscoveryModal } = await import('./ui/modals/center-discovery-modal');
+			const modal = CenterDiscoveryModal.forMOC(this.app, result);
+			modal.open();
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			const errorStack = error instanceof Error ? error.stack : '';
+
+			console.error('[WriteAlive] Analyze MOC failed:');
+			console.error('Error message:', errorMessage);
+			console.error('Error stack:', errorStack);
+			console.error('Full error:', error);
+
+			// Check if it's an AIServiceError for better user messaging
+			const { AIServiceError } = await import('./services/ai/types');
+			if (error instanceof AIServiceError) {
+				// Show user-friendly error message based on error code
+				const errorCode = error.code;
+				let userMessage = `❌ Failed to analyze MOC:\n\n${errorMessage}`;
+
+				switch (errorCode) {
+					case 'MOC_TOO_SMALL':
+						userMessage += '\n\n💡 Tip: Add more related notes to your MOC (minimum 5 notes required).';
+						break;
+					case 'MOC_TOO_LARGE':
+						userMessage += '\n\n💡 Tip: Consider splitting your MOC into smaller, focused MOCs.';
+						break;
+					case 'MOC_NO_VALID_NOTES':
+						userMessage += '\n\n💡 Tip: Check for broken links in your MOC and fix them.';
+						break;
+					case 'INVALID_MOC':
+						userMessage += '\n\n💡 Tip: A MOC must contain links to other notes.';
+						break;
+					case 'INVALID_API_KEY':
+						userMessage += '\n\n💡 Tip: Check your API key in plugin settings.';
+						break;
+					case 'RATE_LIMIT_EXCEEDED':
+						userMessage += '\n\n💡 Tip: Wait a few minutes and try again.';
+						break;
+					case 'NETWORK_ERROR':
+						userMessage += '\n\n💡 Tip: Check your internet connection.';
+						break;
+					default:
+						userMessage += '\n\nCheck console for details.';
+				}
+
+				new Notice(userMessage, 12000);
+			} else {
+				new Notice(`❌ Failed to analyze MOC:\n${errorMessage}\n\nCheck console for details.`, 10000);
+			}
+		}
 	}
 
 	/**

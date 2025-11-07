@@ -19,7 +19,8 @@
  * @see https://www.agile.or.kr/saligo-writing (Saligo Writing introduction)
  */
 
-import type { Center, CenterFindingContext } from './types';
+import type { Center, CenterFindingContext, MOCContext } from './types';
+import type { SeedNote } from '../vault/types';
 
 /**
  * Saligo Writing context for all prompts
@@ -480,6 +481,195 @@ Return ONLY valid JSON (no markdown code blocks):
   "currentWholeness": 7,
   "keyThemes": ["theme1", "theme2", "theme3"]
 }`;
+
+	return { system, user };
+}
+
+/**
+ * Generate prompt for discovering centers from MOC
+ *
+ * Creates MOC-specific prompt that considers:
+ * - User's existing MOC organization (headings, sections)
+ * - Larger note count (10-30 vs 5-10 for seeds)
+ * - Structural coherence across organized notes
+ * - Cross-heading patterns and relationships
+ *
+ * Unlike findCentersFromSeeds (scattered notes), this emphasizes:
+ * - Structural patterns within user's organization
+ * - Cross-section themes
+ * - Academic/professional writing contexts
+ *
+ * @param mocContext - MOC structure (title, headings, seed groupings)
+ * @param seeds - All notes linked in MOC
+ * @param options - Min/max centers to discover
+ * @returns Formatted prompt object with system and user messages
+ */
+export function createDiscoverCentersFromMOCPrompt(
+	mocContext: MOCContext,
+	seeds: SeedNote[],
+	language: 'en' | 'ko' = 'en',
+	options?: {
+		minCenters?: number;
+		maxCenters?: number;
+	}
+): { system: string; user: string } {
+	const minCenters = options?.minCenters || 2;
+	const maxCenters = options?.maxCenters || 5;
+
+	// Language instruction - must be strong and with examples
+	const languageInstruction = language === 'ko'
+		? `
+
+CRITICAL LANGUAGE REQUIREMENT:
+YOU MUST respond entirely in Korean (한국어). This is non-negotiable.
+- Center names (name): Write in Korean only
+- Explanations (explanation): Write in Korean only
+- Expansion potentials (expansionPotential): Write in Korean only
+- All text fields must be in Korean
+
+Example of CORRECT Korean response:
+{
+  "name": "경험적 학습과 반성적 실천의 순환",
+  "explanation": "이 센터는 구체적 경험에서 시작하여 반성적 성찰을 거쳐 새로운 이해로 발전하는 학습 과정을 다룹니다. 여러 노트에서 실천-성찰-개선의 순환 패턴이 반복적으로 나타납니다.",
+  "expansionPotential": "실천 사례들을 시간순으로 정리하고, 각 사례에서 얻은 통찰을 연결하여 학습 이론으로 발전시킬 수 있습니다."
+}
+
+NEVER mix English and Korean. Use only Korean.`
+		: `
+
+CRITICAL LANGUAGE REQUIREMENT:
+YOU MUST respond entirely in English. This is non-negotiable.
+- Center names (name): Write in English only
+- Explanations (explanation): Write in English only
+- Expansion potentials (expansionPotential): Write in English only
+- All text fields must be in English
+
+Example of CORRECT English response:
+{
+  "name": "Cyclic Learning Through Experience and Reflection",
+  "explanation": "This center addresses the learning process that starts from concrete experiences, goes through reflective contemplation, and evolves into new understanding. The practice-reflection-improvement cycle pattern appears repeatedly across multiple notes.",
+  "expansionPotential": "Case studies can be organized chronologically, and insights from each case can be connected to develop into a learning theory."
+}
+
+NEVER mix Korean and English. Use only English.`;
+
+	// Enhanced system prompt for MOC analysis
+	const system = `You are a Saligo Writing expert. Saligo Writing (살리고 글쓰기) is a generative, iterative writing methodology developed by June Kim (김창준), inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' practice philosophy.
+
+CORE PRINCIPLES:
+
+1. Start small and true: "Don't approximate the whole vaguely. Take a small part and be entirely true about it." (Bill Evans)
+
+2. Centers: Identify structural pivots where writing has the most "life" and can expand naturally. Centers are not just topics - they are ideas with:
+   - Cross-domain presence (appearing in multiple contexts)
+   - Emotional resonance (expressed strong feeling or significance)
+   - Concreteness (rooted in lived experience, not just abstract concepts)
+   - Structural pivot potential (can expand in multiple directions)
+
+3. Generative Sequence: Let structure emerge through writing, not predetermined outlines.
+
+YOUR TASK: Analyze notes from a MOC (Map of Content) to identify ${minCenters}-${maxCenters} "centers" - structural themes with the strongest potential for development into coherent academic or professional writing.
+
+MOC-SPECIFIC CONSIDERATIONS:
+- The user has already organized these notes into a MOC, indicating perceived relationships
+- Pay attention to patterns that span multiple sections/headings
+- Look for structural coherence across the user's organization
+- Consider both explicit connections (same heading) and implicit connections (cross-heading patterns)
+- MOCs typically support academic writing (literature reviews, thesis chapters) or professional synthesis (reports, strategy docs)
+
+OUTPUT FORMAT:
+Return ONLY valid JSON (no markdown code blocks):
+{
+  "centers": [
+    {
+      "name": "Center Name (5-10 words, concise)",
+      "explanation": "Why this is a powerful center (2-3 sentences). Explain the structural pattern, cross-domain presence, and why it can generate strong writing.",
+      "connectedSeeds": ["seed-title-1", "seed-title-2", ...],
+      "strength": "strong" | "medium" | "weak",
+      "assessmentCriteria": {
+        "crossDomain": 9,
+        "emotionalResonance": 7,
+        "concreteness": 8,
+        "structuralPivot": 9
+      },
+      "expansionPotential": "Brief description of how this center can expand (1-2 sentences)"
+    }
+  ]
+}
+
+ASSESSMENT CRITERIA (1-10 scale):
+- crossDomain: How many different contexts/sections does this theme appear in?
+- emotionalResonance: Does the user show strong interest or significance in this theme?
+- concreteness: Is it grounded in specific examples, cases, or experiences (vs pure abstraction)?
+- structuralPivot: Can this center serve as a foundation for multiple writing directions?
+
+STRENGTH CLASSIFICATION:
+- strong: 3+ connected seeds, all criteria ≥7, clear expansion potential
+- medium: 2-3 connected seeds, most criteria ≥5, some expansion potential
+- weak: <2 connected seeds, criteria mixed, limited expansion potential${languageInstruction}`;
+
+	// Build user prompt with MOC context
+	let user = `I have a MOC (Map of Content) titled "${mocContext.title}" with ${seeds.length} linked notes.`;
+
+	// Add heading structure if present
+	if (mocContext.headings.length > 0) {
+		// Group seeds by heading for display
+		const seedsByHeading = new Map<string, string[]>();
+		for (const [seedId, heading] of Object.entries(mocContext.seedsFromHeading)) {
+			if (!seedsByHeading.has(heading)) {
+				seedsByHeading.set(heading, []);
+			}
+			// Find seed title by ID
+			const seed = seeds.find((s) => s.file.basename === seedId);
+			if (seed) {
+				seedsByHeading.get(heading)!.push(seed.title);
+			}
+		}
+
+		user += `\n\nMOC STRUCTURE:\n`;
+		for (const heading of mocContext.headings) {
+			const seedsInSection = seedsByHeading.get(heading) || [];
+			if (seedsInSection.length > 0) {
+				user += `\n## ${heading}\n`;
+				user += `- ${seedsInSection.length} notes: ${seedsInSection.slice(0, 5).join(', ')}${seedsInSection.length > 5 ? ` (and ${seedsInSection.length - 5} more)` : ''}\n`;
+			}
+		}
+	}
+
+	// Add all seed contents
+	user += `\n\n--- SEED NOTES CONTENT ---\n\n`;
+
+	for (const seed of seeds) {
+		user += `### [[${seed.title}]]\n`;
+
+		// Add tags if present
+		if (seed.tags && seed.tags.length > 0) {
+			user += `Tags: ${seed.tags.map((t) => `#${t}`).join(' ')}\n`;
+		}
+
+		// Add content (truncate if very long)
+		let content = seed.content;
+
+		// Remove YAML frontmatter
+		content = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '');
+
+		// Truncate if longer than 800 words (~1000 tokens)
+		const words = content.split(/\s+/).length;
+		if (words > 800) {
+			const truncated = content.split(/\s+/).slice(0, 800).join(' ');
+			content = truncated + `\n[... content truncated, originally ${words} words ...]`;
+		}
+
+		user += `\n${content}\n\n---\n\n`;
+	}
+
+	user += `\n\nBased on the MOC structure and note contents above, identify ${minCenters}-${maxCenters} centers that:
+1. Span multiple sections/notes (cross-domain presence)
+2. Show structural coherence in the user's organization
+3. Have strong potential for academic/professional writing development
+4. Are grounded in concrete examples or experiences (not pure abstraction)
+
+Return centers ordered by strength (strongest first).`;
 
 	return { system, user };
 }

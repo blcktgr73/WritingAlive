@@ -430,6 +430,12 @@ export interface AIServiceConfig {
 	apiKey: string;
 
 	/**
+	 * User language preference
+	 * @default 'en'
+	 */
+	language?: 'en' | 'ko';
+
+	/**
 	 * Enable request caching
 	 */
 	enableCache?: boolean;
@@ -735,7 +741,11 @@ export type AIErrorCode =
 	| 'TIMEOUT'
 	| 'QUOTA_EXCEEDED'
 	| 'INVALID_REQUEST'
-	| 'INSUFFICIENT_SEEDS'; // T-010: Not enough seeds for center finding
+	| 'INSUFFICIENT_SEEDS' // T-010: Not enough seeds for center finding
+	| 'INVALID_MOC' // T-025: MOC validation failed
+	| 'MOC_TOO_LARGE' // T-025: MOC has too many notes (>30)
+	| 'MOC_TOO_SMALL' // T-025: MOC has too few notes (<10)
+	| 'MOC_NO_VALID_NOTES'; // T-025: All linked notes are broken/unreadable
 
 /**
  * Next Step Suggestion (T-024)

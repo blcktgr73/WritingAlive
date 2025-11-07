@@ -67,6 +67,23 @@ export interface CreateNoteOptions {
 	 * TODO: Implement cursor positioning
 	 */
 	positionCursor?: boolean;
+
+	/**
+	 * Source MOC information (if created from MOC analysis)
+	 * Used to track provenance and enable MOC-specific features
+	 * @since T-025 (Find Centers from MOC)
+	 */
+	sourceMOC?: {
+		/**
+		 * MOC title (for display)
+		 */
+		title: string;
+
+		/**
+		 * MOC file path (for wikilink)
+		 */
+		path: string;
+	};
 }
 
 /**
@@ -101,7 +118,7 @@ export class DocumentCreator {
 	): Promise<TFile> {
 		try {
 			// 1. Generate filename
-			const filename = this.generateFilename(center);
+			const filename = this.generateFilename(center, options?.sourceMOC);
 			const folder = options?.folder || '';
 
 			// Ensure folder exists if specified
@@ -115,13 +132,15 @@ export class DocumentCreator {
 
 			const filepath = folder ? `${folder}/${filename}` : filename;
 
-			console.log('[DocumentCreator] Creating note:', filepath);
+			console.log('[DocumentCreator] Creating note:', filepath, {
+				fromMOC: !!options?.sourceMOC,
+			});
 
 			// 2. Generate frontmatter
-			const frontmatter = this.generateFrontmatter(center, seeds);
+			const frontmatter = this.generateFrontmatter(center, seeds, options?.sourceMOC);
 
 			// 3. Generate initial content
-			const content = this.generateInitialContent(center, seeds);
+			const content = this.generateInitialContent(center, seeds, options?.sourceMOC);
 
 			// 4. Combine frontmatter and content
 			const fullContent = `${frontmatter}\n${content}`;
@@ -150,22 +169,25 @@ export class DocumentCreator {
 	 * - gathered_seeds: Array of seed file paths
 	 * - selected_center: Center metadata (name, strength, connected seeds)
 	 * - gathered_at: ISO timestamp
+	 * - source_moc: MOC attribution (if created from MOC) - T-025
 	 *
 	 * YAML structure follows WriteAlive metadata convention.
 	 *
 	 * @param center - Selected center
 	 * @param seeds - Seed notes analyzed
+	 * @param sourceMOC - Source MOC information (optional, T-025)
 	 * @returns YAML frontmatter block (with --- delimiters)
 	 */
 	private generateFrontmatter(
 		center: DiscoveredCenter,
-		seeds: SeedNote[]
+		seeds: SeedNote[],
+		sourceMOC?: { title: string; path: string }
 	): string {
 		// Extract seed paths (relative to vault root)
 		const seedPaths = seeds.map((seed) => seed.path);
 
 		// Build YAML object
-		const frontmatterObj = {
+		const frontmatterObj: any = {
 			writealive: {
 				gathered_seeds: seedPaths,
 				selected_center: {
@@ -176,6 +198,13 @@ export class DocumentCreator {
 				gathered_at: new Date().toISOString(),
 			},
 		};
+
+		// Add source_moc if present (T-025)
+		if (sourceMOC) {
+			// Convert path to wikilink format (remove .md extension)
+			const wikilinkPath = sourceMOC.path.replace(/\.md$/, '');
+			frontmatterObj.writealive.source_moc = `[[${wikilinkPath}]]`;
+		}
 
 		// Convert to YAML string
 		// Note: Using manual YAML generation for simplicity
@@ -189,6 +218,7 @@ export class DocumentCreator {
 	 * Generate initial content for the note
 	 *
 	 * Structure (top-to-bottom growth):
+	 * 0. MOC attribution (if from MOC) - T-025
 	 * 1. Seeds reference section with excerpts (at top)
 	 * 2. Horizontal rule separator
 	 * 3. Title (H1): Center name
@@ -200,11 +230,13 @@ export class DocumentCreator {
 	 *
 	 * @param center - Selected center
 	 * @param seeds - Seed notes analyzed
+	 * @param sourceMOC - Source MOC information (optional, T-025)
 	 * @returns Markdown content
 	 */
 	private generateInitialContent(
 		center: DiscoveredCenter,
-		seeds: SeedNote[]
+		seeds: SeedNote[],
+		sourceMOC?: { title: string; path: string }
 	): string {
 		const lines: string[] = [];
 
@@ -216,6 +248,14 @@ export class DocumentCreator {
 		const referenceTitle = isKorean
 			? '## 모아온 씨앗들 (참고자료)'
 			: '## Gathered Seeds (Reference)';
+
+		// 0. MOC attribution (T-025)
+		if (sourceMOC) {
+			const wikilinkPath = sourceMOC.path.replace(/\.md$/, '');
+			const mocLabel = isKorean ? '출처 MOC' : 'Source MOC';
+			lines.push(`> **${mocLabel}**: [[${wikilinkPath}|${sourceMOC.title}]]`);
+			lines.push('');
+		}
 
 		// 1. Seeds reference section (at top)
 		lines.push(referenceTitle);
@@ -273,11 +313,15 @@ export class DocumentCreator {
 	 * @param center - Center to create note for
 	 * @returns Filename with extension
 	 */
-	private generateFilename(center: DiscoveredCenter): string {
+	private generateFilename(
+		center: DiscoveredCenter,
+		sourceMOC?: { title: string; path: string }
+	): string {
 		const sanitizedName = this.sanitizeFilename(center.name);
 		const date = this.formatDate(new Date());
+		const mocSuffix = sourceMOC ? ' (from MOC)' : '';
 
-		return `${sanitizedName} - ${date}.md`;
+		return `${sanitizedName}${mocSuffix} - ${date}.md`;
 	}
 
 	/**

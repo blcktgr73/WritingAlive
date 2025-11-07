@@ -36,6 +36,7 @@ import { CostDisplay } from './components/cost-display';
 import { ErrorState, type ErrorAction } from './components/error-state';
 import { DocumentCreator } from '../../services/vault/document-creator';
 import { pluralize } from './utils/formatters';
+import type { MOCCenterFinderResult } from '../../services/moc/moc-center-finder';
 
 /**
  * Center Finding Result (Extended)
@@ -100,6 +101,9 @@ export class CenterDiscoveryModal extends Modal {
 	private documentCreator: DocumentCreator;
 	private weakCentersExpanded: boolean = false;
 
+	// MOC-specific fields (T-025)
+	private mocResult?: MOCCenterFinderResult;
+
 	/**
 	 * Constructor
 	 *
@@ -119,6 +123,50 @@ export class CenterDiscoveryModal extends Modal {
 		this.seeds = seeds;
 		this.onStartWriting = onStartWriting;
 		this.documentCreator = new DocumentCreator(app);
+	}
+
+	/**
+	 * Static factory for MOC-based center discovery (T-025)
+	 *
+	 * @param app - Obsidian App instance
+	 * @param mocResult - MOC center finding result
+	 * @param onStartWriting - Optional callback when user starts writing
+	 * @returns CenterDiscoveryModal configured for MOC context
+	 */
+	static forMOC(
+		app: App,
+		mocResult: MOCCenterFinderResult,
+		onStartWriting?: (center: DiscoveredCenter) => void
+	): CenterDiscoveryModal {
+		// Convert MOCCenterFinderResult to CenterFindingResult format
+		const centersByStrength = {
+			strong: mocResult.centers.filter(c => c.strength === 'strong'),
+			medium: mocResult.centers.filter(c => c.strength === 'medium'),
+			weak: mocResult.centers.filter(c => c.strength === 'weak'),
+		};
+
+		const adaptedResult: CenterFindingResult = {
+			centers: mocResult.centers,
+			centersByStrength,
+			usage: {
+				promptTokens: mocResult.usage.promptTokens,
+				completionTokens: mocResult.usage.completionTokens,
+				totalTokens: mocResult.usage.totalTokens,
+			},
+			estimatedCost: mocResult.estimatedCost,
+			provider: 'claude', // MOC analysis uses Claude
+			cached: false,
+			timestamp: new Date().toISOString(),
+		};
+
+		const modal = new CenterDiscoveryModal(
+			app,
+			adaptedResult,
+			mocResult.seeds,
+			onStartWriting
+		);
+		modal.mocResult = mocResult;
+		return modal;
 	}
 
 	/**
@@ -163,18 +211,44 @@ export class CenterDiscoveryModal extends Modal {
 	 * Render modal header
 	 *
 	 * Shows title with seed count.
+	 * For MOC-based discovery (T-025), shows MOC information.
 	 */
 	private renderHeader(container: HTMLElement): void {
 		const header = container.createDiv('center-discovery-modal__header');
 
-		const seedCount = this.seeds.length;
-		header.createEl('h2', {
-			cls: 'center-discovery-modal__title',
-			text: `🎯 Centers Discovered (from ${seedCount} ${pluralize(
-				seedCount,
-				'seed'
-			)})`,
-		});
+		// If MOC-based discovery, show MOC context
+		if (this.mocResult) {
+			const mocTitle = this.mocResult.sourceMOC.title;
+			const noteCount = this.seeds.length;
+
+			header.createEl('h2', {
+				cls: 'center-discovery-modal__title',
+				text: `🎯 Centers Discovered from MOC`,
+			});
+
+			// MOC info subheader
+			const mocInfo = header.createDiv('center-discovery-modal__moc-info');
+
+			mocInfo.createSpan({
+				cls: 'center-discovery-modal__moc-name',
+				text: `📚 ${mocTitle}`,
+			});
+
+			mocInfo.createSpan({
+				cls: 'center-discovery-modal__moc-coverage',
+				text: `📝 ${noteCount} ${pluralize(noteCount, 'note')} analyzed`,
+			});
+		} else {
+			// Original seed-based discovery header
+			const seedCount = this.seeds.length;
+			header.createEl('h2', {
+				cls: 'center-discovery-modal__title',
+				text: `🎯 Centers Discovered (from ${seedCount} ${pluralize(
+					seedCount,
+					'seed'
+				)})`,
+			});
+		}
 	}
 
 	/**
@@ -425,6 +499,7 @@ export class CenterDiscoveryModal extends Modal {
 	 * Handle "Start Writing" action
 	 *
 	 * Creates a new note from the selected center.
+	 * For MOC-based discovery (T-025), includes MOC attribution.
 	 *
 	 * @param center - Center to start writing from
 	 */
@@ -438,12 +513,27 @@ export class CenterDiscoveryModal extends Modal {
 			// Get output folder from settings
 			const folder = this.getOutputFolder();
 
+			// Prepare options
+			const options: any = { folder };
+
+			// Add MOC attribution if MOC-based (T-025)
+			if (this.mocResult) {
+				options.sourceMOC = {
+					title: this.mocResult.sourceMOC.title,
+					path: this.mocResult.sourceMOC.path,
+				};
+			}
+
 			// Create note using DocumentCreator
 			const file = await this.documentCreator.createNoteFromCenter(
 				center,
 				this.seeds,
-				{ folder }
+				options
 			);
+
+			// Open the created file
+			const leaf = this.app.workspace.getLeaf(false);
+			await leaf.openFile(file);
 
 			// Show success notice
 			new Notice(`Created: ${file.basename}`);

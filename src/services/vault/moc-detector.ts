@@ -34,6 +34,7 @@ import type {
  * Default folder patterns for MOC detection
  *
  * Common folder naming conventions in PKM systems:
+ * - MOC - Any folder containing "MOC" in name
  * - MOCs/ - Standard MOC folder
  * - Maps/ - Alternative naming
  * - Map of Contents/ - Full spelling
@@ -41,6 +42,7 @@ import type {
  * - _MOCs/ - Underscore prefix
  */
 const DEFAULT_MOC_FOLDERS = [
+	'MOC',
 	'MOCs/',
 	'Maps/',
 	'Map of Contents/',
