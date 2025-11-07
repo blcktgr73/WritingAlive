@@ -87,15 +87,34 @@
 - 🔜 Bibliography integration
 - 🔜 Academic structure templates
 
+**Epic 5: Outcome-Driven & Hybrid Writing** (Next Major Enhancement):
+- 🎯 **Outcome-First Writing Mode**: Define writing goals upfront, AI generates gentle structure
+- 🎯 **Hybrid Seed-Outcome Mode**: Combine existing seeds with defined outcomes for targeted writing
+- 🎯 **Mode Selection Interface**: Help users choose between seed-based, outcome-driven, or hybrid approach
+- 🎯 **Outcome Templates Library**: Pre-built templates for common professional/academic writing types
+- 🎯 **Section-by-Section Writing**: Guided writing within outcome structure maintaining low energy barriers
+- See [PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md](PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md) for detailed specification
+
 ---
 
 ## Product Vision Summary
 
-WriteAlive is an AI-assisted writing tool that enables writers to practice "Saligo Writing" (살리고 글쓰기, Living-Centered Writing) - a methodology developed by **June Kim (김창준)**, inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' step-by-step mastery philosophy. Rather than forcing writers into traditional outline-first approaches, WriteAlive supports an iterative, generative writing process where ideas grow organically from seed centers with low energy barriers to entry. The tool transforms writing from a high-friction, structure-heavy activity into a fluid, discovery-driven creative process.
+WriteAlive is an AI-assisted writing tool that enables writers to practice "Saligo Writing" (살리고 글쓰기, Living-Centered Writing) - a methodology developed by **June Kim (김창준)**, inspired by Christopher Alexander's "The Nature of Order" and Bill Evans' step-by-step mastery philosophy.
 
-**Core Philosophy**: Writing as a living structure that evolves through generative sequences, not as a static artifact produced through rigid planning.
+**Evolution from Single-Mode to Bidirectional System**:
+- **Original Vision** (Seed-Based): Bottom-up discovery from scattered thoughts → Ideal for exploratory essays, personal reflection, creative writing
+- **Enhanced Vision** (Outcome-Driven & Hybrid): Supports both discovery AND intention → Extends to professional reports, academic papers, structured arguments
 
-**Primary Value Proposition**: Enable anyone to write with clarity and depth by starting small, building truthfully, and evolving naturally - just as Bill Evans taught musicians to master jazz one step at a time.
+Rather than forcing writers into traditional outline-first approaches, WriteAlive now supports **three complementary writing modes**:
+1. **Seed-Based** (Discovery): Ideas grow organically from seed centers → Low energy barrier, maximum creativity
+2. **Outcome-Driven** (Intention): Define writing goals, AI provides gentle structure → Professional efficiency, deadline-driven writing
+3. **Hybrid** (Discovery + Intention): Combine seeds with outcomes → Academic research, thesis writing, literature reviews
+
+The tool transforms writing from a high-friction, structure-heavy activity into a fluid, generative process - whether you're exploring scattered thoughts or working toward a specific goal.
+
+**Core Philosophy**: Writing as a living structure that evolves through generative sequences, not as a static artifact produced through rigid planning. Even goal-oriented writing proceeds through small, truthful steps.
+
+**Primary Value Proposition**: Enable anyone to write with clarity and depth by starting small, building truthfully, and evolving naturally - just as Bill Evans taught musicians to master jazz one step at a time. Now supporting both exploratory discovery (30% of users) and intentional goal-driven writing (70% of professional knowledge workers).
 
 ---
 
@@ -117,6 +136,13 @@ WriteAlive is an AI-assisted writing tool that enables writers to practice "Sali
 9. **Wholeness Score**: Custom metric measuring paragraph cohesion and center clarity (target: 7+/10)
 10. **User Self-Assessment**: 80% of users report "writing feels easier" after 2 weeks
 11. **Feedback Integration**: Users incorporate external feedback 2x faster with version tracking
+
+### Outcome-Driven & Hybrid Mode KPIs (Epic 5)
+12. **Mode Selection Accuracy**: 90% of users select appropriate mode for their writing context
+13. **Outcome-Driven Adoption**: 50% of professional users adopt outcome-first mode for work writing
+14. **Hybrid Mode Usage**: 40% of academic users use hybrid mode for research papers
+15. **Professional User Growth**: 2x increase in professional/corporate users (from 20% to 40% of user base)
+16. **Completion Rate (Outcome-Driven)**: 70% completion rate for outcome-driven documents (vs 60% seed-based)
 
 ### Concrete Before/After Comparison (from Tutorial Data)
 
