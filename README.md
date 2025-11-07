@@ -12,23 +12,71 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
 - Writer's block from facing blank pages
 - Rigid structure kills creative discovery
 
-### The Saligo Writing Solution
-- **Low energy start**: Begin with a single seed idea
-- **Generative growth**: Discover structure through writing, not before
-- **Center-based evolution**: Let strong ideas naturally strengthen weak ones
-- **Iterative refinement**: Small, truthful steps > vague approximations
+### The Saligo Writing Solution: Three Complementary Modes
+
+WriteAlive supports **three writing modes** that maintain Saligo principles while adapting to different contexts:
+
+#### 1. **Seed-Based Writing** (Bottom-Up Discovery)
+- Start with scattered seed notes → Discover centers → Write from emerging patterns
+- **Best for**: Exploratory essays, creative writing, personal reflection
+- **Centers evolve**: From weak connections to strong structural pivots through iterative writing
+- **Wholeness**: Measured by how centers unify disparate seeds into coherent narrative
+
+#### 2. **Outcome-Driven Writing** (Top-Down with Generative Steps)
+- Define writing goal → AI suggests gentle structure → Write section-by-section using small steps
+- **Best for**: Professional reports, proposals, deadline-driven documents
+- **Centers evolve**: Each section develops its own micro-centers that serve the overall outcome
+- **Wholeness**: Measured by how well sections contribute to unified outcome while maintaining internal coherence
+
+#### 3. **Hybrid Writing** (Discovery + Intention)
+- Define outcome + Gather seeds → AI finds outcome-aligned centers → Write with intentional direction grounded in existing insights
+- **Best for**: Academic papers, literature reviews, thesis chapters
+- **Centers evolve**: Seeds crystallize into centers that both serve your thesis AND reveal unexpected insights
+- **Wholeness**: Measured by alignment (center serves outcome) × depth (center reveals new understanding)
+
+**Core Principles Across All Modes**:
+- **Low energy start**: Begin with small, truthful steps (never full outlines)
+- **Generative growth**: Structure evolves through writing, not dictated beforehand
+- **Center-based evolution**: Strong ideas naturally strengthen weak ones through iterative refinement
+- **Wholeness tracking**: Continuous feedback on structural coherence (1-10 scale)
 
 ### Inspired by Bill Evans' Practice Philosophy
 > "Don't approximate the whole vaguely. Take a small part and be entirely true, entirely real, entirely accurate about it."
 
-## ✨ Key Features (MVP)
+This philosophy applies whether you're discovering centers from seeds, writing toward an outcome, or synthesizing existing knowledge with new goals.
 
-### 🌱 Seed Gathering & MOC Integration
+## ✨ Key Features
+
+### 🎯 Three Writing Modes (New in Epic 5)
+
+**Choose your starting point based on context**:
+
+1. **Seed-Based Mode** (✅ Available Now)
+   - Gather scattered notes → Discover centers → Write organically
+   - Perfect for exploratory essays and creative writing
+
+2. **Outcome-Driven Mode** (📋 Planned - Epic 5)
+   - Define writing goal → AI generates structure → Write section-by-section
+   - Perfect for professional reports and deadline-driven work
+
+3. **Hybrid Mode** (📋 Planned - Epic 5)
+   - Define outcome + Select seeds → AI finds aligned centers → Write with purpose
+   - Perfect for academic papers and thesis chapters
+
+**All modes maintain**: Low energy start, center evolution, wholeness tracking
+
+See [PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md](docs/PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md) for detailed specification.
+
+---
+
+### 🌱 Seed Gathering & MOC Integration (Seed-Based & Hybrid Modes)
+
 - **Seed Gathering**: Automatically collect tagged ideas from your entire vault
   - Configurable seed tags: `#seed`, `#idea`, `#💡`, `#씨앗`, or your custom tags
   - Support for multiple tags (finds notes matching any configured tag)
   - Bilingual support: Korean and English tags work seamlessly
   - **Quick Start Mode**: Auto-select recent 10 seeds for instant center discovery
+
 - **MOC Integration**: Start writing from your Map of Contents notes
   - Works with `#moc` tag, folder patterns, or YAML frontmatter
   - **NEW: Find Centers from MOC** - Discover structural centers from organized note collections
@@ -38,31 +86,55 @@ WriteAlive is an Obsidian plugin that helps you practice **Saligo Writing (살�
     - Cost-transparent analysis ($0.020-0.035 per MOC)
     - Documents include MOC source attribution
   - See tutorials: [English](docs/TUTORIAL-USING-MOC-EN.md) | [한국어](docs/TUTORIAL-USING-MOC-KR.md)
+
 - **Living MOCs**: Auto-update your MOCs with new seeds matching specific themes
   - Set tags per MOC: e.g., `seed_tags: [creativity, practice, 창의성]`
   - Three modes: realtime, daily notifications, or manual
   - Never overwrites your manual content
+
 - Zero-friction path: "note while reading" → "coherent essay"
 - Works with existing Zettelkasten, PARA, and other PKM workflows
 
-### 🎯 AI-Assisted Center Discovery
-- **Two Discovery Workflows**:
-  1. **From Scattered Seeds**: Discover patterns across 5-15 tagged notes (exploratory writing)
-  2. **From Organized MOCs**: Synthesize 10-30 linked notes into thesis statements (academic writing)
-- Identify the strongest "centers" that unify your ideas
-- Visual strength indicators: ⭐⭐⭐ Strong, ⭐⭐ Medium, ⭐ Weak
-- Get suggestions for where your writing naturally wants to grow
+### 🎯 AI-Assisted Center Discovery (All Modes)
+
+**Centers are the structural pivots that give your writing "life"**. WriteAlive helps centers evolve and strengthen through iterative writing.
+
+- **Three Discovery Workflows**:
+  1. **From Scattered Seeds** (Seed-Based): Discover patterns across 5-15 tagged notes
+  2. **From Organized MOCs** (Seed-Based): Synthesize 10-30 linked notes into thesis statements
+  3. **From Outcome + Seeds** (Hybrid): Find centers that serve your goal while revealing insights
+
+- **Center Evolution Tracking**:
+  - Visual strength indicators: ⭐⭐⭐ Strong, ⭐⭐ Medium, ⭐ Weak
+  - Watch centers strengthen as you write and refine
+  - See how centers connect to seeds and support overall structure
+
+- **Outcome-Driven Center Development** (Planned):
+  - Each section develops micro-centers that serve the whole
+  - AI suggests where to deepen or expand based on wholeness metrics
+
 - Powered by Claude 3.5 Sonnet, GPT-4, or Gemini Pro
 
-### 🌿 Generative Expansion
-- AI suggests multiple directions to develop your ideas
-- Choose paths that feel most alive
-- Maintain wholeness while growing complexity
+### 🌿 Generative Expansion (All Modes)
 
-### 📊 Wholeness Analysis
-- Quantify structural coherence (1-10 scale)
-- Track how your writing's "life" improves through iterations
+- AI suggests multiple directions to develop your ideas
+- Choose paths that feel most alive and strengthen wholeness
+- **Seed-Based**: Expand from discovered centers
+- **Outcome-Driven**: Expand sections while maintaining outcome alignment
+- **Hybrid**: Balance discovery and intention
+
+### 📊 Wholeness Analysis (All Modes)
+
+**Wholeness measures how well your writing holds together as a unified living structure**:
+
+- **Quantify structural coherence**: 1-10 scale across all writing modes
+- **Track center evolution**: See how centers strengthen through iterations
+- **Mode-specific metrics**:
+  - **Seed-Based**: How well centers unify disparate seeds
+  - **Outcome-Driven**: How well sections contribute to unified outcome
+  - **Hybrid**: Alignment (serves outcome) × Depth (reveals insight)
 - Visual feedback on document evolution
+- Iterative refinement guidance based on wholeness scores
 
 ### 🔄 Version Snapshots
 - Save transformation checkpoints

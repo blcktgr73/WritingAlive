@@ -118,6 +118,130 @@ The tool transforms writing from a high-friction, structure-heavy activity into 
 
 ---
 
+## Core Principles: How Centers Live and Grow Across All Modes
+
+**The fundamental insight**: Whether you start with seeds or outcomes, writing only gains "life" when **centers emerge, evolve, and strengthen** through iterative refinement.
+
+### What Are Centers?
+
+**Centers** are the structural pivots that hold a piece of writing together. They are:
+- **Not just topics**: A topic is "feedback loops" (static). A center is "temporal delay compounds error propagation" (dynamic, structural)
+- **Living elements**: They start weak and strengthen as you write
+- **Relational**: Centers exist in relationship to other elements (seeds, sections, arguments)
+- **Measurable**: Through wholeness scores (1-10) indicating structural coherence
+
+### Center Evolution in Three Modes
+
+#### 1. Seed-Based Mode: Centers Emerge from Connections
+
+**Process**:
+```
+Scattered Seeds → AI Discovers Potential Centers → Select Strongest → Write → Centers Strengthen
+```
+
+**Example**:
+- **Seeds**: Bill Evans quote, guitar practice note, code review insight, tree photo
+- **Discovered Center** (weak): "Practice and mastery"
+- **After writing iteration 1** (medium): "Completeness vs approximation in skill development"
+- **After iteration 2** (strong): "Small truthful steps compound into mastery faster than vague approximations"
+- **Wholeness progression**: 6.5 → 7.8 → 9.1
+
+**Key**: Centers weren't predetermined - they emerged from writing about seed relationships and gained clarity through revision.
+
+---
+
+#### 2. Outcome-Driven Mode: Micro-Centers Serve the Whole
+
+**Process**:
+```
+Define Outcome → AI Suggests Structure → Write Section 1 → Discover Section's Center → Repeat → Unify
+```
+
+**Example**:
+- **Outcome**: "Q4 Project Retrospective: Wins, Challenges, Lessons"
+- **Section 1 Center** (emerges while writing "Wins"): "User retention surge as leading indicator"
+- **Section 2 Center** (emerges while writing "Challenges"): "Technical debt masks feature velocity"
+- **Section 3 Center** (emerges while writing "Lessons"): "Metrics reveal truth that narratives obscure"
+- **Document-Level Center** (emerges from unifying sections): "Data-driven retrospection prevents repeated mistakes"
+- **Wholeness progression**: Sections start at 7.0 each, unified document reaches 8.5
+
+**Key**: Even with predetermined structure (outcome), each section develops its own living center through small iterative steps. The final document's wholeness depends on how well section-centers support the outcome-center.
+
+---
+
+#### 3. Hybrid Mode: Centers Align Purpose with Insight
+
+**Process**:
+```
+Define Outcome + Gather Seeds → AI Finds Outcome-Aligned Centers → Select → Write → Centers Deepen Both Ways
+```
+
+**Example**:
+- **Outcome**: "Literature review on temporal delay in feedback loops"
+- **Seeds**: 18 academic papers + 5 personal observations
+- **Discovered Hybrid Center**: "Temporal delay problem manifests differently across domains but shares structural cause"
+- **Writing iteration 1** (alignment: 0.85, depth: 0.70): Center serves thesis, but insights feel shallow
+- **Iteration 2** (alignment: 0.92, depth: 0.85): Added cross-domain patterns from seeds, deepened understanding while maintaining thesis focus
+- **Final** (alignment: 0.94, depth: 0.92): Center both proves thesis AND reveals unexpected insight (delay compounds non-linearly)
+- **Wholeness formula**: Alignment × Depth = 0.94 × 0.92 = 0.86 (8.6/10)
+
+**Key**: Hybrid centers must satisfy dual constraints: serve the outcome (alignment) AND reveal genuine insight from seeds (depth). Wholeness measures both dimensions.
+
+---
+
+### Wholeness: The Measure of Center Life
+
+**Wholeness** quantifies how well centers give structure "life":
+
+**Universal Wholeness Criteria** (All Modes):
+1. **Unity**: Does the center hold disparate elements together?
+2. **Clarity**: Is the center's core idea sharp and specific?
+3. **Strength**: Does writing from this center feel generative (not forced)?
+4. **Evolution**: Does the center deepen through iterative refinement?
+
+**Mode-Specific Wholeness**:
+
+| Mode | Wholeness Measures | Target Score |
+|------|-------------------|--------------|
+| **Seed-Based** | How well center unifies disparate seeds into coherent narrative | 7.5+/10 |
+| **Outcome-Driven** | Section wholeness (internal coherence) + Document wholeness (sections serve outcome) | 8.0+/10 |
+| **Hybrid** | Alignment score (serves outcome) × Depth score (reveals insight) | 8.5+/10 |
+
+**Continuous Feedback Loop**:
+- WriteAlive checks wholeness after each significant edit
+- Low wholeness (< 6.0) → AI suggests: "Center may be too vague. Can you make it more specific?"
+- Medium wholeness (6.0-7.5) → AI suggests expansion directions that strengthen center
+- High wholeness (7.5+) → AI confirms: "This center is holding well. Consider how it connects to other sections."
+
+---
+
+### Why This Matters: Living Structure vs Static Outline
+
+**Traditional Outline Approach** (Static):
+```
+1. Introduction
+2. Body Paragraph 1
+3. Body Paragraph 2
+4. Conclusion
+```
+- Structure predetermined
+- No centers, no life
+- Writing feels mechanical
+- Wholeness: N/A (structure doesn't evolve)
+
+**Saligo Approach - All Three Modes** (Living):
+```
+Start → Write small truthful step → Discover emerging center → Strengthen through revision → Check wholeness → Iterate
+```
+- Structure emerges (seed-based) OR sections develop their own centers (outcome-driven) OR centers align dual goals (hybrid)
+- Centers gain strength through writing
+- Writing feels generative
+- Wholeness: Continuously measured and improved (6.0 → 7.5 → 9.0)
+
+**The Guarantee**: If wholeness increases through iterations, your writing is gaining structural life. If wholeness stagnates or decreases, the center is weak or writing has lost direction.
+
+---
+
 ## Success Metrics
 
 ### Primary KPIs (Structural Life Enhancement)

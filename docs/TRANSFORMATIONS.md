@@ -7,16 +7,16 @@ This document tracks all transformations (structural improvements) made to the W
 ## Summary (Updated: 2025-11-07)
 
 ### Completed Transformations: 17
-### Planned Transformations: 1 (T-I18N-001)
+### Planned Transformations: 2 (T-I18N-001, T-027 Epic 5)
 
 **Foundation & Infrastructure (5)**:
 - T-001: Plugin Scaffold ✅
 - T-002-003: Settings & Encryption ✅
 - T-004-006: AI Service Layer ✅
 - T-024: Ribbon Button & Next Steps Suggestion ✅
-- T-026: Context-Aware Ribbon Button Enhancement ✅ **NEW**
+- T-026: Context-Aware Ribbon Button Enhancement ✅
 
-**Core Workflow (9)**:
+**Core Workflow - Seed-Based Mode (9)**:
 - T-007: Seed Gathering (tag filtering, photos, emoji tags) ✅
 - T-008: MOC Detection & Parsing ✅
 - T-009: Living MOC Auto-Update ✅
@@ -25,7 +25,7 @@ This document tracks all transformations (structural improvements) made to the W
 - T-011b: Center Discovery Modal UI ✅
 - T-013: Complete Workflow Integration ✅
 - T-024: Ribbon Button & Next Steps Suggestion ✅
-- T-025: Find Centers from MOC ✅ **NEW**
+- T-025: Find Centers from MOC ✅
 
 **Storage & Version Management (4)**:
 - T-012: YAML Frontmatter Manager ✅
@@ -40,33 +40,59 @@ This document tracks all transformations (structural improvements) made to the W
 
 ### Current Status
 
-**Workflow Completeness**: 100% of Phases 1-4 (Gather Seeds → Find Centers → Start Writing → Next Steps Suggestion)
+**Product Evolution**: Single-Mode → Three-Mode Writing System
 
-**Key Features**:
+**✅ Mode 1: Seed-Based Writing (Current - 100% Complete)**
+- Gather Seeds → Find Centers → Write from emerging patterns
+- Supports: Exploratory essays, creative writing, personal reflection
+- Centers evolve: Weak connections → Strong structural pivots through iteration
+- Wholeness: Measures how centers unify disparate seeds (target 7.5+/10)
+
+**📋 Mode 2: Outcome-Driven Writing (Planned - Epic 5)**
+- Define outcome → AI generates structure → Write section-by-section
+- Supports: Professional reports, proposals, deadline-driven documents
+- Centers evolve: Each section develops micro-centers serving the whole
+- Wholeness: Section coherence + Document unity (target 8.0+/10)
+- See: [T-20251107-027](transformations/T-20251107-027-OUTCOME-HYBRID-PLAN.md)
+
+**📋 Mode 3: Hybrid Writing (Planned - Epic 5)**
+- Define outcome + Gather seeds → AI finds outcome-aligned centers → Write
+- Supports: Academic papers, literature reviews, thesis chapters
+- Centers evolve: Serve thesis AND reveal unexpected insights
+- Wholeness: Alignment × Depth (target 8.5+/10)
+- See: [PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md](PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md)
+
+**Core Principle Across All Modes**: Centers must "live and grow"
+- Centers are not static topics - they are dynamic structural pivots
+- Centers start weak and strengthen through iterative writing
+- Wholeness measures center life (1-10 scale)
+- All modes support: Low energy start, center evolution, wholeness tracking
+
+**Key Features (Seed-Based Mode)**:
 - ✅ Gather Seeds (tag filtering, photos, emoji tags)
 - ✅ Find Centers (AI-powered discovery from seeds OR MOC)
 - ✅ Start Writing (automated document creation with MOC attribution)
 - ✅ Suggest Next Steps (AI-powered iteration guidance)
 - ✅ Snapshot Management (create, list, restore, compare)
-- ✅ **Context-Aware Ribbon Button** (intelligent workflow routing) - **NEW**
+- ✅ Context-Aware Ribbon Button (intelligent workflow routing)
 - ✅ Find Centers from MOC (MOC → Centers workflow)
 
-**Performance Metrics**:
+**Performance Metrics (Seed-Based Mode)**:
 - Seed gathering: <5s (✅ meets target)
-- AI center analysis: 3-5s (✅ meets target)
+- AI center analysis (Seeds): 3-5s (✅ meets target)
+- AI center analysis (MOC): 5-10s (✅ meets target)
 - Document creation: <2s (✅ meets target)
 - Next steps suggestion: ~5-7s (✅ meets target)
 - End-to-end: ~10-15s (✅ exceeds <90s target)
 
-**Next Phase**: Enhanced Center Discovery (T-025) + Refinement Features
-- 📋 **T-025: Find Centers from MOC** (Design Complete, Ready for Implementation)
-  - Discover structural centers from organized MOCs (10-30 notes)
-  - Reuse existing Center Discovery Modal with MOC context
-  - Target: 60% of users (academic researchers, professional writers)
-  - Estimated effort: 25-34 hours across 12 tasks
-- Wholeness scoring
-- Read-aloud feedback
-- Version snapshots
+**Next Major Phase**: Epic 5 - Outcome-Driven & Hybrid Writing
+- 📋 **T-027: Three-Mode System Implementation** (16-20 weeks)
+  - Phase 1: Mode Selection & Outcome Definition (4-5 weeks)
+  - Phase 2: Outcome-Driven Writing (5-6 weeks)
+  - Phase 3: Hybrid Mode (4-5 weeks)
+  - Phase 4: Polish & Integration (3-4 weeks)
+  - Estimated market expansion: 30% → 100% (creative + professional + academic)
+  - See: [T-20251107-027-OUTCOME-HYBRID-PLAN.md](transformations/T-20251107-027-OUTCOME-HYBRID-PLAN.md)
 
 ---
 
@@ -3528,3 +3554,33 @@ npm run i18n:check  # (to be created)
 
 ---
 
+
+## T-20251107-027 — Outcome-Driven & Hybrid Writing Enhancement (Epic 5)
+
+**Date**: 2025-11-07
+**Status**: 📋 Planned (Product Specification Complete)
+**Estimated Time**: 16-20 weeks (4 phases)
+
+### Summary
+
+Transform WriteAlive from single-mode (seed-based) to **three-mode bidirectional writing system**:
+- Mode 1: Seed-Based (existing) - Bottom-up discovery
+- Mode 2: Outcome-Driven (new) - Top-down with generative steps
+- Mode 3: Hybrid (new) - Discovery + Intention
+
+**Core Innovation**: All modes maintain center evolution and wholeness tracking while adapting to different contexts (exploratory, professional, academic).
+
+**Detailed Documentation**:
+- **Transformation Plan**: [T-20251107-027-OUTCOME-HYBRID-PLAN.md](transformations/T-20251107-027-OUTCOME-HYBRID-PLAN.md)
+- **Product Specification**: [PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md](PRODUCT-SPEC-OUTCOME-HYBRID-WRITING.md) (English)
+- **Product Specification**: [PRODUCT-SPEC-OUTCOME-HYBRID-WRITING-KR.md](PRODUCT-SPEC-OUTCOME-HYBRID-WRITING-KR.md) (한국어)
+
+**Market Impact**: 
+- Current: 30% market (creative/exploratory writers)
+- After: 100% market (creative + professional + academic)
+- Professional user growth: 2x (20% → 40% of user base)
+
+**Key Principle Emphasized**: 
+Centers must "live and grow" in ALL modes through iterative refinement, measured by continuous wholeness tracking (1-10 scale).
+
+---
