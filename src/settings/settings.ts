@@ -104,6 +104,38 @@ export interface WriteAliveSettings {
 	 * @default '' - Empty string
 	 */
 	customOutputFolder: string;
+
+	/**
+	 * Outcome-Driven Writing Mode Settings
+	 *
+	 * Configuration for outcome-driven writing workflow,
+	 * which focuses on structured professional documents.
+	 */
+	outcomeMode: {
+		/**
+		 * Enable outcome-driven mode
+		 * @default true - Available for all users
+		 */
+		enabled: boolean;
+
+		/**
+		 * Auto-save interval during section writing (in seconds)
+		 * @default 30 - Saves every 30 seconds
+		 */
+		autoSaveInterval: number;
+
+		/**
+		 * Minimum word percentage to complete a section
+		 * @default 80 - Must reach 80% of target words
+		 */
+		minWordPercentage: number;
+
+		/**
+		 * Cost warning threshold for structure generation (in USD)
+		 * @default 0.02 - Warn if cost exceeds $0.02
+		 */
+		costWarningThreshold: number;
+	};
 }
 
 /**
@@ -127,6 +159,12 @@ export const DEFAULT_SETTINGS: WriteAliveSettings = {
 	language: 'en',
 	documentOutputLocation: 'vault-root',
 	customOutputFolder: '',
+	outcomeMode: {
+		enabled: true,
+		autoSaveInterval: 30,
+		minWordPercentage: 80,
+		costWarningThreshold: 0.02,
+	},
 };
 
 /**

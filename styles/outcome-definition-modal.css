@@ -1,0 +1,296 @@
+/**
+ * Outcome Definition Modal Styles
+ *
+ * Styling for the Outcome Definition Modal component.
+ * Follows Obsidian's design system for consistency.
+ */
+
+/* Modal Container */
+.outcome-definition-modal {
+	--modal-max-width: 600px;
+	--modal-padding: 24px;
+	--spacing-sm: 8px;
+	--spacing-md: 16px;
+	--spacing-lg: 24px;
+}
+
+.outcome-definition-modal .modal-content {
+	max-width: var(--modal-max-width);
+	padding: 0;
+}
+
+/* Header */
+.outcome-definition-modal__header {
+	padding: var(--modal-padding);
+	padding-bottom: var(--spacing-md);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.outcome-definition-modal__title {
+	margin: 0;
+	font-size: 1.5em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+/* Form */
+.outcome-definition-modal__form {
+	padding: var(--modal-padding);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-lg);
+}
+
+/* Textarea Container */
+.outcome-definition-modal__textarea-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+}
+
+.outcome-definition-modal__textarea {
+	width: 100%;
+	min-height: 100px;
+	padding: 8px 12px;
+	font-family: var(--font-text);
+	font-size: var(--font-ui-medium);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+	resize: vertical;
+	transition: border-color 0.2s ease;
+}
+
+.outcome-definition-modal__textarea:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+.outcome-definition-modal__textarea::placeholder {
+	color: var(--text-muted);
+}
+
+/* Character Counter */
+.outcome-definition-modal__char-counter {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.outcome-definition-modal__char-count {
+	font-size: var(--font-ui-smaller);
+	font-weight: 500;
+	padding: 2px 8px;
+	border-radius: var(--radius-s);
+	transition: all 0.2s ease;
+}
+
+.outcome-definition-modal__char-count--error {
+	color: var(--text-error);
+	background-color: var(--background-modifier-error);
+}
+
+.outcome-definition-modal__char-count--warning {
+	color: var(--text-warning);
+	background-color: var(--background-modifier-warning);
+}
+
+.outcome-definition-modal__char-count--valid {
+	color: var(--text-success);
+	background-color: var(--background-modifier-success);
+}
+
+/* Examples Hint */
+.outcome-definition-modal__examples {
+	padding: var(--spacing-sm) var(--spacing-md);
+	background-color: var(--background-secondary);
+	border-left: 3px solid var(--interactive-accent);
+	border-radius: var(--radius-s);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.outcome-definition-modal__examples strong {
+	color: var(--text-normal);
+	font-weight: 600;
+}
+
+/* Radio Group */
+.outcome-definition-modal__radio-group {
+	display: flex;
+	gap: var(--spacing-md);
+}
+
+.outcome-definition-modal__radio-label {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	padding: 8px 16px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: var(--font-ui-medium);
+	color: var(--text-normal);
+	background-color: var(--background-primary);
+}
+
+.outcome-definition-modal__radio-label:hover {
+	background-color: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.outcome-definition-modal__radio-label input[type="radio"] {
+	margin: 0;
+	cursor: pointer;
+}
+
+.outcome-definition-modal__radio-label input[type="radio"]:checked {
+	accent-color: var(--interactive-accent);
+}
+
+.outcome-definition-modal__radio-label:has(input:checked) {
+	background-color: var(--interactive-accent-hover);
+	border-color: var(--interactive-accent);
+	font-weight: 600;
+}
+
+/* Validation Feedback */
+.outcome-definition-modal__validation {
+	padding: var(--spacing-md);
+	background-color: var(--background-secondary);
+	border-radius: var(--radius-m);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.outcome-definition-modal__validation-section {
+	margin-bottom: var(--spacing-md);
+}
+
+.outcome-definition-modal__validation-section:last-child {
+	margin-bottom: 0;
+}
+
+.outcome-definition-modal__validation-label {
+	display: block;
+	margin-bottom: var(--spacing-sm);
+	font-size: var(--font-ui-small);
+	font-weight: 600;
+}
+
+.outcome-definition-modal__validation-label--error {
+	color: var(--text-error);
+}
+
+.outcome-definition-modal__validation-label--warning {
+	color: var(--text-warning);
+}
+
+.outcome-definition-modal__validation-label--suggestion {
+	color: var(--interactive-accent);
+}
+
+.outcome-definition-modal__validation-list {
+	margin: 0;
+	padding-left: 20px;
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+}
+
+.outcome-definition-modal__validation-list li {
+	margin-bottom: 4px;
+}
+
+.outcome-definition-modal__validation-list li:last-child {
+	margin-bottom: 0;
+}
+
+/* Footer */
+.outcome-definition-modal__footer {
+	padding: var(--modal-padding);
+	padding-top: var(--spacing-md);
+	border-top: 1px solid var(--background-modifier-border);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+
+.outcome-definition-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--spacing-sm);
+}
+
+.outcome-definition-modal__action {
+	padding: 8px 24px;
+	border-radius: var(--radius-m);
+	font-size: var(--font-ui-medium);
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border: none;
+	outline: none;
+}
+
+.outcome-definition-modal__action--primary {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.outcome-definition-modal__action--primary:hover:not(:disabled) {
+	background-color: var(--interactive-accent-hover);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.outcome-definition-modal__action--primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.outcome-definition-modal__action--secondary {
+	background-color: transparent;
+	color: var(--text-muted);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.outcome-definition-modal__action--secondary:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+	border-color: var(--interactive-accent);
+}
+
+/* Loading State */
+.outcome-definition-modal__loading {
+	padding: var(--spacing-md);
+	text-align: center;
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+	font-style: italic;
+	animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.6;
+	}
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.outcome-definition-modal {
+		--modal-padding: 16px;
+		--spacing-lg: 16px;
+	}
+
+	.outcome-definition-modal__radio-group {
+		flex-direction: column;
+	}
+
+	.outcome-definition-modal__radio-label {
+		width: 100%;
+	}
+}

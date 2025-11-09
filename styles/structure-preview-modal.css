@@ -1,0 +1,473 @@
+/**
+ * Structure Preview Modal Styles
+ *
+ * Styling for the Structure Preview Modal component.
+ * Follows Obsidian's design system for consistency.
+ */
+
+/* Modal Container */
+.structure-preview-modal {
+	--modal-max-width: 800px;
+	--modal-padding: 24px;
+	--spacing-xs: 4px;
+	--spacing-sm: 8px;
+	--spacing-md: 16px;
+	--spacing-lg: 24px;
+	--card-border-radius: 8px;
+}
+
+.structure-preview-modal .modal-content {
+	max-width: var(--modal-max-width);
+	padding: 0;
+	max-height: 85vh;
+	overflow-y: auto;
+}
+
+/* Header */
+.structure-preview-modal__header {
+	padding: var(--modal-padding);
+	padding-bottom: var(--spacing-md);
+	border-bottom: 1px solid var(--background-modifier-border);
+	position: sticky;
+	top: 0;
+	background-color: var(--background-primary);
+	z-index: 10;
+}
+
+.structure-preview-modal__title {
+	margin: 0;
+	font-size: 1.5em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.structure-preview-modal__subtitle {
+	margin: var(--spacing-sm) 0 0 0;
+	font-size: 1.1em;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+
+/* Overview */
+.structure-preview-modal__overview {
+	padding: var(--spacing-md) var(--modal-padding);
+	background-color: var(--background-secondary);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.structure-preview-modal__stat {
+	font-size: var(--font-ui-medium);
+	color: var(--text-normal);
+	font-weight: 500;
+}
+
+/* Sections Container */
+.structure-preview-modal__sections {
+	padding: var(--modal-padding);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+
+/* Section Card */
+.structure-preview-modal__section-card {
+	position: relative;
+	padding: var(--spacing-md);
+	background-color: var(--background-primary);
+	border: 2px solid var(--background-modifier-border);
+	border-radius: var(--card-border-radius);
+	transition: all 0.2s ease;
+	cursor: grab;
+}
+
+.structure-preview-modal__section-card:hover {
+	border-color: var(--interactive-accent);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.structure-preview-modal__section-card--editing {
+	border-color: var(--interactive-accent);
+	background-color: var(--background-secondary);
+}
+
+.structure-preview-modal__section-card--dragging {
+	opacity: 0.5;
+	cursor: grabbing;
+}
+
+.structure-preview-modal__section-card--drop-target {
+	border-style: dashed;
+	border-color: var(--interactive-accent);
+	background-color: var(--background-modifier-hover);
+}
+
+/* Section Header */
+.structure-preview-modal__section-header {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	margin-bottom: var(--spacing-md);
+}
+
+.structure-preview-modal__drag-handle {
+	font-size: 1.2em;
+	color: var(--text-muted);
+	cursor: grab;
+	user-select: none;
+	padding: var(--spacing-xs);
+}
+
+.structure-preview-modal__drag-handle:hover {
+	color: var(--text-normal);
+}
+
+.structure-preview-modal__section-number {
+	font-size: 1.2em;
+	font-weight: 600;
+}
+
+.structure-preview-modal__section-title {
+	flex: 1;
+	font-size: 1.1em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.structure-preview-modal__edit-button {
+	padding: 4px 12px;
+	background-color: var(--interactive-normal);
+	color: var(--text-normal);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	cursor: pointer;
+	font-size: var(--font-ui-small);
+	transition: all 0.2s ease;
+}
+
+.structure-preview-modal__edit-button:hover {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+/* Section Details */
+.structure-preview-modal__section-details {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+	padding-left: calc(var(--spacing-md) * 3);
+}
+
+.structure-preview-modal__section-field {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+}
+
+.structure-preview-modal__section-prompt {
+	margin-top: var(--spacing-xs);
+}
+
+.structure-preview-modal__section-prompt-label {
+	font-size: var(--font-ui-small);
+	font-weight: 600;
+	color: var(--text-normal);
+	margin-bottom: var(--spacing-xs);
+}
+
+.structure-preview-modal__section-prompt-text {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+	padding: var(--spacing-sm);
+	background-color: var(--background-secondary);
+	border-left: 3px solid var(--interactive-accent);
+	border-radius: var(--radius-s);
+	font-style: italic;
+}
+
+/* Progress Bar */
+.structure-preview-modal__progress-container {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	margin-top: var(--spacing-sm);
+}
+
+.structure-preview-modal__progress-bar {
+	flex: 1;
+	height: 8px;
+	background-color: var(--background-modifier-border);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.structure-preview-modal__progress-fill {
+	height: 100%;
+	background-color: var(--interactive-accent);
+	transition: width 0.3s ease;
+	border-radius: 4px;
+}
+
+.structure-preview-modal__progress-fill--low {
+	background-color: var(--color-green);
+}
+
+.structure-preview-modal__progress-fill--medium {
+	background-color: var(--color-yellow);
+}
+
+.structure-preview-modal__progress-fill--high {
+	background-color: var(--color-orange);
+}
+
+.structure-preview-modal__progress-label {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	white-space: nowrap;
+	min-width: 80px;
+	text-align: right;
+}
+
+/* Delete Button */
+.structure-preview-modal__delete-button {
+	position: absolute;
+	top: var(--spacing-sm);
+	right: var(--spacing-sm);
+	padding: 4px 8px;
+	background-color: transparent;
+	color: var(--text-muted);
+	border: none;
+	border-radius: var(--radius-s);
+	cursor: pointer;
+	font-size: 1em;
+	transition: all 0.2s ease;
+	opacity: 0.6;
+}
+
+.structure-preview-modal__delete-button:hover {
+	background-color: var(--background-modifier-error);
+	color: var(--text-error);
+	opacity: 1;
+}
+
+/* Edit Form */
+.structure-preview-modal__edit-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+	padding: var(--spacing-md);
+	background-color: var(--background-primary);
+	border-radius: var(--radius-m);
+}
+
+.structure-preview-modal__estimates-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--spacing-md);
+}
+
+.structure-preview-modal__edit-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--spacing-sm);
+	margin-top: var(--spacing-sm);
+}
+
+.structure-preview-modal__edit-action {
+	padding: 6px 20px;
+	border-radius: var(--radius-m);
+	font-size: var(--font-ui-small);
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border: none;
+}
+
+.structure-preview-modal__edit-action--primary {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.structure-preview-modal__edit-action--primary:hover {
+	background-color: var(--interactive-accent-hover);
+}
+
+.structure-preview-modal__edit-action--secondary {
+	background-color: transparent;
+	color: var(--text-muted);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.structure-preview-modal__edit-action--secondary:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+/* Action Buttons */
+.structure-preview-modal__actions {
+	padding: var(--spacing-md) var(--modal-padding);
+	display: flex;
+	gap: var(--spacing-sm);
+	border-top: 1px solid var(--background-modifier-border);
+	background-color: var(--background-secondary);
+}
+
+.structure-preview-modal__action-button {
+	padding: 8px 16px;
+	background-color: var(--interactive-normal);
+	color: var(--text-normal);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	cursor: pointer;
+	font-size: var(--font-ui-small);
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.structure-preview-modal__action-button:hover {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+/* Validation */
+.structure-preview-modal__validation {
+	padding: var(--spacing-md) var(--modal-padding);
+	background-color: var(--background-secondary);
+	border-top: 1px solid var(--background-modifier-border);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.structure-preview-modal__validation-header {
+	margin-bottom: var(--spacing-md);
+	font-size: var(--font-ui-medium);
+	color: var(--text-normal);
+}
+
+.structure-preview-modal__validation-passes {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+	margin-bottom: var(--spacing-md);
+}
+
+.structure-preview-modal__validation-warnings {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+}
+
+.structure-preview-modal__validation-item {
+	font-size: var(--font-ui-small);
+	padding: var(--spacing-xs) var(--spacing-sm);
+	border-radius: var(--radius-s);
+}
+
+.structure-preview-modal__validation-item--pass {
+	color: var(--text-success);
+	background-color: var(--background-modifier-success);
+}
+
+.structure-preview-modal__validation-item--warning {
+	color: var(--text-warning);
+	background-color: var(--background-modifier-warning);
+}
+
+/* Footer */
+.structure-preview-modal__footer {
+	padding: var(--modal-padding);
+	padding-top: var(--spacing-md);
+	border-top: 1px solid var(--background-modifier-border);
+	position: sticky;
+	bottom: 0;
+	background-color: var(--background-primary);
+	z-index: 10;
+}
+
+.structure-preview-modal__footer-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--spacing-sm);
+}
+
+.structure-preview-modal__footer-action {
+	padding: 10px 28px;
+	border-radius: var(--radius-m);
+	font-size: var(--font-ui-medium);
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border: none;
+}
+
+.structure-preview-modal__footer-action--primary {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.structure-preview-modal__footer-action--primary:hover:not(:disabled) {
+	background-color: var(--interactive-accent-hover);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.structure-preview-modal__footer-action--primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.structure-preview-modal__footer-action--secondary {
+	background-color: transparent;
+	color: var(--text-muted);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.structure-preview-modal__footer-action--secondary:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+	border-color: var(--interactive-accent);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.structure-preview-modal {
+		--modal-padding: 16px;
+		--spacing-lg: 16px;
+	}
+
+	.structure-preview-modal__section-details {
+		padding-left: var(--spacing-md);
+	}
+
+	.structure-preview-modal__estimates-row {
+		grid-template-columns: 1fr;
+	}
+
+	.structure-preview-modal__actions {
+		flex-direction: column;
+	}
+
+	.structure-preview-modal__action-button {
+		width: 100%;
+	}
+}
+
+/* Accessibility */
+.structure-preview-modal__section-card:focus-within {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Smooth transitions */
+.structure-preview-modal__section-card,
+.structure-preview-modal__progress-fill,
+.structure-preview-modal__edit-button,
+.structure-preview-modal__action-button,
+.structure-preview-modal__footer-action {
+	transition: all 0.2s ease;
+}
+
+/* Color scheme fallbacks for older Obsidian versions */
+:root {
+	--color-green: #4ade80;
+	--color-yellow: #facc15;
+	--color-orange: #fb923c;
+}

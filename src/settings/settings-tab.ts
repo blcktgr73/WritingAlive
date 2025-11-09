@@ -84,6 +84,9 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 		// Seed Gathering Section
 		this.addSeedGatheringSettings(containerEl);
 
+		// Outcome-Driven Writing Section
+		this.addOutcomeModeSettings(containerEl);
+
 		// General Settings Section
 		this.addGeneralSettings(containerEl);
 	}
@@ -332,6 +335,83 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.seedTags = value;
 						await this.plugin.saveSettings();
+					})
+			);
+	}
+
+	/**
+	 * Outcome-Driven Writing Mode Settings
+	 *
+	 * Single Responsibility: Configure outcome-driven writing preferences
+	 */
+	private addOutcomeModeSettings(containerEl: HTMLElement): void {
+		containerEl.createEl('h3', { text: 'Outcome-Driven Writing' });
+		containerEl.createEl('p', {
+			text: 'Configure settings for structured, outcome-focused document creation.',
+			cls: 'setting-item-description',
+		});
+
+		// Enable Outcome Mode
+		new Setting(containerEl)
+			.setName('Enable Outcome-Driven Mode')
+			.setDesc('Enable the outcome-driven writing workflow for professional documents')
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.outcomeMode.enabled)
+					.onChange(async (value) => {
+						this.plugin.settings.outcomeMode.enabled = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		// Auto-save Interval (Outcome Mode)
+		new Setting(containerEl)
+			.setName('Auto-save Interval')
+			.setDesc('How often to auto-save during section writing (in seconds, 10-300)')
+			.addText((text) =>
+				text
+					.setPlaceholder('30')
+					.setValue(String(this.plugin.settings.outcomeMode.autoSaveInterval))
+					.onChange(async (value) => {
+						const num = parseInt(value);
+						if (!isNaN(num) && num >= 10 && num <= 300) {
+							this.plugin.settings.outcomeMode.autoSaveInterval = num;
+							await this.plugin.saveSettings();
+						}
+					})
+			);
+
+		// Minimum Word Percentage
+		new Setting(containerEl)
+			.setName('Minimum Word Percentage')
+			.setDesc('Minimum % of target words required to complete a section (50-100)')
+			.addText((text) =>
+				text
+					.setPlaceholder('80')
+					.setValue(String(this.plugin.settings.outcomeMode.minWordPercentage))
+					.onChange(async (value) => {
+						const num = parseInt(value);
+						if (!isNaN(num) && num >= 50 && num <= 100) {
+							this.plugin.settings.outcomeMode.minWordPercentage = num;
+							await this.plugin.saveSettings();
+						}
+					})
+			);
+
+		// Cost Warning Threshold
+		new Setting(containerEl)
+			.setName('Cost Warning Threshold')
+			.setDesc('Warn if structure generation cost exceeds this amount (in USD, e.g., 0.02)')
+			.addText((text) =>
+				text
+					.setPlaceholder('0.02')
+					.setValue(String(this.plugin.settings.outcomeMode.costWarningThreshold))
+					.onChange(async (value) => {
+						const num = parseFloat(value);
+						if (!isNaN(num) && num >= 0.01 && num <= 1.0) {
+							this.plugin.settings.outcomeMode.costWarningThreshold = num;
+							await this.plugin.saveSettings();
+						}
 					})
 			);
 	}

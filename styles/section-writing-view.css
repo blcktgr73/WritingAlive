@@ -1,0 +1,413 @@
+/**
+ * Section Writing View Styles
+ *
+ * Styling for the Section Writing View component.
+ * Follows Obsidian's design system for consistency.
+ */
+
+/* View Container */
+.section-writing-view {
+	--view-max-width: 900px;
+	--view-padding: 24px;
+	--spacing-xs: 4px;
+	--spacing-sm: 8px;
+	--spacing-md: 16px;
+	--spacing-lg: 24px;
+	--spacing-xl: 32px;
+	--border-radius: 8px;
+	--sidebar-width: 240px;
+}
+
+.section-writing-view .modal-content {
+	max-width: 100%;
+	padding: 0;
+	height: 90vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.writing-view-container {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	overflow: hidden;
+}
+
+/* Main Content Area */
+.writing-view-main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	padding: var(--view-padding);
+	overflow-y: auto;
+}
+
+/* Progress Header */
+.progress-header {
+	padding: var(--spacing-md);
+	background: var(--background-secondary);
+	border-radius: var(--border-radius);
+	margin-bottom: var(--spacing-lg);
+}
+
+.progress-text {
+	font-size: 1em;
+	font-weight: 600;
+	color: var(--text-normal);
+	margin-bottom: var(--spacing-sm);
+}
+
+.progress-bar {
+	width: 100%;
+	height: 8px;
+	background: var(--background-modifier-border);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.progress-fill {
+	height: 100%;
+	transition: width 0.3s ease, background-color 0.3s ease;
+	border-radius: 4px;
+}
+
+.progress-fill-green {
+	background: var(--color-green);
+}
+
+.progress-fill-yellow {
+	background: var(--color-yellow);
+}
+
+.progress-fill-red {
+	background: var(--color-red);
+}
+
+/* Section Context */
+.section-context {
+	padding: var(--spacing-lg);
+	background: var(--background-primary-alt);
+	border-radius: var(--border-radius);
+	margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+	margin: 0 0 var(--spacing-md) 0;
+	font-size: 1.5em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.section-purpose {
+	font-size: 1em;
+	color: var(--text-muted);
+	margin-bottom: var(--spacing-sm);
+}
+
+.section-estimate {
+	font-size: 0.95em;
+	color: var(--text-muted);
+	margin-bottom: var(--spacing-md);
+}
+
+.prompt-label {
+	font-size: 1em;
+	font-weight: 600;
+	color: var(--text-accent);
+	margin-top: var(--spacing-md);
+	margin-bottom: var(--spacing-sm);
+}
+
+.writing-prompt {
+	font-size: 1em;
+	color: var(--text-normal);
+	padding: var(--spacing-md);
+	background: var(--background-secondary);
+	border-radius: var(--border-radius);
+	border-left: 3px solid var(--text-accent);
+}
+
+.section-separator {
+	height: 1px;
+	background: var(--background-modifier-border);
+	margin: var(--spacing-lg) 0;
+}
+
+/* Editor Container */
+.editor-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 400px;
+}
+
+.section-editor {
+	width: 100%;
+	min-height: 400px;
+	flex: 1;
+	padding: var(--spacing-md);
+	font-family: var(--font-monospace);
+	font-size: 1em;
+	line-height: 1.6;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--border-radius);
+	background: var(--background-primary);
+	color: var(--text-normal);
+	resize: vertical;
+	transition: border-color 0.2s ease;
+}
+
+.section-editor:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+.section-editor::placeholder {
+	color: var(--text-faint);
+}
+
+.counter-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--spacing-sm) var(--spacing-md);
+	background: var(--background-secondary);
+	border-radius: var(--border-radius);
+	margin-top: var(--spacing-sm);
+}
+
+.word-count {
+	font-size: 0.95em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.auto-save-status {
+	font-size: 0.9em;
+	color: var(--text-muted);
+}
+
+/* Action Buttons */
+.action-buttons {
+	display: flex;
+	gap: var(--spacing-md);
+	justify-content: flex-end;
+	margin-top: var(--spacing-lg);
+	padding-top: var(--spacing-lg);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.action-buttons button {
+	padding: var(--spacing-sm) var(--spacing-lg);
+	font-size: 1em;
+	font-weight: 500;
+	border-radius: var(--border-radius);
+	border: 1px solid var(--background-modifier-border);
+	background: var(--interactive-normal);
+	color: var(--text-normal);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.action-buttons button:hover {
+	background: var(--interactive-hover);
+	border-color: var(--interactive-accent);
+}
+
+.action-buttons button:active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.suggest-button {
+	background: var(--background-secondary) !important;
+	border-color: var(--text-accent) !important;
+}
+
+.suggest-button:hover {
+	background: var(--text-accent) !important;
+	color: var(--text-on-accent) !important;
+}
+
+.complete-button {
+	background: var(--color-green) !important;
+	color: var(--text-on-accent) !important;
+	border-color: var(--color-green) !important;
+}
+
+.complete-button:hover {
+	opacity: 0.9;
+}
+
+.save-button {
+	background: var(--interactive-accent) !important;
+	color: var(--text-on-accent) !important;
+	border-color: var(--interactive-accent) !important;
+}
+
+.save-button:hover {
+	opacity: 0.9;
+}
+
+/* Section Sidebar */
+.section-sidebar {
+	width: var(--sidebar-width);
+	background: var(--background-secondary);
+	border-left: 1px solid var(--background-modifier-border);
+	padding: var(--view-padding);
+	overflow-y: auto;
+}
+
+.sidebar-title {
+	margin: 0 0 var(--spacing-md) 0;
+	font-size: 1.1em;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.section-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+}
+
+.section-item {
+	padding: var(--spacing-md);
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	border: 1px solid transparent;
+}
+
+.section-item:hover {
+	background: var(--background-primary-alt);
+	border-color: var(--background-modifier-border);
+}
+
+.section-item-title {
+	font-size: 0.95em;
+	font-weight: 500;
+	color: var(--text-normal);
+	margin-bottom: var(--spacing-xs);
+}
+
+.section-item-words {
+	font-size: 0.85em;
+	color: var(--text-muted);
+}
+
+/* Section Status Variants */
+.section-completed {
+	background: var(--background-primary-alt);
+	border-color: var(--color-green);
+}
+
+.section-completed .section-item-title {
+	color: var(--color-green);
+}
+
+.section-in-progress {
+	background: var(--interactive-accent-hover);
+	border-color: var(--interactive-accent);
+}
+
+.section-in-progress .section-item-title {
+	color: var(--interactive-accent);
+	font-weight: 600;
+}
+
+.section-not-started {
+	opacity: 0.7;
+}
+
+.section-not-started .section-item-title {
+	color: var(--text-muted);
+}
+
+/* Loading States */
+.loading-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.loading-spinner {
+	width: 48px;
+	height: 48px;
+	border: 4px solid var(--background-modifier-border);
+	border-top-color: var(--interactive-accent);
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.writing-view-container {
+		flex-direction: column;
+	}
+
+	.section-sidebar {
+		width: 100%;
+		border-left: none;
+		border-top: 1px solid var(--background-modifier-border);
+		max-height: 200px;
+	}
+
+	.action-buttons {
+		flex-direction: column;
+	}
+
+	.action-buttons button {
+		width: 100%;
+	}
+}
+
+/* Accessibility */
+.section-item:focus {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+button:focus {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+.section-editor:focus {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+/* Dark Mode Adjustments */
+.theme-dark .progress-fill-green {
+	background: var(--color-green);
+}
+
+.theme-dark .progress-fill-yellow {
+	background: var(--color-yellow);
+}
+
+.theme-dark .progress-fill-red {
+	background: var(--color-red);
+}
+
+.theme-dark .section-context {
+	background: var(--background-secondary);
+}
+
+.theme-dark .writing-prompt {
+	background: var(--background-primary);
+}

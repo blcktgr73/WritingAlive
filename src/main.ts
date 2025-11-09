@@ -1,4 +1,4 @@
-import { Plugin, Notice, Menu } from 'obsidian';
+import { Plugin, Notice, Menu, TFile } from 'obsidian';
 import type { WriteAliveSettings } from './settings/settings';
 import { DEFAULT_SETTINGS, needsMigration } from './settings/settings';
 import type { LegacySettings } from './settings/settings';
@@ -18,6 +18,18 @@ import { RateLimiter } from './services/storage/rate-limiter';
 // UI components
 import { SnapshotModal } from './ui/snapshot-modal';
 import { GatherSeedsModal } from './ui/gather-seeds-modal';
+
+// Outcome-Driven Writing components
+import { OutcomeDefinitionModal } from './ui/modals/outcome-definition-modal';
+import { StructurePreviewModal } from './ui/modals/structure-preview-modal';
+import { SectionWritingView } from './ui/views/section-writing-view';
+
+// Outcome-Driven Writing services
+import { OutcomeManager } from './services/outcome/outcome-manager';
+import { StructureGenerator } from './services/outcome/structure-generator';
+import { SectionManager } from './services/outcome/section-manager';
+import { TemplateLibrary } from './services/outcome/template-library';
+import type { OutcomeDefinition, DocumentStructure } from './services/outcome/types';
 
 /**
  * WriteAlive Plugin
@@ -162,6 +174,60 @@ export default class WriteAlivePlugin extends Plugin {
 	private rateLimiter: RateLimiter | null = null;
 
 	/**
+	 * Outcome Manager instance
+	 *
+	 * Provides outcome-driven document management:
+	 * - Create and validate outcome definitions
+	 * - Save/load outcome metadata from documents
+	 * - Track document progress (sections completed)
+	 * - Validate section completion
+	 *
+	 * Initialized on plugin load.
+	 * No disposal needed (stateless service).
+	 */
+	private outcomeManager: OutcomeManager | null = null;
+
+	/**
+	 * Structure Generator instance
+	 *
+	 * Provides AI-powered structure generation:
+	 * - Generate document sections from outcomes
+	 * - Estimate word counts and effort
+	 * - Follow Saligo Writing principles
+	 *
+	 * Initialized on plugin load after AI service.
+	 * No disposal needed (uses AI service).
+	 */
+	private structureGenerator: StructureGenerator | null = null;
+
+	/**
+	 * Section Manager instance
+	 *
+	 * Provides section-level operations:
+	 * - Validate section content
+	 * - Calculate completion percentage
+	 * - Manage section state
+	 *
+	 * Initialized on plugin load.
+	 * No disposal needed (stateless service).
+	 */
+	private sectionManager: SectionManager | null = null;
+
+	/**
+	 * Template Library instance
+	 *
+	 * Provides pre-defined outcome templates:
+	 * - Research papers
+	 * - Business proposals
+	 * - Technical docs
+	 * - Blog posts
+	 *
+	 * Initialized on plugin load.
+	 * No disposal needed (static data).
+	 */
+	private templateLibrary: TemplateLibrary | null = null;
+
+	/**
 	 * Plugin initialization
 	 *
 	 * Follows lifecycle pattern:
@@ -195,6 +261,9 @@ export default class WriteAlivePlugin extends Plugin {
 
 		// Initialize storage services (Phase 2)
 		this.initializeStorageServices();
+
+		// Initialize outcome-driven services
+		this.initializeOutcomeServices();
 
 		// Register ribbon button (T-024)
 		this.registerRibbonButton();
@@ -329,14 +398,17 @@ export default class WriteAlivePlugin extends Plugin {
 		const provider = this.settings.aiProvider;
 		const encryptedKey = this.settings.encryptedApiKeys[provider];
 
+		console.log('[WriteAlive] Loading API key:', { provider, hasKey: !!encryptedKey });
+
 		if (encryptedKey) {
 			try {
 				this.decryptedApiKey = await encryptionService.decryptApiKey(
 					encryptedKey,
 					provider
 				);
+				console.log('[WriteAlive] API key decrypted successfully');
 			} catch (error) {
-				console.error('Failed to decrypt API key on load:', error);
+				console.error('[WriteAlive] Failed to decrypt API key on load:', error);
 				this.decryptedApiKey = '';
 
 				new Notice(
@@ -344,6 +416,7 @@ export default class WriteAlivePlugin extends Plugin {
 				);
 			}
 		} else {
+			console.log('[WriteAlive] No API key configured for provider:', provider);
 			this.decryptedApiKey = '';
 		}
 	}
@@ -484,6 +557,36 @@ export default class WriteAlivePlugin extends Plugin {
 		});
 
 		console.log('[WriteAlive] Storage services initialized');
+	}
+
+	/**
+	 * Initialize outcome-driven services
+	 *
+	 * Creates outcome-driven writing services for structured document creation.
+	 * Called on plugin load after AI service and storage services are initialized.
+	 *
+	 * Services initialized:
+	 * - OutcomeManager: Document outcome management
+	 * - StructureGenerator: AI-powered structure generation
+	 * - SectionManager: Section-level operations
+	 * - TemplateLibrary: Pre-defined outcome templates
+	 */
+	private initializeOutcomeServices(): void {
+		// Outcome manager (foundation for outcome-driven workflow)
+		this.outcomeManager = new OutcomeManager(this.app.vault);
+
+		// Structure generator (requires AI service)
+		// Note: Initialized lazily when needed, as it depends on AI service
+		// which may not be available on plugin load
+		this.structureGenerator = null;
+
+		// Section manager (requires vault)
+		this.sectionManager = new SectionManager(this.app.vault);
+
+		// Template library (static data)
+		this.templateLibrary = new TemplateLibrary();
+
+		console.log('[WriteAlive] Outcome-driven services initialized');
 	}
 
 	/**
@@ -686,7 +789,57 @@ export default class WriteAlivePlugin extends Plugin {
 			},
 		});
 
+		// Register outcome-driven commands
+		this.registerOutcomeDrivenCommands();
+
 		console.log('[WriteAlive] Commands registered');
+	}
+
+	/**
+	 * Register outcome-driven command palette commands
+	 *
+	 * Registers commands for outcome-driven writing workflow.
+	 * Called during plugin load after services are initialized.
+	 *
+	 * Commands registered:
+	 * - Start Outcome-Driven Writing: Opens outcome definition modal
+	 * - Resume Outcome Writing: Resumes partial outcome-driven document
+	 */
+	private registerOutcomeDrivenCommands(): void {
+		// Command: Start Outcome-Driven Writing
+		this.addCommand({
+			id: 'start-outcome-driven-writing',
+			name: 'Start Outcome-Driven Writing',
+			callback: () => {
+				this.startOutcomeDrivenWriting();
+			},
+		});
+
+		// Command: Resume Outcome Writing (conditional - only for outcome documents)
+		this.addCommand({
+			id: 'resume-outcome-writing',
+			name: 'Resume Outcome-Driven Writing',
+			checkCallback: (checking: boolean) => {
+				const activeFile = this.app.workspace.getActiveFile();
+				if (!activeFile) return false;
+
+				// Check if file has outcome metadata (synchronous check)
+				// We'll use a simple heuristic: check if file is tracked by checking cache
+				// Full metadata check happens when command is actually executed
+				const hasOutcome = this.hasOutcomeMetadataSync(activeFile);
+
+				if (checking) {
+					return hasOutcome;
+				}
+
+				if (hasOutcome) {
+					this.resumeOutcomeWriting(activeFile);
+				}
+				return true;
+			},
+		});
+
+		console.log('[WriteAlive] Outcome-driven commands registered');
 	}
 
 	/**
@@ -720,10 +873,10 @@ export default class WriteAlivePlugin extends Plugin {
 
 			const menu = new Menu();
 
-			// Workflow commands section
+			// Workflow commands section - Seed-based mode
 			menu.addItem((item) =>
 				item
-					.setTitle('🌱 Gather Seeds')
+					.setTitle('🌱 Seed-Based Writing')
 					.setSection('workflow')
 					.onClick(() => this.openGatherSeeds())
 			);
@@ -741,6 +894,27 @@ export default class WriteAlivePlugin extends Plugin {
 					.setSection('workflow')
 					.onClick(() => this.findCentersFromMOC())
 			);
+
+			menu.addSeparator();
+
+			// Outcome-Driven Writing section
+			menu.addItem((item) =>
+				item
+					.setTitle('🎯 Outcome-Driven Writing')
+					.setSection('outcome')
+					.onClick(() => this.startOutcomeDrivenWriting())
+			);
+
+			// Add Resume command if active file has outcome metadata
+			const activeFile = this.app.workspace.getActiveFile();
+			if (activeFile && this.hasOutcomeMetadataSync(activeFile)) {
+				menu.addItem((item) =>
+					item
+						.setTitle('▶️ Resume Outcome Writing')
+						.setSection('outcome')
+						.onClick(() => this.resumeOutcomeWriting(activeFile))
+				);
+			}
 
 			menu.addSeparator();
 
@@ -1292,5 +1466,237 @@ export default class WriteAlivePlugin extends Plugin {
 	 */
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
+	}
+
+	// ========================================================================
+	// Outcome-Driven Writing Workflow Methods
+	// ========================================================================
+
+	/**
+	 * Start Outcome-Driven Writing workflow
+	 *
+	 * Step 1: Define Outcome
+	 * Opens OutcomeDefinitionModal for user to define writing outcome.
+	 * On success, proceeds to structure generation.
+	 *
+	 * Workflow:
+	 * 1. User defines outcome (goal, audience, length)
+	 * 2. AI generates document structure
+	 * 3. User previews and customizes structure
+	 * 4. Document created, section-by-section writing begins
+	 */
+	private async startOutcomeDrivenWriting(): Promise<void> {
+		// Check if outcome mode is enabled in settings
+		if (!this.settings.outcomeMode.enabled) {
+			new Notice('Outcome-Driven Writing is disabled in settings');
+			return;
+		}
+
+		// Check services initialized
+		if (!this.outcomeManager || !this.templateLibrary) {
+			new Notice('WriteAlive: Outcome services not initialized');
+			console.error('[WriteAlive] Cannot start outcome-driven writing: services not initialized');
+			return;
+		}
+
+		// Check AI service (structureGenerator is initialized lazily)
+		if (!this.aiService) {
+			new Notice('WriteAlive: AI service not configured. Please add API key in settings.');
+			console.error('[WriteAlive] AI service not available');
+			return;
+		}
+
+		try {
+			const modal = new OutcomeDefinitionModal(
+				this.app,
+				this.outcomeManager,
+				this.templateLibrary,
+				{
+					language: this.settings.language || 'en',
+					onGenerate: async (outcome: OutcomeDefinition) => {
+						// Generate structure using AI
+						if (!this.structureGenerator) {
+							// Initialize structure generator if not already done
+							if (!this.aiService) {
+								new Notice('WriteAlive: AI service not configured');
+								return;
+							}
+							this.structureGenerator = new StructureGenerator(
+								this.aiService,
+								this.settings.language
+							);
+						}
+
+						try {
+							// Show loading notice
+							const loadingNotice = new Notice(
+								'Generating document structure... (5-10 seconds)',
+								0
+							);
+
+							// Generate structure
+							const result = await this.structureGenerator.generateStructure(outcome);
+
+							// Hide loading notice
+							loadingNotice.hide();
+
+							// Step 2: Preview and edit structure
+							await this.openStructurePreview(outcome, result.structure);
+						} catch (error) {
+							console.error('[WriteAlive] Structure generation failed:', error);
+							new Notice('Failed to generate structure. Check console for details.');
+						}
+					},
+				}
+			);
+
+			modal.open();
+		} catch (error) {
+			console.error('[WriteAlive] Failed to start outcome-driven writing:', error);
+			new Notice('Failed to start outcome-driven writing. Check console for details.');
+		}
+	}
+
+	/**
+	 * Open Structure Preview Modal
+	 *
+	 * Step 2: Review and customize AI-generated structure
+	 * Displays StructurePreviewModal for structure review and editing.
+	 *
+	 * @param outcome - Validated outcome definition
+	 * @param structure - AI-generated document structure
+	 */
+	private async openStructurePreview(
+		outcome: OutcomeDefinition,
+		structure: DocumentStructure
+	): Promise<void> {
+		if (!this.outcomeManager || !this.sectionManager || !this.structureGenerator) {
+			new Notice('WriteAlive: Outcome services not initialized');
+			return;
+		}
+
+		try {
+			const modal = new StructurePreviewModal(
+				this.app,
+				this.outcomeManager,
+				this.sectionManager,
+				this.structureGenerator,
+				{
+					outcome,
+					structure,
+					language: this.settings.language || 'en',
+					onStartWriting: async (file: TFile) => {
+						// Step 3: Open section writing view
+						await this.openSectionWriting(file);
+					},
+				}
+			);
+
+			modal.open();
+		} catch (error) {
+			console.error('[WriteAlive] Failed to open structure preview:', error);
+			new Notice('Failed to open structure preview. Check console for details.');
+		}
+	}
+
+	/**
+	 * Open Section Writing View
+	 *
+	 * Step 3: Write section by section
+	 * Opens SectionWritingView for guided section-by-section writing.
+	 *
+	 * @param file - Document file with outcome metadata
+	 */
+	private async openSectionWriting(file: TFile): Promise<void> {
+		if (!this.outcomeManager || !this.sectionManager) {
+			new Notice('WriteAlive: Outcome services not initialized');
+			return;
+		}
+
+		try {
+			const view = new SectionWritingView(
+				this.app,
+				this.outcomeManager,
+				this.sectionManager,
+				{
+					file,
+					language: this.settings.language || 'en',
+					onComplete: async (completedFile: TFile) => {
+						// Document completed
+						new Notice('Document completed!');
+
+						// Open the completed document
+						await this.app.workspace.getLeaf().openFile(completedFile);
+					},
+				}
+			);
+
+			view.open();
+		} catch (error) {
+			console.error('[WriteAlive] Failed to open section writing view:', error);
+			new Notice('Failed to open section writing view. Check console for details.');
+		}
+	}
+
+	/**
+	 * Resume Outcome Writing (from partial document)
+	 *
+	 * Resumes writing for a document that has outcome metadata
+	 * but is not yet complete. Opens SectionWritingView at the
+	 * current section.
+	 *
+	 * @param file - Document file to resume
+	 */
+	private async resumeOutcomeWriting(file: TFile): Promise<void> {
+		if (!this.outcomeManager) {
+			new Notice('WriteAlive: Outcome manager not initialized');
+			return;
+		}
+
+		try {
+			// Read outcome metadata from file
+			const metadata = await this.outcomeManager.getOutcome(file);
+
+			if (!metadata) {
+				new Notice('This file is not an outcome-driven document.');
+				return;
+			}
+
+			// Check progress
+			if (metadata.progress.completedSections === metadata.structure.sections.length) {
+				new Notice('This document is already complete.');
+				return;
+			}
+
+			// Resume writing from current section
+			await this.openSectionWriting(file);
+		} catch (error) {
+			console.error('[WriteAlive] Failed to resume outcome writing:', error);
+			new Notice('Failed to resume outcome writing. Check console for details.');
+		}
+	}
+
+	/**
+	 * Check if file has outcome metadata (synchronous heuristic)
+	 *
+	 * Uses a fast heuristic to check if a file likely has outcome metadata.
+	 * This is used for command visibility checks (checkCallback).
+	 *
+	 * Note: This is a simplified check. Full validation happens when
+	 * actually loading the outcome.
+	 *
+	 * @param file - File to check
+	 * @returns true if file likely has outcome metadata
+	 */
+	private hasOutcomeMetadataSync(file: TFile): boolean {
+		// Simple heuristic: Check if file has frontmatter with mode field
+		// This avoids async operations in checkCallback
+		const cache = this.app.metadataCache.getFileCache(file);
+		if (!cache || !cache.frontmatter) {
+			return false;
+		}
+
+		// Check for 'mode' field with 'outcome-driven' value
+		return cache.frontmatter.mode === 'outcome-driven';
 	}
 }
