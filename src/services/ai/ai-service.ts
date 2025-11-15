@@ -533,6 +533,7 @@ export class AIService {
 			const result: NextStepsResult = {
 				suggestions: parsed.suggestions,
 				currentWholeness: parsed.currentWholeness,
+				wholenessAnalysis: parsed.wholenessAnalysis,
 				keyThemes: parsed.keyThemes,
 				relatedSeeds: parsed.relatedSeeds,
 				usage: {
@@ -549,6 +550,7 @@ export class AIService {
 			console.log('[AIService] Next steps suggestion complete', {
 				suggestionCount: result.suggestions.length,
 				wholeness: result.currentWholeness,
+				wholenessChange: parsed.wholenessAnalysis.scoreChange,
 				cost: result.estimatedCost,
 			});
 
@@ -673,6 +675,8 @@ export class AIService {
 		gatheredSeeds?: string[];
 		selectedCenter?: { name: string; explanation: string };
 		keywords?: string[];
+		previousWholeness?: number;
+		wordCount?: number;
 	} | undefined {
 		// Check if content starts with frontmatter
 		if (!content.trim().startsWith('---')) {
@@ -689,40 +693,63 @@ export class AIService {
 			}
 
 			const frontmatter = lines.slice(1, frontmatterEnd).join('\n');
+			const bodyContent = lines.slice(frontmatterEnd + 1).join('\n');
+
+			// Calculate word count from body (excluding frontmatter)
+			const wordCount = bodyContent.trim().split(/\s+/).length;
 
 			// Simple YAML parsing for writealive section
 			// (In production, use a proper YAML parser)
 			const writeAliveMatch = frontmatter.match(/writealive:([\s\S]*?)(?=\n\w+:|$)/);
-			if (!writeAliveMatch) {
-				return undefined;
-			}
 
-			const writeAliveSection = writeAliveMatch[1];
+			let gatheredSeeds: string[] | undefined;
+			let selectedCenter: { name: string; explanation: string } | undefined;
+			let previousWholeness: number | undefined;
 
-			// Extract gathered_seeds
-			const seedsMatch = writeAliveSection.match(/gathered_seeds:\s*\[(.*?)\]/s);
-			const gatheredSeeds = seedsMatch
-				? seedsMatch[1]
-						.split(',')
-						.map(s => s.trim().replace(/['"]/g, ''))
-						.filter(Boolean)
-				: undefined;
+			if (writeAliveMatch) {
+				const writeAliveSection = writeAliveMatch[1];
 
-			// Extract selected_center
-			const centerNameMatch = writeAliveSection.match(/name:\s*['"](.*?)['"]/);
-			const centerExplanationMatch = writeAliveSection.match(/explanation:\s*['"](.*?)['"]/);
-
-			const selectedCenter =
-				centerNameMatch && centerExplanationMatch
-					? {
-							name: centerNameMatch[1],
-							explanation: centerExplanationMatch[1],
-					  }
+				// Extract gathered_seeds
+				const seedsMatch = writeAliveSection.match(/gathered_seeds:\s*\[(.*?)\]/s);
+				gatheredSeeds = seedsMatch
+					? seedsMatch[1]
+							.split(',')
+							.map(s => s.trim().replace(/['"]/g, ''))
+							.filter(Boolean)
 					: undefined;
+
+				// Extract selected_center
+				const centerNameMatch = writeAliveSection.match(/name:\s*['"](.*?)['"]/);
+				const centerExplanationMatch = writeAliveSection.match(/explanation:\s*['"](.*?)['"]/);
+
+				selectedCenter =
+					centerNameMatch && centerExplanationMatch
+						? {
+								name: centerNameMatch[1],
+								explanation: centerExplanationMatch[1],
+						  }
+						: undefined;
+
+				// Extract previous wholeness score from wholeness_history
+				// Look for the most recent entry in wholeness_history array
+				const historyMatch = writeAliveSection.match(/wholeness_history:\s*\[([\s\S]*?)\]/);
+				if (historyMatch) {
+					const historyContent = historyMatch[1];
+					// Find all score entries
+					const scoreMatches = [...historyContent.matchAll(/score:\s*(\d+(?:\.\d+)?)/g)];
+					if (scoreMatches.length > 0) {
+						// Get the last score
+						const lastScore = scoreMatches[scoreMatches.length - 1][1];
+						previousWholeness = parseFloat(lastScore);
+					}
+				}
+			}
 
 			return {
 				gatheredSeeds,
 				selectedCenter,
+				previousWholeness,
+				wordCount,
 			};
 		} catch (error) {
 			console.warn('[AIService] Failed to parse document metadata:', error);
@@ -741,6 +768,7 @@ export class AIService {
 	private parseNextStepsResponse(content: string): {
 		suggestions: NextStepSuggestion[];
 		currentWholeness: number;
+		wholenessAnalysis: any;
 		keyThemes: string[];
 		relatedSeeds?: string[];
 	} {
@@ -792,9 +820,25 @@ export class AIService {
 			};
 		});
 
+		// Parse wholeness analysis (with fallback for backward compatibility)
+		const wholenessAnalysis = parsed.wholenessAnalysis || {
+			score: parsed.currentWholeness,
+			previousScore: undefined,
+			scoreChange: undefined,
+			breakdown: {
+				structuralCompleteness: parsed.currentWholeness,
+				thematicCoherence: parsed.currentWholeness,
+				internalConnections: parsed.currentWholeness,
+				depthBreadthBalance: parsed.currentWholeness,
+			},
+			strengths: [],
+			improvements: [],
+		};
+
 		return {
 			suggestions,
 			currentWholeness: parsed.currentWholeness,
+			wholenessAnalysis,
 			keyThemes: Array.isArray(parsed.keyThemes) ? parsed.keyThemes : [],
 			relatedSeeds: parsed.relatedSeeds,
 		};

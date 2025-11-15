@@ -796,6 +796,97 @@ export interface NextStepSuggestion {
 }
 
 /**
+ * WholenessHistoryEntry
+ *
+ * Single entry in document wholeness history
+ * Tracks how document wholeness evolves over time
+ */
+export interface WholenessHistoryEntry {
+	/**
+	 * Wholeness score at this point (1-10)
+	 */
+	score: number;
+
+	/**
+	 * When this score was calculated
+	 */
+	timestamp: string;
+
+	/**
+	 * Word count at this point
+	 */
+	wordCount: number;
+
+	/**
+	 * Key changes made since last score (optional)
+	 */
+	changes?: string;
+}
+
+/**
+ * WholenessAnalysisDetail
+ *
+ * Detailed breakdown of wholeness evaluation
+ * Provides transparency in how AI evaluates document quality
+ */
+export interface WholenessAnalysisDetail {
+	/**
+	 * Overall wholeness score (1-10)
+	 */
+	score: number;
+
+	/**
+	 * Previous score for comparison (if available)
+	 */
+	previousScore?: number;
+
+	/**
+	 * Score change explanation
+	 * e.g., "7 → 8 (+1)" or "7 → 7 (no change)"
+	 */
+	scoreChange?: string;
+
+	/**
+	 * Breakdown by evaluation criteria
+	 */
+	breakdown: {
+		/**
+		 * Structural completeness (1-10)
+		 * Has clear intro, body, conclusion
+		 */
+		structuralCompleteness: number;
+
+		/**
+		 * Thematic coherence (1-10)
+		 * Clear main themes, ideas flow logically
+		 */
+		thematicCoherence: number;
+
+		/**
+		 * Internal connections (1-10)
+		 * Ideas reference each other, build on previous points
+		 */
+		internalConnections: number;
+
+		/**
+		 * Depth vs breadth balance (1-10)
+		 * Not too shallow, not too scattered
+		 */
+		depthBreadthBalance: number;
+	};
+
+	/**
+	 * Specific strengths identified
+	 */
+	strengths: string[];
+
+	/**
+	 * Specific areas for improvement
+	 */
+	improvements: string[];
+}
+
+/**
  * Next Steps Result (T-024)
  *
  * Complete result from AI next steps analysis
@@ -808,8 +899,14 @@ export interface NextStepsResult {
 
 	/**
 	 * Current document wholeness score (1-10)
+	 * @deprecated Use wholenessAnalysis.score instead
 	 */
 	currentWholeness: number;
+
+	/**
+	 * Detailed wholeness analysis with breakdown
+	 */
+	wholenessAnalysis: WholenessAnalysisDetail;
 
 	/**
 	 * Key themes identified in document

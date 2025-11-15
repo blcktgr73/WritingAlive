@@ -408,6 +408,8 @@ export function createSuggestNextStepsPrompt(
 		gatheredSeeds?: string[];
 		selectedCenter?: { name: string; explanation: string };
 		keywords?: string[];
+		previousWholeness?: number;
+		wordCount?: number;
 	}
 ): { system: string; user: string } {
 	const system = `${SALIGO_CONTEXT}
@@ -434,7 +436,9 @@ Return JSON only, no markdown formatting.`;
 Document Metadata:
 - Gathered Seeds: ${metadata.gatheredSeeds?.length || 0} seeds referenced
 - Selected Center: ${metadata.selectedCenter?.name || 'None'}
-${metadata.keywords ? `- Keywords: ${metadata.keywords.join(', ')}` : ''}`
+${metadata.keywords ? `- Keywords: ${metadata.keywords.join(', ')}` : ''}
+${metadata.previousWholeness ? `- Previous Wholeness Score: ${metadata.previousWholeness}/10` : ''}
+${metadata.wordCount ? `- Current Word Count: ${metadata.wordCount} words` : ''}`
 		: '';
 
 	const user = `Analyze this document and suggest 2-4 expansion directions.
@@ -460,8 +464,40 @@ For each suggestion, provide:
 - **estimatedLength**: Number of words to add (realistic estimate)
 - **relatedSeeds** (optional): Array of seed note titles if applicable
 
-Also analyze:
-- **currentWholeness**: Rate document coherence (1-10 scale)
+**CRITICAL: Wholeness Analysis**
+Evaluate document wholeness using these specific criteria (1-10 scale for each):
+
+1. **Structural Completeness** (structuralCompleteness):
+   - Does it have clear introduction, body, and conclusion?
+   - Are sections well-organized with logical flow?
+   - Is the document "complete" or still a fragment?
+
+2. **Thematic Coherence** (thematicCoherence):
+   - Are main themes clearly identifiable?
+   - Do ideas flow logically from one to another?
+   - Is there a unified message or purpose?
+
+3. **Internal Connections** (internalConnections):
+   - Do ideas reference and build on previous points?
+   - Are there clear relationships between sections?
+   - Does the document feel integrated, not scattered?
+
+4. **Depth vs Breadth Balance** (depthBreadthBalance):
+   - Is depth appropriate (not too shallow, not too dense)?
+   - Is scope appropriate (not too narrow, not too scattered)?
+   - Are examples concrete and specific?
+
+Calculate overall score as average of these four criteria.
+${metadata?.previousWholeness ? `
+IMPORTANT: Previous score was ${metadata.previousWholeness}/10.
+- If document improved, explain what changed and increase score accordingly
+- If document stayed similar, keep score similar (small variations like 7.0→7.2 are expected)
+- Show score change clearly: "${metadata.previousWholeness} → X (+/-Y)" or "${metadata.previousWholeness} → ${metadata.previousWholeness} (no change)"
+` : ''}
+
+Also identify:
+- **strengths**: 2-3 specific strengths of this document
+- **improvements**: 2-3 specific areas that need improvement
 - **keyThemes**: 3-5 main themes in the document
 
 Return ONLY valid JSON (no markdown code blocks):
@@ -478,6 +514,19 @@ Return ONLY valid JSON (no markdown code blocks):
       "relatedSeeds": ["optional-seed-1"]
     }
   ],
+  "wholenessAnalysis": {
+    "score": 7,
+    "previousScore": ${metadata?.previousWholeness || 'null'},
+    "scoreChange": "${metadata?.previousWholeness ? `${metadata.previousWholeness} → 7 (+0)` : 'N/A'}",
+    "breakdown": {
+      "structuralCompleteness": 6,
+      "thematicCoherence": 8,
+      "internalConnections": 7,
+      "depthBreadthBalance": 7
+    },
+    "strengths": ["strength 1", "strength 2"],
+    "improvements": ["improvement 1", "improvement 2"]
+  },
   "currentWholeness": 7,
   "keyThemes": ["theme1", "theme2", "theme3"]
 }`;
