@@ -52,6 +52,7 @@
 - `ops/skills/security-baseline.md` — 커밋/릴리즈 전 보안 baseline 점검.
 - `ops/skills/kanban-sweep.md` — 자기 lane kanban sweep (cron 호출).
 - `ops/skills/acp-claude.md` — **(OpenClaw 코딩 봇 전용)** dispatched(GitHub webhook 트리거) **코딩** 작업을 Claude Code(ACP)로 위임 실행. OpenClaw=지휘, Claude Code=실행기.
+- `ops/skills/issue-intake.md` — **(Neo·Kusanagi 전용)** 새로 드러난 할 일을 GitHub issue 로 등록하고, 필요하면 `dispatch:<봇>` 라벨로 다른 봇에게 넘긴다. 다른 봇에게 업무를 넘길 때는 카드를 먼저 만든다.
 
 > 흐름 (Transformation-Centered Development): `story-authoring`(spec 작성) → `transformation`(변경 정의·옵션·로그) → `verify-ac`(검증).
 > **dispatched 실행**: `dispatch:<봇>` 로 깨어난 **코딩** 작업이면, OpenClaw 는 직접 코딩하지 말고 `acp-claude` 절차대로 **Claude Code(ACP)에 위임**한다 (프롬프트에 `acp claude 사용해서 진행해줘`). 라우터가 코딩 route 에 이 문구를 이미 붙여 보낼 수도 있다(중복 무해). 조회·요약만이면 직접 처리.
