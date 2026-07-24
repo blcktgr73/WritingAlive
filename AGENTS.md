@@ -56,6 +56,7 @@
 
 > 흐름 (Transformation-Centered Development): `story-authoring`(spec 작성) → `transformation`(변경 정의·옵션·로그) → `verify-ac`(검증).
 > **dispatched 실행**: `dispatch:<봇>` 로 깨어난 **코딩** 작업이면, OpenClaw 는 직접 코딩하지 말고 `acp-claude` 절차대로 **Claude Code(ACP)에 위임**한다 (프롬프트에 `acp claude 사용해서 진행해줘`). 라우터가 코딩 route 에 이 문구를 이미 붙여 보낼 수도 있다(중복 무해). 조회·요약만이면 직접 처리.
+> **dispatched 마무리**: 커밋만 남기고 끝내지 않는다. **push → PR 생성(`Closes #N` / 일부면 `Refs #N` + 남은 항목) → 카드에 PR 링크 댓글**까지가 한 건이다. 완료 판정·카드 닫기는 `github-project-closeout` 계약을 따른다. 여기서 멈춘 카드는 라우터의 정체(dead-letter) 감지에 잡힌다.
 - (추가 skill 은 여기에 등록)
 
 런타임 어댑터 (`SKILL.md` 은 Claude Code·Codex·OpenClaw 공통 표준 포맷):
