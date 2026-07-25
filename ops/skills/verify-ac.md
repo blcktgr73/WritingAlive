@@ -20,6 +20,9 @@
 1. **영향 AC 식별** — 변경이 건드리는 AC ID 를 찾는다. 없으면 Story Map/AC 누락 여부 확인 → 필요시 신규 AC 제안.
 2. **scope 판정** — 각 AC 를 `dev` / `ops` / `both` 로 구분.
 3. **증거 확인** — unit / component / contract / mocked-integration 우선 (manual·e2e 는 예외). 증거 = 테스트명 / 로그 / 응답 + 변경의 **Transformation ID**(`T-YYYYMMDD-###`).
+   - **Android**: 빌드/유닛테스트 증거는 **CI(`android-verify`) run URL** 이다 (봇 노드 로컬 `gradlew` 아님 —
+     시크릿이 없어 로컬 빌드는 신뢰할 수 없다). 봇의 검증 상한은 **CI green(컴파일 + 유닛테스트)** 까지고,
+     **런타임/기능 동작은 사람이 확인**한다(ops 축, 자동화 불가). `acp-claude` 의 사람 확인 핸드오프 참조.
 4. **Development Status 갱신** — Not started / In progress / In review / Implemented / Blocked.
 5. **Operation Status** (ops·both AC) — Not verified / staging / production / monitoring / hold.
 6. **drift 검사** — 구현은 바뀌었는데 AC/문서가 안 따라오면 drift 표시 → 먼저 재매핑, 그 다음 status 재계산.
