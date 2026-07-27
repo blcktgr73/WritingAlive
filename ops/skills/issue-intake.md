@@ -32,6 +32,10 @@
 2. **한 장에 하나** — 카드 하나 = 실행 단위 하나. 크면 2~4개로 쪼개고 서로 링크한다.
 3. **body 를 계약대로 채운다** — spec §Body 권장 템플릿(Summary / Why / Ready contract / Acceptance criteria / Notes·links).
    빈칸을 남기지 않는다. **모르는 값은 추정하지 말고 `확인 필요` 로 적는다.**
+   `확인 필요` 가 하나라도 있으면 본문 끝에 **`## 사람 확인 필요`** 3줄을 붙인다
+   ([human-task-brief](https://github.com/blcktgr73/palab-platform/blob/main/docs/operations/human-task-brief.md) 형식):
+   ① 무엇을 확정해야 하는지 ② 선택지(근거가 있을 때만, 2개까지) ③ 정한 뒤 붙일 라벨.
+   `확인 필요` 만 남기면 받는 사람이 카드를 처음부터 다시 읽어야 한다.
 4. **issue 생성**
    ```bash
    gh issue create -R <owner>/<repo> --title "<한 줄 요약>" --body-file <본문파일>
@@ -88,5 +92,6 @@
 ## 출력
 
 - 만든 카드: `#<번호> <제목>` + URL + Owner/Type + dispatch 여부.
+- 사람 확인이 필요한 카드는 **무엇을 확정해야 하는지** 한 줄로 (카드 본문 `## 사람 확인 필요` 와 같은 내용).
 - 만들지 않은 것: 중복이라서 / 정보가 부족해서 / 권한 밖이라서 — 이유를 한 줄로.
 - 만들 게 없으면 조용히 (`NO_REPLY`).
