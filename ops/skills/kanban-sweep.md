@@ -36,4 +36,6 @@
 
 - 변동 없음 → 조용히 (`NO_REPLY`).
 - 진전 있음 → 짧게 보고 (착수/완료/막힘).
-- blocker/결정 필요 → `#neo-ops` 로 승격.
+- blocker/결정 필요 → `#neo-ops` 로 승격. 승격할 때는 상태만 올리지 말고
+  [human-task-brief](https://github.com/blcktgr73/palab-platform/blob/main/docs/operations/human-task-brief.md)
+  형식으로 **무엇을 할지 3줄**을 함께 올린다 (볼 곳 → 판단할 것 → 끝내는 신호).

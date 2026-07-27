@@ -19,11 +19,17 @@
 
 1. **브랜치** — `main` 직커밋 금지. 성격별 접두어를 쓴다: `docs/` · `chore/` · `feat/` · `fix/` ([git-workflow](https://github.com/blcktgr73/palab-platform/blob/main/policies/git-workflow.md)).
 2. **커밋** — 한국어는 [ko-writing-style](https://github.com/blcktgr73/palab-platform/blob/main/policies/ko-writing-style.md). 끝에 `Co-Authored-By` 를 남긴다. **hooks·서명을 건너뛰지 않는다**(`--no-verify` 금지).
-3. **PR 생성** — body 에 **무엇 / 왜 / 범위 밖**을 적는다. 관련 카드가 있으면 `Closes #N`(완결) 또는 `Refs #N`(일부 + 남은 항목).
+3. **PR 생성** — body 에 **무엇 / 왜 / 범위 밖**을 적고, 마지막에 **`## 리뷰어 할 일`** 3줄을 붙인다
+   ([human-task-brief](https://github.com/blcktgr73/palab-platform/blob/main/docs/operations/human-task-brief.md) 형식):
+   ① 어디를 볼지(가장 위험한 파일·줄 한 곳) ② 사람만 판단할 항목(없으면 "판단 필요 없음 — 문서만")
+   ③ 머지 명령 `gh pr merge <N> --squash --delete-branch`.
+   관련 카드가 있으면 `Closes #N`(완결) 또는 `Refs #N`(일부 + 남은 항목).
 4. **리뷰 게이트** — 정책·규약·보안·배포에 영향 있는 변경이면 사람 또는 Batou 사인오프를 받는다. 단순 문서면 생략 가능.
 5. **머지 = 사람 승인 경계** — **Claude·봇은 머지하지 않는다.** 사람이 GitHub UI 또는 `gh pr merge <N> --squash --delete-branch` 로 머지한다. 이 단계는 배포·시크릿과 같은 급의 승인 경계다.
 6. **main 반영 확인** — 머지 후 `main` 복귀·`git pull`. **배선 전파를 확인한다**: `bootstrap/templates/` 변경이면 carry 대상 repo 반영 계획, `docs/operations/agents/` 변경이면 봇 컨텍스트 반영.
 7. **보고** — PR 링크 + 머지 여부 + main 반영 확인 한 줄. 관련 카드가 있으면 그 카드에 PR 링크 댓글.
+   **머지 대기 상태로 끝나면 `## 리뷰어 할 일` 3줄을 보고에도 함께 올린다** — 사람이 PR 을 열기 전에
+   무엇을 할지 알아야 승인이 빨라진다.
 
 ## 가드레일
 
@@ -36,4 +42,5 @@
 
 - PR: `#<번호> <제목>` + URL.
 - 상태: 머지 대기(사람 승인 필요) / 머지됨 + main 반영 확인 / 리뷰 대기.
+- 머지 대기면 `## 리뷰어 할 일` 3줄 (볼 곳 → 판단할 것 → 머지 명령).
 - 배선 전파가 남았으면 그 대상을 한 줄로.
