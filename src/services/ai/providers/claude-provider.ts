@@ -2,7 +2,7 @@
  * Claude AI Provider
  *
  * Concrete implementation of AIProvider for Anthropic's Claude API.
- * Uses Claude 3.5 Sonnet for all operations.
+ * Uses a pinned Claude Sonnet model for all operations.
  *
  * Design Principles:
  * - Single Responsibility: Only handles Claude API communication
@@ -59,6 +59,14 @@ interface ClaudeRequest {
 	system?: string;
 }
 
+export type ClaudeModel =
+	| 'claude-sonnet-4-5-20250929'
+	| 'claude-sonnet-5-5';
+
+export interface ClaudeProviderOptions {
+	model?: ClaudeModel;
+}
+
 interface ClaudeResponse {
 	id: string;
 	type: 'message';
@@ -88,13 +96,10 @@ export class ClaudeProvider extends BaseAIProvider {
 	protected readonly apiEndpoint = 'https://api.anthropic.com/v1/messages';
 
 	/**
-	 * Claude 3.5 Sonnet pricing (as of 2025-11-01)
+	 * Pricing is selected with the model pin (USD per 1M tokens).
 	 * @see https://www.anthropic.com/pricing
 	 */
-	protected readonly pricing = {
-		input: 3.0, // $3 per 1M input tokens
-		output: 15.0, // $15 per 1M output tokens
-	};
+	protected readonly pricing: { input: number; output: number };
 
 	/**
 	 * Claude API version
@@ -102,11 +107,10 @@ export class ClaudeProvider extends BaseAIProvider {
 	private readonly apiVersion = '2023-06-01';
 
 	/**
-	 * Model identifier for Claude Sonnet 4.5
-	 * Using latest stable version (released Sep 2025)
+	 * Model identifier for Claude Sonnet 4.5 (rollback-safe default until cutover approval).
 	 * @see https://docs.claude.com/en/docs/about-claude/models/overview
 	 */
-	private readonly model = 'claude-sonnet-4-5-20250929';
+	private readonly model: ClaudeModel;
 
 	/**
 	 * Maximum output tokens per request
@@ -122,6 +126,19 @@ export class ClaudeProvider extends BaseAIProvider {
 	 * Initial retry delay in milliseconds
 	 */
 	private readonly initialRetryDelay = 1000;
+
+	constructor(apiKey: string, options: ClaudeProviderOptions = {}) {
+		super(apiKey);
+		this.model = options.model ?? 'claude-sonnet-4-5-20250929';
+		this.pricing = this.model === 'claude-sonnet-5-5'
+			? { input: 2.0, output: 10.0 }
+			: { input: 3.0, output: 15.0 };
+	}
+
+	/** Exposes the active pin for diagnostics and migration verification. */
+	get modelId(): ClaudeModel {
+		return this.model;
+	}
 
 	/**
 	 * Find centers in text

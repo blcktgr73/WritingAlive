@@ -429,6 +429,9 @@ export interface AIServiceConfig {
 	 */
 	apiKey: string;
 
+	/** Optional Claude model pin used for controlled migration and rollback. */
+	claudeModel?: import('./providers/claude-provider').ClaudeModel;
+
 	/**
 	 * User language preference
 	 * @default 'en'

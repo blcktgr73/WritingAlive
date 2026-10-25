@@ -107,7 +107,7 @@ export class AIService {
 		};
 
 		// Initialize provider
-		this.provider = this.createProvider(config.provider, config.apiKey);
+		this.provider = this.createProvider(config.provider, config.apiKey, config.claudeModel);
 
 		// Initialize cache
 		this.cache = new Map();
@@ -1067,11 +1067,12 @@ export class AIService {
 	 */
 	private createProvider(
 		providerType: AIProviderType,
-		apiKey: string
+		apiKey: string,
+		claudeModel?: import('./providers/claude-provider').ClaudeModel
 	): AIProvider {
 		switch (providerType) {
 			case 'claude':
-				return new ClaudeProvider(apiKey);
+				return new ClaudeProvider(apiKey, { model: claudeModel });
 			case 'gpt':
 				// TODO: Implement GPT provider in future transformation
 				throw new Error('GPT provider not yet implemented');
