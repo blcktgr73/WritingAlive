@@ -440,6 +440,7 @@ export default class WriteAlivePlugin extends Plugin {
 				this.aiService = new AIService({
 					provider: this.settings.aiProvider,
 					apiKey: this.decryptedApiKey,
+					claudeModel: this.settings.claudeModel,
 					language: this.settings.language,
 					enableCache: true,
 					enableRateLimit: true,

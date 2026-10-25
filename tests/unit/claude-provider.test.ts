@@ -37,6 +37,17 @@ describe('ClaudeProvider', () => {
 		it('should initialize with valid API key', () => {
 			expect(provider).toBeDefined();
 			expect(provider.name).toBe('claude');
+			expect(provider.modelId).toBe('claude-sonnet-4-5-20250929');
+		});
+
+		it('should allow a controlled Sonnet 5.5 evaluation pin', () => {
+			const evaluationProvider = new ClaudeProvider(testApiKey, {
+				model: 'claude-sonnet-5-5',
+			});
+
+			expect(evaluationProvider.modelId).toBe('claude-sonnet-5-5');
+			expect(evaluationProvider.estimateCost('find-centers', 1000))
+				.toBeLessThan(provider.estimateCost('find-centers', 1000));
 		});
 
 		it('should throw error for empty API key', () => {

@@ -11,6 +11,7 @@ import type { EncryptedKey } from '../services/encryption';
  * AI Provider types
  */
 export type AIProvider = 'claude' | 'gpt' | 'gemini';
+export type ClaudeModel = 'claude-sonnet-4-5-20250929' | 'claude-sonnet-5-5';
 
 /**
  * Document output location types
@@ -34,6 +35,9 @@ export interface WriteAliveSettings {
 	 * @default 'claude' - Claude 3.5 Sonnet (MVP)
 	 */
 	aiProvider: AIProvider;
+
+	/** Claude model pin. Keep the retirement model until production approval is recorded. */
+	claudeModel: ClaudeModel;
 
 	/**
 	 * Encrypted API Keys (one per provider)
@@ -146,6 +150,7 @@ export interface WriteAliveSettings {
  */
 export const DEFAULT_SETTINGS: WriteAliveSettings = {
 	aiProvider: 'claude',
+	claudeModel: 'claude-sonnet-4-5-20250929',
 	encryptedApiKeys: {
 		claude: null,
 		gpt: null,

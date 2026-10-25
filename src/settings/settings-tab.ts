@@ -166,6 +166,21 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 					})
 			);
 
+		if (this.plugin.settings.aiProvider === 'claude') {
+			new Setting(containerEl)
+				.setName('Claude model')
+				.setDesc('Controlled model pin for evaluation and rollback. Production cutover requires approval.')
+				.addDropdown((dropdown) => dropdown
+					.addOption('claude-sonnet-4-5-20250929', 'Sonnet 4.5 (retirement 2026-11-30)')
+					.addOption('claude-sonnet-5-5', 'Sonnet 5.5')
+					.setValue(this.plugin.settings.claudeModel)
+					.onChange(async (value) => {
+						this.plugin.settings.claudeModel = value as typeof this.plugin.settings.claudeModel;
+						await this.plugin.saveSettings();
+						await this.plugin.reinitializeAIService();
+					}));
+		}
+
 		// API Key with encryption
 		this.addApiKeyInput(containerEl);
 
