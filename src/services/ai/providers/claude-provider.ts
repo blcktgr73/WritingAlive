@@ -129,7 +129,7 @@ export class ClaudeProvider extends BaseAIProvider {
 
 	constructor(apiKey: string, options: ClaudeProviderOptions = {}) {
 		super(apiKey);
-		this.model = options.model ?? 'claude-sonnet-4-5-20250929';
+		this.model = options.model ?? 'claude-sonnet-5-5';
 		this.pricing = this.model === 'claude-sonnet-5-5'
 			? { input: 2.0, output: 10.0 }
 			: { input: 3.0, output: 15.0 };

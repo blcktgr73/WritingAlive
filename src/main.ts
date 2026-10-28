@@ -328,6 +328,18 @@ export default class WriteAlivePlugin extends Plugin {
 
 		// Normal settings load
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+
+		// Cut over existing installs that still have the pre-approval default.
+		// Once the marker is written, a user-selected 4.5 rollback is preserved.
+		if (
+			loadedData?.claudeModel === 'claude-sonnet-4-5-20250929' &&
+			loadedData?.claudeModelMigrationVersion !== 1
+		) {
+			this.settings.claudeModel = 'claude-sonnet-5-5';
+			this.settings.claudeModelMigrationVersion = 1;
+			await this.saveSettings();
+			console.log('[WriteAlive] Claude Sonnet 5.5 production cutover applied');
+		}
 	}
 
 	/**

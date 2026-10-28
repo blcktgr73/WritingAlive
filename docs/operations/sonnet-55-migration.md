@@ -1,12 +1,13 @@
 # Claude Sonnet 5.5 전환 검증 계획
 
-WritingAlive의 Claude 모델은 `WriteAliveSettings.claudeModel`로 고정한다. 기본값은
-rollback을 위해 `claude-sonnet-4-5-20250929`로 유지하고, production 전환 승인 후
-`claude-sonnet-5-5`로 바꾼다.
+WritingAlive의 Claude 모델은 `WriteAliveSettings.claudeModel`로 고정한다. Production
+기본값은 `claude-sonnet-5-5`이며, `claude-sonnet-4-5-20250929`는 즉시 rollback 핀으로
+유지한다. 기존 설치의 pre-cutover 저장 설정은 1회성 마이그레이션으로 5.5로 전환한다.
 
 ## 현재 확인 결과
 
-- 운영 provider의 기존 모델: `claude-sonnet-4-5-20250929`
+- Production provider 모델: `claude-sonnet-5-5`
+- Rollback pin: `claude-sonnet-4-5-20250929`
 - Anthropic API retirement: 2026-11-30
 - 권장 대체: `claude-sonnet-5-5`
 - Sonnet 5.5 기준 가격: input `$2/MTok`, output `$10/MTok`
@@ -39,6 +40,6 @@ rollback을 위해 `claude-sonnet-4-5-20250929`로 유지하고, production 전�
 
 ## Rollback
 
-설정에서 `Claude model`을 `claude-sonnet-4-5-20250929`로 되돌리고 AI 서비스를
-재초기화한다. 전환 승인 전에는 기본값을 변경하지 않는다. 두 모델의 실제 API 비교
-결과와 production 일정이 이슈 #10 및 전환 PR에 기록되기 전에는 cutover하지 않는다.
+설정에서 `Claude model`을 `claude-sonnet-4-5-20250929`로 선택하고 AI 서비스를
+재초기화하면 rollback할 수 있다. 이후 사용자가 선택한 rollback 값은 자동 마이그레이션으로
+덮어쓰지 않는다.
