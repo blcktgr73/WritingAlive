@@ -169,13 +169,14 @@ export class WriteAliveSettingTab extends PluginSettingTab {
 		if (this.plugin.settings.aiProvider === 'claude') {
 			new Setting(containerEl)
 				.setName('Claude model')
-				.setDesc('Controlled model pin for evaluation and rollback. Production cutover requires approval.')
+				.setDesc('Production pin is Sonnet 5.5. Select Sonnet 4.5 only for rollback or comparison.')
 				.addDropdown((dropdown) => dropdown
 					.addOption('claude-sonnet-4-5-20250929', 'Sonnet 4.5 (retirement 2026-11-30)')
 					.addOption('claude-sonnet-5-5', 'Sonnet 5.5')
 					.setValue(this.plugin.settings.claudeModel)
 					.onChange(async (value) => {
 						this.plugin.settings.claudeModel = value as typeof this.plugin.settings.claudeModel;
+						this.plugin.settings.claudeModelMigrationVersion = 1;
 						await this.plugin.saveSettings();
 						await this.plugin.reinitializeAIService();
 					}));

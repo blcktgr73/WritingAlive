@@ -13,6 +13,11 @@ describe('Settings', () => {
 			expect(DEFAULT_SETTINGS.aiProvider).toBe('claude');
 		});
 
+		it('should use Sonnet 5.5 as the production default', () => {
+			expect(DEFAULT_SETTINGS.claudeModel).toBe('claude-sonnet-5-5');
+			expect(DEFAULT_SETTINGS.claudeModelMigrationVersion).toBe(1);
+		});
+
 		it('should have null encrypted API keys by default', () => {
 			expect(DEFAULT_SETTINGS.encryptedApiKeys.claude).toBeNull();
 			expect(DEFAULT_SETTINGS.encryptedApiKeys.gpt).toBeNull();

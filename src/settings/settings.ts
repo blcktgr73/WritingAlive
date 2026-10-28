@@ -36,8 +36,11 @@ export interface WriteAliveSettings {
 	 */
 	aiProvider: AIProvider;
 
-	/** Claude model pin. Keep the retirement model until production approval is recorded. */
+	/** Claude model pin. Production uses Sonnet 5.5; Sonnet 4.5 remains the rollback pin. */
 	claudeModel: ClaudeModel;
+
+	/** One-time production cutover marker for existing persisted settings. */
+	claudeModelMigrationVersion: number;
 
 	/**
 	 * Encrypted API Keys (one per provider)
@@ -150,7 +153,8 @@ export interface WriteAliveSettings {
  */
 export const DEFAULT_SETTINGS: WriteAliveSettings = {
 	aiProvider: 'claude',
-	claudeModel: 'claude-sonnet-4-5-20250929',
+	claudeModel: 'claude-sonnet-5-5',
+	claudeModelMigrationVersion: 1,
 	encryptedApiKeys: {
 		claude: null,
 		gpt: null,

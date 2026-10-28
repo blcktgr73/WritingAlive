@@ -37,7 +37,7 @@ describe('ClaudeProvider', () => {
 		it('should initialize with valid API key', () => {
 			expect(provider).toBeDefined();
 			expect(provider.name).toBe('claude');
-			expect(provider.modelId).toBe('claude-sonnet-4-5-20250929');
+			expect(provider.modelId).toBe('claude-sonnet-5-5');
 		});
 
 		it('should allow a controlled Sonnet 5.5 evaluation pin', () => {
