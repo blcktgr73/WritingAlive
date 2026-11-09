@@ -2,9 +2,12 @@
 
 > dispatched(GitHub webhook 트리거) 코딩 작업을 **Claude Code(ACP)** 에 위임해 실행한다.
 > OpenClaw = 지휘·중계, Claude Code(ACP) = 실행기. **OpenClaw 전용 스킬** (`.codex`/`.claude` 어댑터 없음 —
-> Claude 런타임은 자기가 실행기라 무의미, Codex 는 대상 아님).
+> Claude 런타임은 자기가 실행기라 무의미).
 > 판단 기준·트리거/승인 규약은 palab-platform 을 참조한다 (여기 복제하지 않는다).
 > spec: palab-platform `docs/operations/event-driven-trigger-design.md` (트리거·승인 경계).
+>
+> **상태 (2026-11-09): 기본 실행기가 아니다.** 비대화형 권한 프롬프트 문제([#53](https://github.com/blcktgr73/palab-platform/issues/53))를 풀지 않고, 봇이 자기 실행기로 직접 처리하는 쪽을 기본으로 했다.
+> 이 파일의 **마무리(closeout)·Android 절차는 실행기와 무관하게 유효**하다. Claude Code 위임을 다시 쓰려면 #53 의 권한 범위 결정이 먼저다.
 
 ## 언제 실행
 
