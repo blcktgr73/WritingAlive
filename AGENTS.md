@@ -52,12 +52,12 @@
 - `ops/skills/deployment-verify.md` — **(server/auto-deploy repo만)** 배포·서비스 반영 확인 (Actions/파이프라인/prod). `push` ≠ `배포`.
 - `ops/skills/security-baseline.md` — 커밋/릴리즈 전 보안 baseline 점검.
 - `ops/skills/kanban-sweep.md` — 자기 lane kanban sweep (cron 호출).
-- `ops/skills/acp-claude.md` — **(OpenClaw 코딩 봇 전용)** dispatched(GitHub webhook 트리거) **코딩** 작업을 Claude Code(ACP)로 위임 실행. OpenClaw=지휘, Claude Code=실행기.
+- `ops/skills/acp-claude.md` — **(OpenClaw 코딩 봇 전용, 기본 실행기 아님)** 코딩 작업을 Claude Code(ACP)로 위임하는 절차. 비대화형 권한 프롬프트 문제([palab-platform#53](https://github.com/blcktgr73/palab-platform/issues/53))로 기본 경로에서 뺐다. 이 스킬의 **마무리(closeout)·Android 절차는 실행기와 무관하게** 따른다.
 - `ops/skills/change-closeout.md` — **(OpenClaw 전용)** 변경(문서·정책·코드)을 브랜치→PR→머지→main 반영 확인까지 태운다. **머지는 사람 승인 경계**(봇 자동 머지 금지). PR 만 만들고 멈추는 것 방지.
 - `ops/skills/issue-intake.md` — **(Neo·Kusanagi 전용)** 새로 드러난 할 일을 GitHub issue 로 등록하고, 필요하면 `dispatch:<봇>` 라벨로 다른 봇에게 넘긴다. 다른 봇에게 업무를 넘길 때는 카드를 먼저 만든다.
 
 > 흐름 (Transformation-Centered Development): `story-authoring`(spec 작성) → `transformation`(변경 정의·옵션·로그) → `verify-ac`(검증).
-> **dispatched 실행**: `dispatch:<봇>` 로 깨어난 **코딩** 작업이면, OpenClaw 는 직접 코딩하지 말고 `acp-claude` 절차대로 **Claude Code(ACP)에 위임**한다 (프롬프트에 `acp claude 사용해서 진행해줘`). 라우터가 코딩 route 에 이 문구를 이미 붙여 보낼 수도 있다(중복 무해). 조회·요약만이면 직접 처리.
+> **dispatched 실행**: `dispatch:<봇>` 로 깨어난 **코딩** 작업은 **봇이 자기 실행기(예: OpenClaw 에 등록된 Codex)로 직접 처리한다.** 라우터는 실행기를 지정하는 문구를 붙이지 않는다(2026-11-09 결정). 실행기를 무엇으로 쓰든 **카드 본문이 적은 변경 가능 범위 밖은 건드리지 않고**, 새 브랜치에서 작업하며, `main` 에 직접 커밋·push 하지 않는다. 실행 중 사람 승인 게이트가 없으므로 이 범위가 곧 안전 경계다. 조회·요약만이면 바로 답한다.
 > **dispatched 마무리**: 커밋만 남기고 끝내지 않는다. **push → PR 생성(`Refs #N` + 남은 항목) → PR 링크 댓글 → `awaiting-review` 라벨**까지가 한 건이다. `awaiting-review` 가 라우터의 **완료→리뷰 핸드오프**를 발화해 요청자(Neo)를 재기동한다(design §5). **봇이 스스로 카드를 닫지 않는다** — 완료 판정·카드 닫기는 Neo 가 verify-ac 후 `github-project-closeout` 계약대로 한다. 여기서 멈춘 카드는 라우터의 정체(dead-letter) 감지에 잡힌다.
 > **단, 코디네이터(Neo)가 자기 카드(`dispatch:neo`)를 끝내면 `awaiting-review` 를 붙이지 않고 직접 닫는다(#42).** 핸드오프는 worker→코디네이터 전용이라, Neo 가 자기에게 넘기면 무한 self-loop 가 된다(라우터도 이 경우를 `self-handoff` 로 막지만, 원천은 여기서 막는다).
 - (추가 skill 은 여기에 등록)

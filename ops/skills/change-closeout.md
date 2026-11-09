@@ -3,7 +3,7 @@
 > 변경(문서·정책·코드)을 **브랜치 → PR → 머지 → main 반영 확인**까지 태우는 절차.
 > PR 만 만들어 두고 멈춰 변경이 붕 뜨는 것을 막는다.
 > **머지 = 사람 승인 경계** (배포·시크릿·비가역 작업과 동급). 봇도 머지하지 않는다.
-> **(OpenClaw 봇 전용)** — 변경을 main 까지 태우는 것은 지휘(OpenClaw)의 몫이다. 코드 편집 자체를 `acp-claude` 로 Claude Code(ACP)에 위임했더라도, 브랜치→PR→머지 요청→반영 확인은 **봇이 이 절차로 마무리**한다.
+> **(OpenClaw 봇 전용)** — 변경을 main 까지 태우는 것은 지휘(OpenClaw)의 몫이다. 코드 편집을 다른 실행기에 맡겼더라도, 브랜치→PR→머지 요청→반영 확인은 **봇이 이 절차로 마무리**한다.
 > **정본 절차.**
 > spec: [git-workflow](https://github.com/blcktgr73/palab-platform/blob/main/policies/git-workflow.md) (branch/PR 규약),
 > [delivery-lifecycle](https://github.com/blcktgr73/palab-platform/blob/main/docs/operations/delivery-lifecycle.md) §6 (승인 경계·채널 역할)
