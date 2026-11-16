@@ -32,6 +32,12 @@
 2. **한 장에 하나** — 카드 하나 = 실행 단위 하나. 크면 2~4개로 쪼개고 서로 링크한다.
 3. **body 를 계약대로 채운다** — spec §Body 권장 템플릿(Summary / Why / Ready contract / Acceptance criteria / Notes·links).
    빈칸을 남기지 않는다. **모르는 값은 추정하지 말고 `확인 필요` 로 적는다.**
+   **완료 기준에 라벨 부착을 넣지 않는다.** `awaiting-review` 는 봇이 붙이는 신호이고 라우터가 곧바로 가져가서
+   카드에 남지 않는다. 라벨 유무로 완료를 판정하면 영원히 미완료가 된다. 완료 기준은 결과물로 쓴다
+   (예: "PR 을 올리고 링크를 카드에 댓글로 남겼다").
+   **봇이 PR 까지 만드는 카드에는 본문에 `허용 범위:` 한 줄을 둔다.** 바꿔도 되는 파일·경로 패턴을 쓴다
+   (예: `허용 범위: docs/tasks/TASK-026.md, bootstrap/skills/`). Neo 가 PR 을 직접 머지할 때 변경 파일이
+   이 범위 안인지 확인한다. 줄이 없으면 Neo 는 머지하지 않고 사람에게 넘긴다 ([neo-merge](https://github.com/blcktgr73/palab-platform/blob/main/bootstrap/skills/neo-merge.md)).
    `확인 필요` 가 하나라도 있으면 본문 끝에 **`## 사람 확인 필요`** 3줄을 붙인다
    ([human-task-brief](https://github.com/blcktgr73/palab-platform/blob/main/docs/operations/human-task-brief.md) 형식):
    ① 무엇을 확정해야 하는지 ② 선택지(근거가 있을 때만, 2개까지) ③ 정한 뒤 붙일 라벨.
@@ -56,6 +62,10 @@
 
 1. **readiness contract 를 먼저 다 채운다.** 미충족 카드에 라벨을 붙이면 깨어난 봇이 집지 못하고
    되돌려 보낸다 — 서로의 시간만 쓴다.
+   **본문 끝에 `## 마무리` 문단을 둔다. 체크박스가 아니다.** 봇이 끝낼 때 할 일을 한 줄로 적는다:
+   "PR 을 올리고 링크를 카드에 댓글로 남긴 뒤 `awaiting-review` 를 붙인다." 체크박스로 쓰면 라우터가 라벨을
+   가져가 영원히 미완료가 된다. 봇이 마무리 규약을 이미 알아도 카드에 적어 두면, 아직 익히지 못한 봇도 따른다
+   (REQ-010 시험: 카드에 라벨 문구가 없으면 Morpheus 가 붙이지 않았다).
 2. **위험한 일이면 `gated` 를 같이 붙인다** — 배포 / 시크릿 / 외부 전송 / 비가역 작업.
    라우터가 발화 대신 `awaiting-approval` 을 붙이고 승인자에게 넘긴다. 승인 전엔 상대 봇이 안 깨어난다.
 3. 라벨 부착은 **맨 마지막 단계**다.
@@ -68,6 +78,7 @@
 
 - **자기 자신에게 dispatch 하지 않는다** (`dispatch:<나>`) — 자기가 자기를 깨우는 순환이 된다.
 - `dispatched` / `approved` / `awaiting-approval` 라벨은 건드리지 않는다. 라우터와 사람의 것이다.
+  핸드오프 뒤 라우터가 바꾼 `dispatch:*` 와 `handoffs:*` 도 같다. 라우터가 정리한 라벨을 다시 붙이지 않는다.
 - 한 번의 run 에서 dispatch 는 **최대 2건**. 넘치면 나머지는 라벨 없이 카드만 만들고 Neo 에게 올린다.
 
 ## 권한 (현재 기준)
