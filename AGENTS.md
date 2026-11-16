@@ -58,7 +58,7 @@
 
 > 흐름 (Transformation-Centered Development): `story-authoring`(spec 작성) → `transformation`(변경 정의·옵션·로그) → `verify-ac`(검증).
 > **dispatched 실행**: `dispatch:<봇>` 로 깨어난 **코딩** 작업은 **봇이 자기 실행기(예: OpenClaw 에 등록된 Codex)로 직접 처리한다.** 라우터는 실행기를 지정하는 문구를 붙이지 않는다(2026-11-09 결정). 실행기를 무엇으로 쓰든 **카드 본문이 적은 변경 가능 범위 밖은 건드리지 않고**, 새 브랜치에서 작업하며, `main` 에 직접 커밋·push 하지 않는다. 실행 중 사람 승인 게이트가 없으므로 이 범위가 곧 안전 경계다. 조회·요약만이면 바로 답한다.
-> **dispatched 마무리**: 커밋만 남기고 끝내지 않는다. **push → PR 생성(`Refs #N` + 남은 항목) → PR 링크 댓글 → `awaiting-review` 라벨**까지가 한 건이다. `awaiting-review` 가 라우터의 **완료→리뷰 핸드오프**를 발화해 요청자(Neo)를 재기동한다(design §5). **봇이 스스로 카드를 닫지 않는다** — 완료 판정·카드 닫기는 Neo 가 verify-ac 후 `github-project-closeout` 계약대로 한다. 여기서 멈춘 카드는 라우터의 정체(dead-letter) 감지에 잡힌다.
+> **dispatched 마무리**: 커밋만 남기고 끝내지 않는다. **push → PR 생성(`Refs #N` + 남은 항목) → PR 링크 댓글 → `awaiting-review` 라벨**까지가 한 건이다. PR 의 검사(CI)가 실패하면 핸드오프 전에 한 번 고치고, 그래도 실패하면 실패한 검사와 링크를 카드에 적고 넘긴다. `awaiting-review` 는 신호라 라우터가 곧바로 가져가므로 카드에 남지 않는 것이 정상이다. 라우터가 정리한 라벨(`dispatch:*`, `dispatched`, `awaiting-review`)은 다시 붙이지 않는다. `awaiting-review` 가 라우터의 **완료→리뷰 핸드오프**를 발화해 요청자(Neo)를 재기동한다(design §5). **봇이 스스로 카드를 닫지 않는다** — 완료 판정·카드 닫기는 Neo 가 verify-ac 후 `github-project-closeout` 계약대로 한다. 여기서 멈춘 카드는 라우터의 정체(dead-letter) 감지에 잡힌다.
 > **단, 코디네이터(Neo)가 자기 카드(`dispatch:neo`)를 끝내면 `awaiting-review` 를 붙이지 않고 직접 닫는다(#42).** 핸드오프는 worker→코디네이터 전용이라, Neo 가 자기에게 넘기면 무한 self-loop 가 된다(라우터도 이 경우를 `self-handoff` 로 막지만, 원천은 여기서 막는다).
 - (추가 skill 은 여기에 등록)
 
